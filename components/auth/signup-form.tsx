@@ -12,13 +12,16 @@ import {
 import { Button } from "../ui/button";
 import { Eye, EyeOff, Lock, Mail, MoveRight, User } from "lucide-react";
 import { Input } from "../ui/input";
+import { resolveAction } from "@/lib/actions/helpers";
 import { ROUTES } from "@/lib/constants/constants";
+import { signup } from "@/actions/auth/signup";
 import { signUpInputSchema } from "@/lib/schema/sign-up-schema";
 import { SocialMediaOptions } from "./social-media-options";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import z from "zod";
 
 const abrilFatface = Abril_Fatface({
@@ -39,8 +42,27 @@ export const SignUpForm = () => {
     },
   });
 
-  const onSubmit = (values: SignupInput) => {
-    console.log(values);
+  const onSubmit = async (values: SignupInput) => {
+    const formData = new FormData();
+
+    formData.append("email", values.email);
+    formData.append("username", values.username);
+    formData.append("password", values.password);
+
+    const resp = resolveAction(await signup(formData));
+
+    if (resp.success) {
+      toast.success("Account created");
+      return;
+    }
+
+    if (resp.error.kind === "field") {
+      Object.entries(resp.error.errors).forEach(([field, message]) => {
+        form.setError(field as "username" | "email" | "password", { message });
+      });
+    } else {
+      toast.error(resp.error.message);
+    }
   };
 
   const toggleShowPassword = () => {
