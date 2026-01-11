@@ -1,6 +1,11 @@
 export const ROUTES = {
-  login: "/login",
-  signup: "/signup",
+  AUTH: {
+    LOGIN: "/login",
+    SIGNUP: "/signup",
+  },
+  DASHBOARD: {
+    EXPENSES: "/expenses",
+  },
 };
 
 export const ACTION_ERRORS = {

@@ -2,6 +2,7 @@
 
 import { ACTION_ERRORS } from "@/lib/constants/constants";
 import { ActionResult } from "@/lib/actions/types";
+import { createSession } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { hashPassword } from "@/lib/utils/auth";
 import { signUpInputSchema } from "@/lib/schema/sign-up-schema";
@@ -14,10 +15,10 @@ export async function signup(formData: FormData): Promise<ActionResult<void>> {
     password: formData.get("password"),
   };
 
-  const parsed = signUpInputSchema.safeParse(input);
+  const parsedInput = signUpInputSchema.safeParse(input);
 
-  if (!parsed.success) {
-    const fieldErrors = z.flattenError(parsed.error).fieldErrors;
+  if (!parsedInput.success) {
+    const fieldErrors = z.flattenError(parsedInput.error).fieldErrors;
 
     return {
       ok: false,
@@ -30,7 +31,7 @@ export async function signup(formData: FormData): Promise<ActionResult<void>> {
     };
   }
 
-  const { email, username, password } = parsed.data;
+  const { email, username, password } = parsedInput.data;
 
   const existing = await db.query("SELECT 1 FROM users WHERE email = $1", [
     email,
@@ -46,10 +47,12 @@ export async function signup(formData: FormData): Promise<ActionResult<void>> {
 
   const passwordHash = await hashPassword(password);
 
-  await db.query(
-    "INSERT INTO users (email, username, password_hash) VALUES ($1, $2, $3)",
+  const result = await db.query(
+    "INSERT INTO users (email, username, password_hash) VALUES ($1, $2, $3) RETURNING id",
     [email, username, passwordHash]
   );
 
+  const userId = result.rows[0].id;
+  createSession(userId);
   return { ok: true };
 }

@@ -12,13 +12,17 @@ import {
 import { Button } from "../ui/button";
 import { Eye, EyeOff, Lock, Mail, MoveRight } from "lucide-react";
 import { Input } from "../ui/input";
+import { login } from "@/actions/auth/login";
 import { loginInputSchema } from "@/lib/schema/login-schema";
+import { resolveAction } from "@/lib/actions/helpers";
 import { ROUTES } from "@/lib/constants/constants";
 import { SocialMediaOptions } from "./social-media-options";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import z from "zod";
 
 const abrilFatface = Abril_Fatface({
@@ -28,6 +32,8 @@ const abrilFatface = Abril_Fatface({
 type LoginInput = z.infer<typeof loginInputSchema>;
 
 export const LoginForm = () => {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const form = useForm<LoginInput>({
@@ -38,8 +44,27 @@ export const LoginForm = () => {
     },
   });
 
-  const onSubmit = (values: LoginInput) => {
-    console.log(values);
+  const onSubmit = async (values: LoginInput) => {
+    const formData = new FormData();
+
+    formData.append("email", values.email);
+    formData.append("password", values.password);
+
+    const resp = resolveAction(await login(formData));
+
+    if (resp.success) {
+      toast.success("Logged in successfully!");
+      router.push(ROUTES.DASHBOARD.EXPENSES);
+      return;
+    }
+
+    if (resp.error.kind === "field") {
+      Object.entries(resp.error.errors).forEach(([field, message]) => {
+        form.setError(field as "email" | "password", { message });
+      });
+    } else {
+      toast.error(resp.error.message);
+    }
   };
 
   const toggleShowPassword = () => {
@@ -141,7 +166,7 @@ export const LoginForm = () => {
       <p className="font-medium text-sm text-center">
         Don&apos;t have an account?&nbsp;
         <Link
-          href={ROUTES.signup}
+          href={ROUTES.AUTH.SIGNUP}
           className="text-(--color-cta) hover:underline"
         >
           <strong>Sign Up Here</strong>

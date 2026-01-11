@@ -18,6 +18,7 @@ import { signup } from "@/actions/auth/signup";
 import { signUpInputSchema } from "@/lib/schema/sign-up-schema";
 import { SocialMediaOptions } from "./social-media-options";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -31,6 +32,8 @@ const abrilFatface = Abril_Fatface({
 type SignupInput = z.infer<typeof signUpInputSchema>;
 
 export const SignUpForm = () => {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const form = useForm<SignupInput>({
@@ -52,7 +55,8 @@ export const SignUpForm = () => {
     const resp = resolveAction(await signup(formData));
 
     if (resp.success) {
-      toast.success("Account created");
+      toast.success("Account created successfully");
+      router.push(ROUTES.DASHBOARD.EXPENSES);
       return;
     }
 
@@ -182,7 +186,7 @@ export const SignUpForm = () => {
       <p className="font-medium text-sm text-center">
         Already have an account?&nbsp;
         <Link
-          href={ROUTES.login}
+          href={ROUTES.AUTH.LOGIN}
           className="text-(--color-cta) hover:underline"
         >
           <strong>Log In Here</strong>

@@ -19,8 +19,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.className}`}>{children}</body>
-      <Toaster position="top-right" />
+      <body className={`${montserrat.className}`}>
+        {children}
+        <Toaster position="top-right" />
+      </body>
     </html>
   );
 }
