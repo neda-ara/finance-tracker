@@ -1,3 +1,4 @@
+import { LoginForm } from "@/components/auth/login-form";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -6,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
-  return <div>LOGIN</div>;
+  return <LoginForm />;
 }

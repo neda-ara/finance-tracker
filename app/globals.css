@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -47,6 +46,11 @@
 }
 
 :root {
+  --color-primary: hsl(0 85% 91%);
+  --color-primary-soft: hsl(0 70% 94%);
+  --color-secondary: hsl(0 100% 96%);
+  --color-tertiary: hsl(0 0% 100%);
+  --color-cta: hsl(359 99% 74%);
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -82,6 +86,10 @@
 }
 
 .dark {
+  --color-primary: hsl(0 30% 30%);
+  --color-primary-soft: hsl(0 35% 35%);
+  --color-secondary: hsl(0 20% 20%);
+  --color-tertiary: hsl(0 0% 10%);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
