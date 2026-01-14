@@ -53,6 +53,6 @@ export async function signup(formData: FormData): Promise<ActionResult<void>> {
   );
 
   const userId = result.rows[0].id;
-  createSession(userId);
+  await createSession(userId);
   return { ok: true };
 }
