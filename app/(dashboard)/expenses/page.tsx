@@ -1,4 +1,4 @@
-import { LogoutButton } from "@/components/header/logout-button";
+import { PageTitle } from "@/components/common/page-title";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,8 +9,10 @@ export const metadata: Metadata = {
 export default function ExpensesPage() {
   return (
     <div className="flex flex-col items-center justify-center">
-      <h1>MY EXPENSES</h1>
-      <LogoutButton />
+      <PageTitle
+        heading="Expenses"
+        subheading="Control the chaos, one expense at a time."
+      />
     </div>
   );
 }
