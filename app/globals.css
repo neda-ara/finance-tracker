@@ -46,11 +46,11 @@
 }
 
 :root {
-  --color-primary: hsl(0 85% 91%);
-  --color-primary-soft: hsl(0 70% 94%);
-  --color-secondary: hsl(0 100% 96%);
-  --color-tertiary: hsl(0 0% 100%);
-  --color-cta: hsl(359 99% 74%);
+  --color-primary: #f9dede;
+  --color-primary-soft: #f8e6e6;
+  --color-secondary: #ffe5e5;
+  --color-tertiary: #ffffff;
+  --color-cta: #ff7a7d;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
