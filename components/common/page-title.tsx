@@ -19,14 +19,14 @@ export const PageTitle = ({
   return (
     <div>
       <h1
-        className={`${volkorn.className} flex items-center font-extrabold text-4xl tracking-wide leading-tight `}
+        className={`${volkorn.className} flex items-center font-bold text-4xl leading-tight text-(--color-cta) [text-shadow:1.5px_1.5px_0_var(--color-primary)]`}
       >
         {icon}
         {heading}
       </h1>
       {subheading && (
         <h3
-          className={`${volkorn.className} font-medium text-xl text-muted-foreground leading-tight`}
+          className={`${volkorn.className} text-lg font-medium text-(--color-subtext) leading-tight [text-shadow:1px_1px_0_rgba(0,0,0,0.1)]`}
         >
           {subheading}
         </h3>

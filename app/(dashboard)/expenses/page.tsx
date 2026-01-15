@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function ExpensesPage() {
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col justify-center">
       <PageTitle
         heading="Expenses"
         subheading="Control the chaos, one expense at a time."
