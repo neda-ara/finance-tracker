@@ -26,7 +26,7 @@ export const PageTitle = ({
       </h1>
       {subheading && (
         <h3
-          className={`${volkorn.className} text-lg font-medium text-(--color-subtext) leading-tight [text-shadow:1px_1px_0_rgba(0,0,0,0.1)]`}
+          className={`${volkorn.className} text-xl font-medium text-(--color-subtext) leading-tight [text-shadow:1px_1px_0_rgba(0,0,0,0.1)]`}
         >
           {subheading}
         </h3>

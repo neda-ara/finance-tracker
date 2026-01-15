@@ -14,3 +14,10 @@ export const ACTION_ERRORS = {
   AUTH: "auth",
   SYSTEM: "system",
 } as const;
+
+export const ACTION_CONSTANTS = {
+  CREATE: "Create",
+  DELETE: "Delete",
+  EDIT: "Edit",
+  VIEW: "View",
+};
