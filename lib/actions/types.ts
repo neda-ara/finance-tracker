@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { ACTION_ERRORS } from "../constants/constants";
 
 export type ActionErrorType =
@@ -22,3 +23,12 @@ export type NormalizedActionError =
       message: string;
       type: ActionErrorType;
     };
+
+export type ModalProps = {
+  dialogTrigger: JSX.Element;
+  dialogTitle: string | JSX.Element;
+  dialogDescription?: string | JSX.Element;
+  dialogContent: JSX.Element;
+  showFooter?: boolean;
+  footerContent?: JSX.Element;
+};
