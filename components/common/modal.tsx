@@ -11,7 +11,7 @@ import { ModalProps } from "@/lib/actions/types";
 
 export function Modal(props: ModalProps) {
   return (
-    <Dialog>
+    <Dialog open={props.open} onOpenChange={props.onOpenChange}>
       <form>
         <DialogTrigger asChild>{props?.dialogTrigger}</DialogTrigger>
         <DialogContent className="sm:max-w-106.25">

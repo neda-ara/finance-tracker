@@ -5,25 +5,72 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { DataGrid } from "../common/data-grid";
 import { Modal } from "../common/modal";
-import { DialogClose } from "../ui/dialog";
+import { ActionConstant, ModalContent } from "@/lib/actions/types";
+import { ExpenseForm } from "./expense-form";
+import { Plus } from "lucide-react";
+
+type Expense = {
+  amount: number;
+};
 
 export const ExpenseGrid = () => {
-  const [action, setAction] = useState<typeof ACTION_CONSTANTS | undefined>();
+  const [action, setAction] = useState<ActionConstant | undefined>();
+  const [quickActionData, setQuickActionData] = useState<Expense | undefined>();
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
+
+  const actionHandler = (action: ActionConstant, data?: Expense) => {
+    setAction(action);
+    setQuickActionData(data);
+    setOpenModal(true);
+  };
+
+  const modalContentMap = new Map<ActionConstant, ModalContent>([
+    [
+      ACTION_CONSTANTS.CREATE,
+      {
+        header: <p>Add New Expense</p>,
+        body: <ExpenseForm />,
+      },
+    ],
+    [
+      ACTION_CONSTANTS.EDIT,
+      {
+        header: <p>Update Expense - {quickActionData?.amount}</p>,
+        body: <ExpenseForm />,
+      },
+    ],
+    [
+      ACTION_CONSTANTS.DELETE,
+      {
+        header: <p>Delete Expense</p>,
+        body: <ExpenseForm />,
+      },
+    ],
+  ]);
 
   return (
     <div>
-      <div>My Expenses</div>
-
+      <Button
+        variant="cta"
+        className="font-medium"
+        onClick={() => actionHandler(ACTION_CONSTANTS.CREATE)}
+      >
+        <Plus /> Add New
+      </Button>
       <Modal
-        dialogTrigger={<Button variant="cta">+ Add New</Button>}
-        dialogTitle={<p>TITLE</p>}
-        dialogContent={<p>CONTENT</p>}
+        open={openModal}
+        onOpenChange={handleOpenModal}
+        dialogTitle={modalContentMap.get(action!)?.header}
+        dialogContent={modalContentMap.get(action!)?.body}
         showFooter={true}
         footerContent={
           <>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
+            <Button variant="outline" onClick={handleCloseModal}>
+              Cancel
+            </Button>
             <Button type="submit">Save changes</Button>
           </>
         }
