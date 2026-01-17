@@ -14,7 +14,10 @@ export function Modal(props: ModalProps) {
     <Dialog open={props.open} onOpenChange={props.onOpenChange}>
       <form>
         <DialogTrigger asChild>{props?.dialogTrigger}</DialogTrigger>
-        <DialogContent className="sm:max-w-106.25">
+        <DialogContent
+          showCloseButton={props?.showCloseButton}
+          className="sm:max-w-106.25"
+        >
           <DialogHeader>
             <DialogTitle>{props?.dialogTitle}</DialogTitle>
             {props?.dialogDescription && (

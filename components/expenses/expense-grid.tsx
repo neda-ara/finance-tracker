@@ -29,24 +29,34 @@ export const ExpenseGrid = () => {
 
   const modalContentMap = new Map<ActionConstant, ModalContent>([
     [
-      ACTION_CONSTANTS.CREATE,
+      ACTION_CONSTANTS.ADD,
       {
         header: <p>Add New Expense</p>,
-        body: <ExpenseForm />,
+        body: (
+          <ExpenseForm
+            submitButtonText={`Add Expense`}
+            onCancel={handleCloseModal}
+          />
+        ),
       },
     ],
     [
       ACTION_CONSTANTS.EDIT,
       {
         header: <p>Update Expense - {quickActionData?.amount}</p>,
-        body: <ExpenseForm />,
+        body: (
+          <ExpenseForm
+            submitButtonText={`Edit Expense`}
+            onCancel={handleCloseModal}
+          />
+        ),
       },
     ],
     [
       ACTION_CONSTANTS.DELETE,
       {
         header: <p>Delete Expense</p>,
-        body: <ExpenseForm />,
+        body: <p>Are you sure</p>,
       },
     ],
   ]);
@@ -56,7 +66,7 @@ export const ExpenseGrid = () => {
       <Button
         variant="cta"
         className="font-medium"
-        onClick={() => actionHandler(ACTION_CONSTANTS.CREATE)}
+        onClick={() => actionHandler(ACTION_CONSTANTS.ADD)}
       >
         <Plus /> Add New
       </Button>
@@ -65,15 +75,8 @@ export const ExpenseGrid = () => {
         onOpenChange={handleOpenModal}
         dialogTitle={modalContentMap.get(action!)?.header}
         dialogContent={modalContentMap.get(action!)?.body}
-        showFooter={true}
-        footerContent={
-          <>
-            <Button variant="outline" onClick={handleCloseModal}>
-              Cancel
-            </Button>
-            <Button type="submit">Save changes</Button>
-          </>
-        }
+        showFooter={false}
+        showCloseButton={false}
       />
       <DataGrid />
     </div>

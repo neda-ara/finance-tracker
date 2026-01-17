@@ -37,6 +37,7 @@ export type ModalProps = {
   dialogContent: React.ReactNode;
   showFooter?: boolean;
   footerContent?: React.ReactNode;
+  showCloseButton?: boolean;
 };
 
 export type ActionConstant =
