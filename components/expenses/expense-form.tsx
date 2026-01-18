@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import {
   AMOUNT_INPUT_REGEX,
   CURRENCIES,
+  EXPENSE_CATEGORIES,
   PAYMENT_MODE,
   SATISFACTION_RATING_LABELS,
   VALIDATION,
@@ -49,7 +50,7 @@ export const ExpenseForm = ({
     defaultValues: {
       amount: "",
       currency: CURRENCIES.INR.code,
-      category: "",
+      category: "Food",
       description: "",
       paymentMode: "online",
       satisfactionRating: 4,
@@ -80,7 +81,7 @@ export const ExpenseForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-y-4 mt-3"
+        className="flex flex-col gap-y-5 mt-3"
       >
         <FormField
           control={form.control}
@@ -168,21 +169,6 @@ export const ExpenseForm = ({
               </FormItem>
             )}
           />
-        </div>
-        <div className="flex items-center gap-x-2">
-          <FormField
-            control={form.control}
-            name="category"
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormLabel className="text-sm font-medium">Category</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="Enter Category" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="paymentMode"
@@ -205,12 +191,43 @@ export const ExpenseForm = ({
                     </SelectContent>
                   </Select>
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
+        <FormField
+          control={form.control}
+          name="category"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel className="text-sm font-medium">
+                Pick a Category
+              </FormLabel>
+              <FormControl>
+                <div className="flex flex-wrap gap-2">
+                  {EXPENSE_CATEGORIES.map((category) => (
+                    <div
+                      key={category.title}
+                      onClick={() => field.onChange(category.title)}
+                      className={cn(
+                        "flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-medium border-2 transition cursor-pointer",
+                        category.title === field.value
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-background hover:bg-accent border-muted"
+                      )}
+                    >
+                      <span className="block text-[13px] font-medium">
+                        {category.title}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="description"
@@ -226,7 +243,7 @@ export const ExpenseForm = ({
                 <FormControl>
                   <Textarea
                     {...field}
-                    className="resize-none"
+                    className="resize-none text-sm py-1.5 min-h-14.5"
                     placeholder="Add notes about this expense (optional)"
                     maxLength={maxLength}
                     rows={2}
@@ -236,7 +253,7 @@ export const ExpenseForm = ({
                   <FormMessage />
                   <span
                     className={cn(
-                      "text-xs font-medium",
+                      "text-xs font-medium ml-auto",
                       currentLength >= maxLength
                         ? "text-destructive"
                         : "text-muted-foreground"
@@ -261,7 +278,7 @@ export const ExpenseForm = ({
                   Was this spend worth it?
                 </FormLabel>
                 <FormControl>
-                  <div className="flex flex-col gap-3">
+                  <div className="flex gap-3">
                     <Slider
                       min={1}
                       max={5}
@@ -269,9 +286,15 @@ export const ExpenseForm = ({
                       value={[value]}
                       onValueChange={([val]) => field.onChange(val)}
                     />
-                    <p className="text-sm text-muted-foreground text-center">
-                      {SATISFACTION_RATING_LABELS[value as SatisfactionRating]}
-                    </p>
+                    <div className="min-w-32">
+                      <p className="text-sm text-muted-foreground text-center">
+                        {
+                          SATISFACTION_RATING_LABELS[
+                            value as SatisfactionRating
+                          ]
+                        }
+                      </p>
+                    </div>
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -279,7 +302,6 @@ export const ExpenseForm = ({
             );
           }}
         />
-
         <div className="space-x-2 self-end">
           <Button variant="outline" onClick={onCancel}>
             Cancel

@@ -49,10 +49,39 @@ export const PAYMENT_MODE = [
   { label: "Cash", value: "cash" },
 ];
 
+export const EXPENSE_CATEGORIES = [
+  { title: "Food", icon: <></> },
+  { title: "Grocery", icon: <></> },
+  { title: "Travel", icon: <></> },
+  { title: "Home", icon: <></> },
+  { title: "Vehicle", icon: <></> },
+  { title: "Education", icon: <></> },
+  { title: "Doctor", icon: <></> },
+  { title: "Medicines", icon: <></> },
+  { title: "Electricity", icon: <></> },
+  { title: "Water", icon: <></> },
+  { title: "Gas", icon: <></> },
+  { title: "Internet", icon: <></> },
+  { title: "Phone", icon: <></> },
+  { title: "Cable", icon: <></> },
+  { title: "Pets", icon: <></> },
+  { title: "Gym", icon: <></> },
+  { title: "Salon", icon: <></> },
+  { title: "Shopping", icon: <></> },
+  { title: "Vacation", icon: <></> },
+  { title: "Gifts", icon: <></> },
+  { title: "Entertainment", icon: <></> },
+  { title: "Investment", icon: <></> },
+  { title: "Insurance", icon: <></> },
+  { title: "Subscriptions", icon: <></> },
+  { title: "Personal", icon: <></> },
+  { title: "Other", icon: <></> },
+] as const;
+
 export const SATISFACTION_RATING_LABELS = {
-  1: "Absolutely not",
+  1: "Absolutely not!",
   2: "Not really",
-  3: "Not sure",
+  3: "Maybe",
   4: "Yeah",
-  5: "Hell yes",
+  5: "Definitely!",
 } as const;

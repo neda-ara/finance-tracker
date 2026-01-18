@@ -1,6 +1,7 @@
 import {
   ACTION_CONSTANTS,
   ACTION_ERRORS,
+  EXPENSE_CATEGORIES,
   SATISFACTION_RATING_LABELS,
 } from "../constants/constants";
 
@@ -59,5 +60,7 @@ export type LabelValuePair = {
   label: string;
   value: string;
 };
+
+export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number]["title"];
 
 export type SatisfactionRating = keyof typeof SATISFACTION_RATING_LABELS;
