@@ -1,4 +1,11 @@
-import { ACTION_CONSTANTS, ACTION_ERRORS } from "../constants/constants";
+import {
+  ACTION_CONSTANTS,
+  ACTION_ERRORS,
+  SATISFACTION_RATING_LABELS,
+} from "../constants/constants";
+
+export type ActionConstant =
+  (typeof ACTION_CONSTANTS)[keyof typeof ACTION_CONSTANTS];
 
 export type ActionErrorType =
   (typeof ACTION_ERRORS)[keyof typeof ACTION_ERRORS];
@@ -38,7 +45,19 @@ export type ModalProps = {
   showFooter?: boolean;
   footerContent?: React.ReactNode;
   showCloseButton?: boolean;
+  customStyles?: { dialogContent?: string };
 };
 
-export type ActionConstant =
-  (typeof ACTION_CONSTANTS)[keyof typeof ACTION_CONSTANTS];
+export type DatePickerProps = {
+  value?: Date;
+  onChange: (date: Date | undefined) => void;
+  label?: string;
+  disabled?: (date: Date) => boolean;
+};
+
+export type LabelValuePair = {
+  label: string;
+  value: string;
+};
+
+export type SatisfactionRating = keyof typeof SATISFACTION_RATING_LABELS;

@@ -4,6 +4,8 @@ import { Button } from "../ui/button";
 import {
   AMOUNT_INPUT_REGEX,
   CURRENCIES,
+  PAYMENT_MODE,
+  SATISFACTION_RATING_LABELS,
   VALIDATION,
 } from "@/lib/constants/constants";
 import { expenseInputSchema } from "@/lib/schema/expense-schema";
@@ -16,7 +18,19 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { cn } from "@/lib/utils/shadcn-utils";
+import { DatePicker } from "../common/date-picker";
+import { LabelValuePair, SatisfactionRating } from "@/lib/actions/types";
 import { normalizeNumber } from "@/lib/utils/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Slider } from "../ui/slider";
+import { Textarea } from "../ui/textarea";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
@@ -37,13 +51,15 @@ export const ExpenseForm = ({
       currency: CURRENCIES.INR.code,
       category: "",
       description: "",
-      paymentMode: "",
+      paymentMode: "online",
       satisfactionRating: 4,
       expenseDate: new Date(),
     },
   });
 
   const onSubmit = async (values: ExpenseInput) => {
+    console.log({ values });
+
     const formData = new FormData();
 
     formData.append("amount", String(values.amount));
@@ -64,27 +80,26 @@ export const ExpenseForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-y-4 w-full"
+        className="flex flex-col gap-y-4 mt-3"
       >
         <FormField
           control={form.control}
           name="amount"
           render={({ field }) => (
-            <FormItem className="flex items-center gap-x-8 self-center">
-              <FormLabel className="text-sm font-medium">Amount</FormLabel>
+            <FormItem className="flex flex-col gap-x-8 self-center">
               <FormControl>
-                <div className="flex items-center gap-x-2 self-center">
-                  {/* <div className={commonStyles.inputIconContainer}>
-                      <User className={commonStyles.inputIcon} />
-                    </div> */}
-                  <p className="font-semibold text-4xl">
+                <div className="flex justify-center items-center self-center">
+                  <FormLabel className="text-sm font-medium mr-24 min-w-fit">
+                    Amount Spent
+                  </FormLabel>
+                  <p className="font-semibold text-3xl">
                     {currency &&
                       CURRENCIES[currency as keyof typeof CURRENCIES].symbol}
                   </p>
                   <Input
                     {...field}
                     autoFocus={true}
-                    className="text-3xl! font-medium h-16 border-0 selection:ring-0 focus-visible:ring-0 shadow-none"
+                    className="text-3xl! font-medium border-0 selection:ring-0 focus-visible:ring-0 shadow-none"
                     type="text"
                     inputMode="decimal"
                     placeholder="0.00"
@@ -109,26 +124,162 @@ export const ExpenseForm = ({
             </FormItem>
           )}
         />
+        <div className="flex items-start gap-x-2">
+          <FormField
+            control={form.control}
+            name="expenseDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm font-medium">
+                  Expense Date
+                </FormLabel>
+                <FormControl>
+                  <DatePicker
+                    value={field.value}
+                    onChange={field.onChange}
+                    disabled={(date) => date > new Date()}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="currency"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel className="text-sm font-medium">Currency</FormLabel>
+                <FormControl>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      {Object.entries(CURRENCIES).map(([code, currency]) => (
+                        <SelectItem key={code} value={code}>
+                          {code} ({currency.name})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex items-center gap-x-2">
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel className="text-sm font-medium">Category</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Enter Category" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="paymentMode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm font-medium">
+                  Mode of Payment
+                </FormLabel>
+                <FormControl>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Mode of Payment" />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      {PAYMENT_MODE.map((mode: LabelValuePair) => (
+                        <SelectItem key={mode.value} value={mode.value}>
+                          {mode.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           control={form.control}
           name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-base font-medium">
-                Description
-              </FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Enter Description (optional)"
-                  className=""
-                  //className={commonStyles.input}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => {
+            const maxLength = VALIDATION.MAX_DESCRIPTION_LENGTH;
+            const currentLength = field.value?.length ?? 0;
+
+            return (
+              <FormItem>
+                <FormLabel className="text-sm font-medium">
+                  Description
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    className="resize-none"
+                    placeholder="Add notes about this expense (optional)"
+                    maxLength={maxLength}
+                    rows={2}
+                  />
+                </FormControl>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <FormMessage />
+                  <span
+                    className={cn(
+                      "text-xs font-medium",
+                      currentLength >= maxLength
+                        ? "text-destructive"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {currentLength}/{maxLength}
+                  </span>
+                </div>
+              </FormItem>
+            );
+          }}
         />
+        <FormField
+          control={form.control}
+          name="satisfactionRating"
+          render={({ field }) => {
+            const value = field.value;
+
+            return (
+              <FormItem className="flex-1">
+                <FormLabel className="text-sm font-medium">
+                  Was this spend worth it?
+                </FormLabel>
+                <FormControl>
+                  <div className="flex flex-col gap-3">
+                    <Slider
+                      min={1}
+                      max={5}
+                      step={1}
+                      value={[value]}
+                      onValueChange={([val]) => field.onChange(val)}
+                    />
+                    <p className="text-sm text-muted-foreground text-center">
+                      {SATISFACTION_RATING_LABELS[value as SatisfactionRating]}
+                    </p>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
+        />
+
         <div className="space-x-2 self-end">
           <Button variant="outline" onClick={onCancel}>
             Cancel

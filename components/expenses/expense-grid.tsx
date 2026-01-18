@@ -75,6 +75,9 @@ export const ExpenseGrid = () => {
         onOpenChange={handleOpenModal}
         dialogTitle={modalContentMap.get(action!)?.header}
         dialogContent={modalContentMap.get(action!)?.body}
+        customStyles={{
+          dialogContent: "sm:max-w-120",
+        }}
         showFooter={false}
         showCloseButton={false}
       />
