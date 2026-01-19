@@ -5,6 +5,7 @@ import {
   AMOUNT_INPUT_REGEX,
   CURRENCIES,
   EXPENSE_CATEGORIES,
+  EXPENSE_CATEGORY_BASE_PATH,
   PAYMENT_MODE,
   SATISFACTION_RATING_LABELS,
   VALIDATION,
@@ -35,6 +36,7 @@ import { Textarea } from "../ui/textarea";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
+import Image from "next/image";
 
 type ExpenseInput = z.input<typeof expenseInputSchema>;
 
@@ -217,6 +219,13 @@ export const ExpenseForm = ({
                           : "bg-background hover:bg-accent border-muted"
                       )}
                     >
+                      <Image
+                        alt={category?.title}
+                        height={64}
+                        width={64}
+                        className="h-5 w-5 aspect-square object-contain"
+                        src={`${EXPENSE_CATEGORY_BASE_PATH}${category?.iconPath}`}
+                      />
                       <span className="block text-[13px] font-medium">
                         {category.title}
                       </span>
