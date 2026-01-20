@@ -21,22 +21,29 @@ export const expenseInputSchema = z.object({
     .trim()
     .min(3, "Currency code must be 3 chars")
     .max(3, "Currency code must be 3 chars"),
-  expenseDate: z.date().refine(
-    (date) => {
-      const d = new Date(date);
-      d.setHours(0, 0, 0, 0);
-      return d <= today;
+  expenseDate: z.preprocess(
+    (val) => {
+      if (typeof val === "string" || val instanceof Date) {
+        const d = new Date(val);
+        d.setHours(0, 0, 0, 0);
+        return d;
+      }
+      return val;
     },
-    { message: "Future dates are not allowed" }
+    z.date().refine((date) => date <= today, {
+      message: "Future dates are not allowed",
+    })
   ),
   category: z.string().min(1, "Please choose a category"),
   description: z
     .string()
     .trim()
-    .max(
-      VALIDATION.MAX_DESCRIPTION_LENGTH,
-      `Description cannot be more than ${VALIDATION.MAX_DESCRIPTION_LENGTH}`
-    ),
+    .max(VALIDATION.MAX_DESCRIPTION_LENGTH, {
+      message: `Description cannot be more than ${VALIDATION.MAX_DESCRIPTION_LENGTH}`,
+    })
+    .optional()
+    .or(z.literal("")),
+
   paymentMode: z.string().trim().min(1, "Please enter mode of payment"),
   satisfactionRating: z
     .int()

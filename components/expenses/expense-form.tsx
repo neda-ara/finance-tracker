@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "../ui/button";
+import { createExpense } from "@/actions/dashboard/expense";
 import {
   AMOUNT_INPUT_REGEX,
   CURRENCIES,
@@ -24,6 +25,7 @@ import { cn } from "@/lib/utils/shadcn-utils";
 import { DatePicker } from "../common/date-picker";
 import { LabelValuePair, SatisfactionRating } from "@/lib/actions/types";
 import { normalizeNumber } from "@/lib/utils/utils";
+import { resolveAction } from "@/lib/actions/helpers";
 import {
   Select,
   SelectContent,
@@ -37,6 +39,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 type ExpenseInput = z.input<typeof expenseInputSchema>;
 
@@ -69,9 +72,40 @@ export const ExpenseForm = ({
     formData.append("currency", values.currency);
     formData.append("category", values.category);
     formData.append("paymentMode", values.paymentMode);
-    formData.append("description", values.description);
+    formData.append("description", values.description ?? "");
     formData.append("satisfactionRating", String(values.satisfactionRating));
-    formData.append("expenseDate", String(values.expenseDate));
+    formData.append(
+      "expenseDate",
+      values.expenseDate instanceof Date
+        ? values.expenseDate.toISOString()
+        : String(values.expenseDate)
+    );
+
+    const resp = resolveAction(await createExpense(formData));
+
+    if (resp.success) {
+      toast.success("Expense recorded successfully");
+      onCancel?.();
+      return;
+    }
+
+    if (resp.error.kind === "field") {
+      Object.entries(resp.error.errors).forEach(([field, message]) => {
+        form.setError(
+          field as
+            | "amount"
+            | "currency"
+            | "expenseDate"
+            | "category"
+            | "description"
+            | "paymentMode"
+            | "satisfactionRating",
+          { message }
+        );
+      });
+    } else {
+      toast.error(resp.error.message);
+    }
   };
 
   const currency = useWatch({
@@ -138,7 +172,9 @@ export const ExpenseForm = ({
                 </FormLabel>
                 <FormControl>
                   <DatePicker
-                    value={field.value}
+                    value={
+                      field.value instanceof Date ? field.value : undefined
+                    }
                     onChange={field.onChange}
                     disabled={(date) => date > new Date()}
                   />
