@@ -1,11 +1,72 @@
 "use server";
 
 import { ACTION_ERRORS } from "@/lib/constants/constants";
-import { ActionResult } from "@/lib/actions/types";
+import { ActionResult, Expense, PaginatedResult } from "@/lib/actions/types";
 import { db } from "@/lib/db";
 import { expenseInputSchema } from "@/lib/schema/expense-schema";
 import { getSession } from "@/lib/auth/session";
 import z from "zod";
+
+export async function fetchExpenses({
+  page = 1,
+  pageSize = 25,
+}: {
+  page?: number;
+  pageSize?: number;
+}): Promise<ActionResult<PaginatedResult<Expense>>> {
+  const session = await getSession();
+
+  if (!session) {
+    return {
+      ok: false,
+      type: ACTION_ERRORS.AUTH,
+      message: "You are not authorized to perform this operation.",
+    };
+  }
+
+  const offset = (page - 1) * pageSize;
+
+  const expenseList = await db.query<Expense>(
+    `SELECT
+        id,
+        amount,
+        currency,
+        category,
+        payment_mode AS "paymentMode",
+        description,
+        satisfaction_rating AS "satisfactionRating",
+        expense_date AS "expenseDate",
+        created_at AS "createdAt"
+    FROM expenses
+    WHERE user_id = $1
+    ORDER BY expense_date DESC, created_at DESC
+    LIMIT $2 OFFSET $3
+    `,
+    [session?.userId, pageSize, offset]
+  );
+
+  const totalCountResp = await db.query<{ count: string }>(
+    `
+    SELECT COUNT(*)::text AS count
+    FROM expenses
+    WHERE user_id = $1
+    `,
+    [session?.userId]
+  );
+
+  const totalRecords = Number(totalCountResp.rows[0]?.count);
+  const totalPages = Math.ceil(totalRecords / pageSize);
+
+  const result: PaginatedResult<Expense> = {
+    data: expenseList.rows,
+    page,
+    pageSize,
+    totalRecords,
+    totalPages,
+  };
+
+  return { ok: true, data: result };
+}
 
 export async function createExpense(
   formData: FormData

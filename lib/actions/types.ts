@@ -64,3 +64,23 @@ export type LabelValuePair = {
 export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number]["title"];
 
 export type SatisfactionRating = keyof typeof SATISFACTION_RATING_LABELS;
+
+export type PaginatedResult<T> = {
+  data: T[];
+  page: number;
+  pageSize: number;
+  totalRecords: number;
+  totalPages: number;
+};
+
+export type Expense = {
+  id: string;
+  amount: number;
+  currency: string;
+  category: string;
+  paymentMode: string;
+  description: string | null;
+  satisfactionRating: number;
+  expenseDate: Date;
+  createdAt: Date;
+};
