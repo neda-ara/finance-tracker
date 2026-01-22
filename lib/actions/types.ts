@@ -84,3 +84,10 @@ export type Expense = {
   expenseDate: Date;
   createdAt: Date;
 };
+
+export type GetExpensesRequest = {
+  page: number;
+  pageSize: number;
+  searchKey?: string;
+  filters?: Record<string, unknown>;
+};
