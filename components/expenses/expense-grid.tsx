@@ -8,6 +8,7 @@ import { Modal } from "../common/modal";
 import { ActionConstant, ModalContent } from "@/lib/actions/types";
 import { ExpenseForm } from "./expense-form";
 import { Plus } from "lucide-react";
+import { useExpenses } from "@/hooks/use-expenses";
 
 type Expense = {
   amount: number;
@@ -20,6 +21,15 @@ export const ExpenseGrid = () => {
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
+
+  const { query, mutations } = useExpenses({
+    page: 1,
+    pageSize: 10,
+    searchKey: "",
+    filters: {},
+  });
+
+  console.log(query?.data);
 
   const actionHandler = (action: ActionConstant, data?: Expense) => {
     setAction(action);

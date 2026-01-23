@@ -1,7 +1,12 @@
 "use server";
 
 import { ACTION_ERRORS } from "@/lib/constants/constants";
-import { ActionResult, Expense, PaginatedResult } from "@/lib/actions/types";
+import {
+  ActionResult,
+  Expense,
+  GetExpensesRequest,
+  PaginatedResult,
+} from "@/lib/actions/types";
 import { db } from "@/lib/db";
 import { expenseInputSchema } from "@/lib/schema/expense-schema";
 import { getSession } from "@/lib/auth/session";
@@ -10,10 +15,7 @@ import z from "zod";
 export async function fetchExpenses({
   page = 1,
   pageSize = 25,
-}: {
-  page?: number;
-  pageSize?: number;
-}): Promise<ActionResult<PaginatedResult<Expense>>> {
+}: GetExpensesRequest): Promise<ActionResult<PaginatedResult<Expense>>> {
   const session = await getSession();
 
   if (!session) {

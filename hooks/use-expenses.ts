@@ -5,30 +5,40 @@ import { EXPENSE_CLIENT_QUERY_KEY } from "@/lib/constants/query-keys";
 import { GetExpensesRequest } from "@/lib/actions/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-export function useExpenses(options: GetExpensesRequest) {
+export function useExpenses(params: GetExpensesRequest) {
   const queryClient = useQueryClient();
 
   const query = useQuery({
     queryKey: [
       EXPENSE_CLIENT_QUERY_KEY,
-      options.page,
-      options.pageSize,
-      options.searchKey,
-      options.filters,
+      params.page,
+      params.pageSize,
+      params.searchKey ?? "",
+      JSON.stringify(params.filters ?? {}),
     ],
-    queryFn: () => fetchExpenses(options),
+    queryFn: async () => {
+      const resp = await fetchExpenses(params);
+      if (!resp?.ok) {
+        throw new Error(resp?.message ?? "Failed to fetch expenses");
+      }
+      return resp.data;
+    },
+    placeholderData: (previousData) => previousData,
   });
 
-  const addMutation = useMutation({
-    mutationFn: createExpense,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [EXPENSE_CLIENT_QUERY_KEY] });
-    },
-  });
+  const mutations = {
+    create: useMutation({
+      mutationFn: createExpense,
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: [EXPENSE_CLIENT_QUERY_KEY],
+        });
+      },
+    }),
+  };
 
   return {
-    ...query,
-    expenses: query ?? [],
-    addExpense: addMutation,
+    query,
+    mutations,
   };
 }
