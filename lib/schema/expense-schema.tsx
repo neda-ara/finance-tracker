@@ -21,19 +21,14 @@ export const expenseInputSchema = z.object({
     .trim()
     .min(3, "Currency code must be 3 chars")
     .max(3, "Currency code must be 3 chars"),
-  expenseDate: z.preprocess(
-    (val) => {
-      if (typeof val === "string" || val instanceof Date) {
-        const d = new Date(val);
-        d.setHours(0, 0, 0, 0);
-        return d;
-      }
-      return val;
-    },
-    z.date().refine((date) => date <= today, {
-      message: "Future dates are not allowed",
-    })
-  ),
+  expenseDate: z.preprocess((val) => {
+    if (typeof val === "string" || val instanceof Date) {
+      const d = new Date(val);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
+    return val;
+  }, z.date()),
   category: z.string().min(1, "Please choose a category"),
   description: z
     .string()

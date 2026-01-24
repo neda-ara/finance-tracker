@@ -44,8 +44,10 @@ export const ExpenseGrid = () => {
         header: <p>Add New Expense</p>,
         body: (
           <ExpenseForm
-            submitButtonText={`Add Expense`}
             onCancel={handleCloseModal}
+            onSubmit={(formData) => mutations.create.mutate(formData)}
+            submitButtonText={`Add Expense`}
+            submitInProgress={mutations.create.isPending}
           />
         ),
       },

@@ -34,21 +34,26 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Slider } from "../ui/slider";
+import { Spinner } from "../ui/spinner";
 import { Textarea } from "../ui/textarea";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import z from "zod";
 
 type ExpenseInput = z.input<typeof expenseInputSchema>;
 
 export const ExpenseForm = ({
-  submitButtonText,
   onCancel,
+  onSubmit,
+  submitButtonText,
+  submitInProgress,
 }: {
-  submitButtonText: string;
   onCancel: () => void;
+  onSubmit: (formData: FormData) => void;
+  submitButtonText: string;
+  submitInProgress: boolean;
 }) => {
   const form = useForm<ExpenseInput>({
     resolver: zodResolver(expenseInputSchema),
@@ -63,9 +68,7 @@ export const ExpenseForm = ({
     },
   });
 
-  const onSubmit = async (values: ExpenseInput) => {
-    console.log({ values });
-
+  const handleOnSubmit = async (values: ExpenseInput) => {
     const formData = new FormData();
 
     formData.append("amount", String(values.amount));
@@ -116,7 +119,7 @@ export const ExpenseForm = ({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleOnSubmit)}
         className="flex flex-col gap-y-5 mt-3"
       >
         <FormField
@@ -239,6 +242,7 @@ export const ExpenseForm = ({
           name="category"
           render={({ field }) => (
             <FormItem className="flex-1">
+              s
               <FormLabel className="text-sm font-medium">
                 Pick a Category
               </FormLabel>
@@ -352,7 +356,7 @@ export const ExpenseForm = ({
             Cancel
           </Button>
           <Button variant="cta" type="submit">
-            {submitButtonText}
+            {submitInProgress ? <Spinner /> : submitButtonText}
           </Button>
         </div>
       </form>
