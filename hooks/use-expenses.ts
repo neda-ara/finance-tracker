@@ -19,7 +19,7 @@ export function useExpenses(params: GetExpensesRequest) {
     queryFn: async () => {
       const resp = await fetchExpenses(params);
       if (!resp?.ok) {
-        throw new Error(resp?.message ?? "Failed to fetch expenses");
+        throw new Error(resp.error.message);
       }
       return resp.data;
     },

@@ -9,6 +9,7 @@ import { ActionConstant, ModalContent } from "@/lib/actions/types";
 import { ExpenseForm } from "./expense-form";
 import { Plus } from "lucide-react";
 import { useExpenses } from "@/hooks/use-expenses";
+import { LogoutButton } from "../header/logout-button";
 
 type Expense = {
   amount: number;
@@ -45,7 +46,7 @@ export const ExpenseGrid = () => {
         body: (
           <ExpenseForm
             onCancel={handleCloseModal}
-            onSubmit={(formData) => mutations.create.mutate(formData)}
+            onSubmit={(formData) => mutations.create.mutateAsync(formData)}
             submitButtonText={`Add Expense`}
             submitInProgress={mutations.create.isPending}
           />

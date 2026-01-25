@@ -1,7 +1,10 @@
 "use client";
 
-import { Button } from "../ui/button";
-import { createExpense } from "@/actions/dashboard/expense";
+import {
+  ActionResult,
+  LabelValuePair,
+  SatisfactionRating,
+} from "@/lib/actions/types";
 import {
   AMOUNT_INPUT_REGEX,
   CURRENCIES,
@@ -11,6 +14,7 @@ import {
   SATISFACTION_RATING_LABELS,
   VALIDATION,
 } from "@/lib/constants/constants";
+import { Button } from "../ui/button";
 import { expenseInputSchema } from "@/lib/schema/expense-schema";
 import {
   Form,
@@ -23,9 +27,7 @@ import {
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils/shadcn-utils";
 import { DatePicker } from "../common/date-picker";
-import { LabelValuePair, SatisfactionRating } from "@/lib/actions/types";
 import { normalizeNumber } from "@/lib/utils/utils";
-import { resolveAction } from "@/lib/actions/helpers";
 import {
   Select,
   SelectContent,
@@ -51,7 +53,7 @@ export const ExpenseForm = ({
   submitInProgress,
 }: {
   onCancel: () => void;
-  onSubmit: (formData: FormData) => void;
+  onSubmit: (values: FormData) => Promise<ActionResult<void>>;
   submitButtonText: string;
   submitInProgress: boolean;
 }) => {
@@ -84,31 +86,22 @@ export const ExpenseForm = ({
         : String(values.expenseDate)
     );
 
-    const resp = resolveAction(await createExpense(formData));
+    const resp = await onSubmit(formData);
 
-    if (resp.success) {
-      toast.success("Expense recorded successfully");
-      onCancel?.();
+    if (!resp.ok) {
+      if (resp.error.fieldErrors) {
+        Object.entries(resp.error.fieldErrors).forEach(([k, msg]) =>
+          form.setError(k as keyof ExpenseInput, { message: msg })
+        );
+      }
+      if (resp.error.message) {
+        toast.error(resp.error.message);
+      }
       return;
     }
 
-    if (resp.error.kind === "field") {
-      Object.entries(resp.error.errors).forEach(([field, message]) => {
-        form.setError(
-          field as
-            | "amount"
-            | "currency"
-            | "expenseDate"
-            | "category"
-            | "description"
-            | "paymentMode"
-            | "satisfactionRating",
-          { message }
-        );
-      });
-    } else {
-      toast.error(resp.error.message);
-    }
+    toast.success("Expense recorded successfully!");
+    onCancel();
   };
 
   const currency = useWatch({
@@ -242,7 +235,6 @@ export const ExpenseForm = ({
           name="category"
           render={({ field }) => (
             <FormItem className="flex-1">
-              s
               <FormLabel className="text-sm font-medium">
                 Pick a Category
               </FormLabel>

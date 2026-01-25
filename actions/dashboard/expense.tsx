@@ -1,6 +1,5 @@
 "use server";
 
-import { ACTION_ERRORS } from "@/lib/constants/constants";
 import {
   ActionResult,
   Expense,
@@ -9,27 +8,20 @@ import {
 } from "@/lib/actions/types";
 import { db } from "@/lib/db";
 import { expenseInputSchema } from "@/lib/schema/expense-schema";
-import { getSession } from "@/lib/auth/session";
-import z from "zod";
+import { getAuthenticatedSession, safeRunAction } from "@/lib/actions/helpers";
 
-export async function fetchExpenses({
-  page = 1,
-  pageSize = 25,
-}: GetExpensesRequest): Promise<ActionResult<PaginatedResult<Expense>>> {
-  const session = await getSession();
+export async function fetchExpenses(
+  params: GetExpensesRequest
+): Promise<ActionResult<PaginatedResult<Expense>>> {
+  return safeRunAction(async () => {
+    const session = await getAuthenticatedSession();
 
-  if (!session) {
-    return {
-      ok: false,
-      type: ACTION_ERRORS.AUTH,
-      message: "You are not authorized to perform this operation.",
-    };
-  }
+    const pageNo = Math.max(1, params.page ?? 1);
+    const pageSize = params.pageSize ?? 25;
+    const offset = (pageNo - 1) * pageSize;
 
-  const offset = (page - 1) * pageSize;
-
-  const expenseList = await db.query<Expense>(
-    `SELECT
+    const expenseList = await db.query<Expense>(
+      `SELECT
         id,
         amount,
         currency,
@@ -39,111 +31,85 @@ export async function fetchExpenses({
         satisfaction_rating AS "satisfactionRating",
         expense_date AS "expenseDate",
         created_at AS "createdAt"
-    FROM expenses
-    WHERE user_id = $1
-    ORDER BY expense_date DESC, created_at DESC
-    LIMIT $2 OFFSET $3
+      FROM expenses
+      WHERE user_id = $1
+      ORDER BY expense_date DESC, created_at DESC
+      LIMIT $2 OFFSET $3
     `,
-    [session?.userId, pageSize, offset]
-  );
+      [session?.userId, pageSize, offset]
+    );
 
-  const totalCountResp = await db.query<{ count: string }>(
-    `
-    SELECT COUNT(*)::text AS count
-    FROM expenses
-    WHERE user_id = $1
-    `,
-    [session?.userId]
-  );
+    const count = await db.query<{ count: string }>(
+      `SELECT COUNT(*)::text AS count FROM expenses WHERE user_id = $1`,
+      [session?.userId]
+    );
 
-  const totalRecords = Number(totalCountResp.rows[0]?.count);
-  const totalPages = Math.ceil(totalRecords / pageSize);
+    const totalRecords = Number(count.rows[0].count);
 
-  const result: PaginatedResult<Expense> = {
-    data: expenseList.rows,
-    page,
-    pageSize,
-    totalRecords,
-    totalPages,
-  };
-
-  return { ok: true, data: result };
+    return {
+      data: expenseList.rows,
+      pageNo,
+      pageSize,
+      totalRecords,
+      totalPages: Math.ceil(totalRecords / pageSize),
+    };
+  });
 }
 
 export async function createExpense(
   formData: FormData
 ): Promise<ActionResult<void>> {
-  const session = await getSession();
+  return safeRunAction(async () => {
+    const session = await getAuthenticatedSession();
 
-  if (!session) {
-    return {
-      ok: false,
-      type: ACTION_ERRORS.AUTH,
-      message: "You are not authorized to perform this operation.",
+    const input = {
+      amount: Number(formData.get("amount")),
+      currency: formData.get("currency"),
+      category: formData.get("category"),
+      paymentMode: formData.get("paymentMode"),
+      description: formData.get("description"),
+      satisfactionRating: Number(formData.get("satisfactionRating")),
+      expenseDate: formData.get("expenseDate"),
     };
-  }
 
-  const input = {
-    amount: Number(formData.get("amount")),
-    currency: formData.get("currency"),
-    category: formData.get("category"),
-    paymentMode: formData.get("paymentMode"),
-    description: formData.get("description"),
-    satisfactionRating: Number(formData.get("satisfactionRating")),
-    expenseDate: formData.get("expenseDate"),
-  };
+    const parsedInput = expenseInputSchema.safeParse(input);
 
-  const parsedInput = expenseInputSchema.safeParse(input);
+    if (!parsedInput.success) {
+      throw {
+        fieldErrors: Object.fromEntries(
+          Object.entries(parsedInput.error.flatten().fieldErrors)
+            .filter(([, v]) => v?.length)
+            .map(([k, v]) => [k, v![0]])
+        ),
+      };
+    }
 
-  if (!parsedInput.success) {
-    const fieldErrors = z.flattenError(parsedInput.error).fieldErrors;
+    const values = parsedInput.data;
 
-    return {
-      ok: false,
-      type: ACTION_ERRORS.VALIDATION,
-      errors: Object.fromEntries(
-        Object.entries(fieldErrors)
-          .filter(([, v]) => v?.length)
-          .map(([k, v]) => [k, v![0]])
-      ),
-    };
-  }
-
-  const {
-    amount,
-    expenseDate,
-    category,
-    currency,
-    paymentMode,
-    description,
-    satisfactionRating,
-  } = parsedInput.data;
-
-  await db.query(
-    `
-    INSERT INTO expenses (
-    user_id,
-    amount,
-    expense_date,
-    category,
-    currency,
-    payment_mode,
-    description,
-    satisfaction_rating
-    )
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-    `,
-    [
-      session?.userId,
+    await db.query(
+      `
+      INSERT INTO expenses (
+      user_id,
       amount,
-      expenseDate,
+      expense_date,
       category,
       currency,
-      paymentMode,
+      payment_mode,
       description,
-      satisfactionRating,
-    ]
-  );
-
-  return { ok: true };
+      satisfaction_rating
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `,
+      [
+        session?.userId,
+        values.amount,
+        values.expenseDate,
+        values.category,
+        values.currency,
+        values.paymentMode,
+        values.description,
+        values.satisfactionRating,
+      ]
+    );
+  });
 }

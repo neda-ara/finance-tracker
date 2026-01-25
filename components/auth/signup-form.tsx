@@ -1,6 +1,8 @@
 "use client";
 
 import { Abril_Fatface } from "next/font/google";
+import { Button } from "../ui/button";
+import { Eye, EyeOff, Lock, Mail, MoveRight, User } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -9,14 +11,11 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Button } from "../ui/button";
-import { Eye, EyeOff, Lock, Mail, MoveRight, User } from "lucide-react";
 import { Input } from "../ui/input";
-import { resolveAction } from "@/lib/actions/helpers";
 import { ROUTES } from "@/lib/constants/constants";
-import { signup } from "@/actions/auth/signup";
 import { signUpInputSchema } from "@/lib/schema/sign-up-schema";
 import { SocialMediaOptions } from "./social-media-options";
+import { useAuth } from "@/hooks/use-auth";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -33,6 +32,7 @@ type SignupInput = z.infer<typeof signUpInputSchema>;
 
 export const SignUpForm = () => {
   const router = useRouter();
+  const { signup } = useAuth();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -52,21 +52,22 @@ export const SignUpForm = () => {
     formData.append("username", values.username);
     formData.append("password", values.password);
 
-    const resp = resolveAction(await signup(formData));
+    const resp = await signup.mutateAsync(formData);
 
-    if (resp.success) {
-      toast.success("Account created successfully");
-      router.push(ROUTES.DASHBOARD.EXPENSES);
+    if (!resp.ok) {
+      if (resp.error.fieldErrors) {
+        Object.entries(resp.error.fieldErrors).forEach(([k, msg]) =>
+          form.setError(k as keyof SignupInput, { message: msg })
+        );
+      }
+      if (resp.error.message) {
+        toast.error(resp.error.message);
+      }
       return;
     }
 
-    if (resp.error.kind === "field") {
-      Object.entries(resp.error.errors).forEach(([field, message]) => {
-        form.setError(field as "username" | "email" | "password", { message });
-      });
-    } else {
-      toast.error(resp.error.message);
-    }
+    toast.success("Account created successfully!");
+    router.push(ROUTES.DASHBOARD.EXPENSES);
   };
 
   const toggleShowPassword = () => {

@@ -8,12 +8,8 @@ export const ROUTES = {
   },
 };
 
-export const ACTION_ERRORS = {
-  VALIDATION: "validation",
-  CONFLICT: "conflict",
-  AUTH: "auth",
-  SYSTEM: "system",
-} as const;
+export const UNAUTHORIZED_ERR_MSG =
+  "You are not authorized to perform this operation.";
 
 export const ACTION_CONSTANTS = {
   ADD: "Add",

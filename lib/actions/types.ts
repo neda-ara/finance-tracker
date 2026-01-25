@@ -1,6 +1,5 @@
 import {
   ACTION_CONSTANTS,
-  ACTION_ERRORS,
   EXPENSE_CATEGORIES,
   SATISFACTION_RATING_LABELS,
 } from "../constants/constants";
@@ -8,27 +7,14 @@ import {
 export type ActionConstant =
   (typeof ACTION_CONSTANTS)[keyof typeof ACTION_CONSTANTS];
 
-export type ActionErrorType =
-  (typeof ACTION_ERRORS)[keyof typeof ACTION_ERRORS];
-
 export type ActionResult<T = void> =
   | { ok: true; data?: T }
   | {
       ok: false;
-      type: ActionErrorType;
-      message?: string;
-      errors?: Record<string, string>;
-    };
-
-export type NormalizedActionError =
-  | {
-      kind: "field";
-      errors: Record<string, string>;
-    }
-  | {
-      kind: "message";
-      message: string;
-      type: ActionErrorType;
+      error: {
+        message?: string;
+        fieldErrors?: Record<string, string>;
+      };
     };
 
 export type ModalContent = {
@@ -67,7 +53,7 @@ export type SatisfactionRating = keyof typeof SATISFACTION_RATING_LABELS;
 
 export type PaginatedResult<T> = {
   data: T[];
-  page: number;
+  pageNo: number;
   pageSize: number;
   totalRecords: number;
   totalPages: number;
