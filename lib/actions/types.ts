@@ -1,3 +1,4 @@
+import { ColumnDef } from "@tanstack/react-table";
 import {
   ACTION_CONSTANTS,
   EXPENSE_CATEGORIES,
@@ -76,4 +77,9 @@ export type GetExpensesRequest = {
   pageSize: number;
   searchKey?: string;
   filters?: Record<string, unknown>;
+};
+
+export type DataGridProps<T> = {
+  data: T[];
+  columns: ColumnDef<T>[];
 };

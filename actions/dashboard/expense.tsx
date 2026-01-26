@@ -23,7 +23,7 @@ export async function fetchExpenses(
     const expenseList = await db.query<Expense>(
       `SELECT
         id,
-        amount,
+        amount::float AS amount,
         currency,
         category,
         payment_mode AS "paymentMode",
