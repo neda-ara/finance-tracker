@@ -1,19 +1,33 @@
 "use client";
 
-import { ACTION_CONSTANTS } from "@/lib/constants/constants";
-import { ActionConstant, ModalContent } from "@/lib/actions/types";
+import {
+  ACTION_CONSTANTS,
+  CURRENCIES,
+  SATISFACTION_RATING_LABELS,
+} from "@/lib/constants/constants";
+import {
+  ActionConstant,
+  ModalContent,
+  SatisfactionRating,
+} from "@/lib/actions/types";
+import { ArrowUpDown, Plus } from "lucide-react";
 import { Button } from "../ui/button";
+import { ColumnDef } from "@tanstack/react-table";
 import { DataGrid } from "../common/data-grid";
 import { ExpenseForm } from "./expense-form";
+import { formatDateForDisplay } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
-import { ArrowUpDown, Plus } from "lucide-react";
 import { useExpenses } from "@/hooks/use-expenses";
 import { useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
 
 type Expense = {
   amount: number;
   category: string;
+  currency: string;
+  description: string | undefined;
+  expenseDate: Date;
+  paymentMode: string;
+  satisfactionRating: number;
 };
 
 export const ExpenseGrid = () => {
@@ -41,7 +55,9 @@ export const ExpenseGrid = () => {
     {
       accessorKey: "expenseDate",
       header: "Expense Date",
+      cell: ({ row }) => formatDateForDisplay(row.original.expenseDate),
       enableSorting: true,
+      enableHiding: false,
     },
     {
       accessorKey: "amount",
@@ -55,7 +71,19 @@ export const ExpenseGrid = () => {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
+      cell: ({ row }) => (
+        <p className="capitalize flex items-center gap-x-1">
+          <span>
+            {
+              CURRENCIES[row.original.currency as keyof typeof CURRENCIES]
+                .symbol
+            }
+          </span>
+          {row.original.amount.toLocaleString()}
+        </p>
+      ),
       enableSorting: true,
+      enableHiding: false,
     },
     {
       accessorKey: "currency",
@@ -65,11 +93,38 @@ export const ExpenseGrid = () => {
     {
       accessorKey: "category",
       header: "Category",
+      enableHiding: false,
+    },
+    {
+      accessorKey: "description",
+      header: "Description",
+      enableHiding: true,
     },
     {
       accessorKey: "paymentMode",
       header: "Payment Mode",
+      cell: ({ row }) => (
+        <p className="capitalize">{row.original.paymentMode}</p>
+      ),
       enableHiding: true,
+    },
+    {
+      accessorKey: "satisfactionRating",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="px-0!"
+        >
+          Worth it?
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) =>
+        SATISFACTION_RATING_LABELS[
+          row.original.satisfactionRating as SatisfactionRating
+        ],
+      enableSorting: true,
     },
   ];
 
