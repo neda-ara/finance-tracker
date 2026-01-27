@@ -3,10 +3,12 @@
 import {
   ACTION_CONSTANTS,
   CURRENCIES,
+  DEFAULT_VALUES,
   SATISFACTION_RATING_LABELS,
 } from "@/lib/constants/constants";
 import {
   ActionConstant,
+  Expense,
   ModalContent,
   SatisfactionRating,
 } from "@/lib/actions/types";
@@ -20,16 +22,6 @@ import { Modal } from "../common/modal";
 import { useExpenses } from "@/hooks/use-expenses";
 import { useState } from "react";
 
-type Expense = {
-  amount: number;
-  category: string;
-  currency: string;
-  description: string | undefined;
-  expenseDate: Date;
-  paymentMode: string;
-  satisfactionRating: number;
-};
-
 export const ExpenseGrid = () => {
   const [action, setAction] = useState<ActionConstant | undefined>();
   const [quickActionData, setQuickActionData] = useState<Expense | undefined>();
@@ -37,7 +29,7 @@ export const ExpenseGrid = () => {
 
   const { query, mutations } = useExpenses({
     page: 1,
-    pageSize: 10,
+    pageSize: DEFAULT_VALUES.PAGE_SIZE,
     searchKey: "",
     filters: {},
   });
@@ -164,8 +156,6 @@ export const ExpenseGrid = () => {
     ],
   ]);
 
-  console.log("q", query?.data);
-
   return (
     <div>
       <Button
@@ -181,7 +171,7 @@ export const ExpenseGrid = () => {
         dialogTitle={modalContentMap.get(action!)?.header}
         dialogContent={modalContentMap.get(action!)?.body}
         customStyles={{
-          dialogContent: "sm:max-w-160",
+          dialogContent: "sm:max-w-180",
         }}
         showFooter={false}
         showCloseButton={false}

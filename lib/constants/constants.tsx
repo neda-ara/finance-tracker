@@ -84,3 +84,7 @@ export const SATISFACTION_RATING_LABELS = {
   4: "Yeah",
   5: "Definitely!",
 } as const;
+
+export const DEFAULT_VALUES = {
+  PAGE_SIZE: 50,
+};
