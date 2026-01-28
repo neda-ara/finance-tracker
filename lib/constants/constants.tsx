@@ -48,10 +48,10 @@ export const PAYMENT_MODE = [
 export const EXPENSE_CATEGORY_BASE_PATH = "/images/icons/expense-categories";
 
 export const EXPENSE_CATEGORIES = [
-  { title: "Food", iconPath: "/food.png" },
+  { title: "Food", iconPath: "/food1.png" },
   { title: "Grocery", iconPath: "/grocery.png" },
   { title: "Transport", iconPath: "/transport.png" },
-  { title: "Rent", iconPath: <></> },
+  { title: "Home Rent", iconPath: "/" },
   { title: "Cleaning", iconPath: <></> },
   { title: "Repair", iconPath: <></> },
   { title: "Vehicle", iconPath: <></> },

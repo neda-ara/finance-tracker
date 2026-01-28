@@ -240,12 +240,12 @@ export const ExpenseForm = ({
               </FormLabel>
               <FormControl>
                 <div className="flex flex-wrap gap-2">
-                  {EXPENSE_CATEGORIES.map((category) => (
+                  {EXPENSE_CATEGORIES.slice(0, 5).map((category) => (
                     <div
                       key={category.title}
                       onClick={() => field.onChange(category.title)}
                       className={cn(
-                        "flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-medium border-2 transition cursor-pointer",
+                        "flex items-center gap-x-3 rounded-md h-12 w-fit p-2 font-medium border-2 transition cursor-pointer",
                         category.title === field.value
                           ? "bg-primary text-primary-foreground border-primary"
                           : "bg-background hover:bg-accent border-muted"
@@ -255,7 +255,7 @@ export const ExpenseForm = ({
                         alt={category?.title}
                         height={64}
                         width={64}
-                        className="h-5 w-5 aspect-square object-contain"
+                        className="h-10 w-10 aspect-square object-contain"
                         src={`${EXPENSE_CATEGORY_BASE_PATH}${category?.iconPath}`}
                       />
                       <span className="block text-[13px] font-medium">
