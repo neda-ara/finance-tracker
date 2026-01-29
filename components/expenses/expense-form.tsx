@@ -119,20 +119,20 @@ export const ExpenseForm = ({
           control={form.control}
           name="amount"
           render={({ field }) => (
-            <FormItem className="flex flex-col gap-x-8 self-center">
+            <FormItem className="flex flex-col gap-x-8 self-center my-2">
               <FormControl>
                 <div className="flex justify-center items-center self-center">
                   <FormLabel className="text-sm font-medium mr-24 min-w-fit">
                     Amount Spent
                   </FormLabel>
-                  <p className="font-semibold text-3xl">
+                  <p className="font-semibold text-4xl">
                     {currency &&
                       CURRENCIES[currency as keyof typeof CURRENCIES].symbol}
                   </p>
                   <Input
                     {...field}
                     autoFocus={true}
-                    className="text-3xl! font-medium border-0 selection:ring-0 focus-visible:ring-0 shadow-none"
+                    className="text-4xl! font-medium border-0 selection:ring-0 focus-visible:ring-0 shadow-none"
                     type="text"
                     inputMode="decimal"
                     placeholder="0.00"
@@ -245,7 +245,7 @@ export const ExpenseForm = ({
                       key={category.title}
                       onClick={() => field.onChange(category.title)}
                       className={cn(
-                        "flex items-center gap-x-3 rounded-md h-12 w-fit p-2 font-medium border-2 transition cursor-pointer",
+                        "flex items-center justify-center rounded-full h-14 aspect-square font-medium border-2 transition cursor-pointer",
                         category.title === field.value
                           ? "bg-primary text-primary-foreground border-primary"
                           : "bg-background hover:bg-accent border-muted"
@@ -255,12 +255,9 @@ export const ExpenseForm = ({
                         alt={category?.title}
                         height={64}
                         width={64}
-                        className="h-10 w-10 aspect-square object-contain"
+                        className="h-9 w-9 object-contain"
                         src={`${EXPENSE_CATEGORY_BASE_PATH}${category?.iconPath}`}
                       />
-                      <span className="block text-[13px] font-medium">
-                        {category.title}
-                      </span>
                     </div>
                   ))}
                 </div>
