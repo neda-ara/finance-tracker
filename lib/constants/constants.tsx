@@ -45,23 +45,21 @@ export const PAYMENT_MODE = [
   { label: "Cash", value: "cash" },
 ];
 
-export const EXPENSE_CATEGORY_BASE_PATH = "/images/icons/expense-categories";
+export const EXPENSE_CATEGORY_BASE_PATH = "/images/expense-categories";
 
 export const EXPENSE_CATEGORIES = [
-  { title: "Food", iconPath: "/food1.png" },
+  { title: "Food", iconPath: "/food.png" },
   { title: "Grocery", iconPath: "/grocery.png" },
   { title: "Transport", iconPath: "/transport.png" },
-  { title: "Home Rent", iconPath: "/" },
-  { title: "Cleaning", iconPath: <></> },
-  { title: "Repair", iconPath: <></> },
-  { title: "Vehicle", iconPath: <></> },
-  { title: "Education", iconPath: <></> },
-  { title: "Health", iconPath: <></> },
-  { title: "Electricity", iconPath: <></> },
-  { title: "Water", iconPath: <></> },
-  { title: "Gas", iconPath: <></> },
-  { title: "Internet", iconPath: <></> },
-  { title: "Phone", iconPath: <></> },
+  { title: "Home", iconPath: "/home.png" },
+  { title: "Vehicle", iconPath: "/vehicle.png" },
+  { title: "Education", iconPath: "/education.png" },
+  { title: "Health", iconPath: "/health.png" },
+  { title: "Electricity", iconPath: "/electricity.png" },
+  { title: "Water", iconPath: "/water.png" },
+  { title: "Gas", iconPath: "/gas.png" },
+  { title: "Internet", iconPath: "/internet.png" },
+  { title: "Phone", iconPath: "/phone.png" },
   { title: "Cable", iconPath: <></> },
   { title: "Pets", iconPath: <></> },
   { title: "Gym", iconPath: <></> },
@@ -74,6 +72,8 @@ export const EXPENSE_CATEGORIES = [
   { title: "Insurance", iconPath: <></> },
   { title: "Subscriptions", iconPath: <></> },
   { title: "Personal", iconPath: <></> },
+  { title: "Family/Friends", iconPath: <></> },
+  { title: "Charity", iconPath: <></> },
   { title: "Other", iconPath: <></> },
 ] as const;
 

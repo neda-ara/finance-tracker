@@ -240,7 +240,7 @@ export const ExpenseForm = ({
               </FormLabel>
               <FormControl>
                 <div className="flex flex-wrap gap-2">
-                  {EXPENSE_CATEGORIES.slice(0, 5).map((category) => (
+                  {EXPENSE_CATEGORIES.map((category) => (
                     <div
                       key={category.title}
                       onClick={() => field.onChange(category.title)}
