@@ -27,7 +27,7 @@ import {
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils/shadcn-utils";
 import { DatePicker } from "../common/date-picker";
-import { normalizeNumber } from "@/lib/utils/utils";
+import { isStringEqual, normalizeNumber } from "@/lib/utils/utils";
 import {
   Select,
   SelectContent,
@@ -235,31 +235,66 @@ export const ExpenseForm = ({
           name="category"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <FormLabel className="text-sm font-medium">
-                Pick a Category
+              <FormLabel className="flex items-center justify-between text-sm font-medium">
+                Category
+                <div className="flex items-center text-xs font-medium border-dashed px-2 py-1 rounded-sm bg-(--color-primary-secondary)">
+                  <Image
+                    alt={field?.value}
+                    height={48}
+                    width={48}
+                    className="h-6 w-6 object-contain transition-all delay-100 ease-in"
+                    src={`${EXPENSE_CATEGORY_BASE_PATH}${
+                      EXPENSE_CATEGORIES.find((item) =>
+                        isStringEqual(item.title, field.value)
+                      )?.iconPath
+                    }`}
+                  />
+                </div>
               </FormLabel>
               <FormControl>
-                <div className="flex flex-wrap gap-2">
-                  {EXPENSE_CATEGORIES.map((category) => (
-                    <div
-                      key={category.title}
-                      onClick={() => field.onChange(category.title)}
-                      className={cn(
-                        "flex items-center justify-center rounded-full h-14 aspect-square font-medium border-2 transition cursor-pointer",
-                        category.title === field.value
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "bg-background hover:bg-accent border-muted"
-                      )}
-                    >
-                      <Image
-                        alt={category?.title}
-                        height={64}
-                        width={64}
-                        className="h-9 w-9 object-contain"
-                        src={`${EXPENSE_CATEGORY_BASE_PATH}${category?.iconPath}`}
-                      />
-                    </div>
-                  ))}
+                <div className="flex gap-3 overflow-x-scroll scrollbar-hide">
+                  {EXPENSE_CATEGORIES.map((category) => {
+                    const isSelected = category.title === field.value;
+                    return (
+                      <div
+                        key={category.title}
+                        onClick={() => field.onChange(category.title)}
+                        className="flex flex-col items-center cursor-pointer"
+                      >
+                        <div
+                          style={
+                            isSelected
+                              ? {
+                                  boxShadow: `6px 6px 12px rgba(0,0,0,0.12), -6px -6px 1px rgba(255,255,255,0.9)`,
+                                }
+                              : {}
+                          }
+                          className={cn(
+                            "flex items-center justify-center rounded-full h-17 aspect-square font-medium border-2 transition-all delay-100 ease-in",
+                            isSelected
+                              ? "bg-green-50 text-primary-foreground border-3 border-green-200"
+                              : "bg-background hover:bg-accent border-muted"
+                          )}
+                        >
+                          <Image
+                            alt={category?.title}
+                            height={64}
+                            width={64}
+                            className="h-11 w-11 object-contain"
+                            src={`${EXPENSE_CATEGORY_BASE_PATH}${category?.iconPath}`}
+                          />
+                        </div>
+                        <span
+                          className={cn(
+                            "transition-colors duration-150 text-xs font-medium text-muted-foreground",
+                            isSelected && "text-black"
+                          )}
+                        >
+                          {category?.title}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </FormControl>
               <FormMessage />
