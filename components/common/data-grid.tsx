@@ -1,8 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { ColumnDef } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
-import { DataGridProps } from "@/lib/actions/types";
+import { DataGridProps, RowAction } from "@/lib/actions/types";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -28,13 +29,51 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useState } from "react";
+
+export function createActionsColumn<T>(actions: RowAction<T>[]): ColumnDef<T> {
+  return {
+    id: "actions",
+    accessorKey: "Actions",
+    enableSorting: false,
+    enableHiding: false,
+    cell: ({ row }) => (
+      <div className="flex items-center gap-x-3">
+        {actions.map((action, i) => (
+          <Tooltip key={i}>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="w-fit"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  action.onClick(row.original);
+                }}
+              >
+                {action.icon}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{action.label}</TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
+    ),
+  };
+}
 
 export function DataGrid<T>({ data, columns }: DataGridProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+
+  const hasRowSelection = columns.some((col) => col.id === "select");
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -47,12 +86,15 @@ export function DataGrid<T>({ data, columns }: DataGridProps<T>) {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
+    ...(hasRowSelection && {
+      enableRowSelection: true,
+      onRowSelectionChange: setRowSelection,
+    }),
     state: {
       sorting,
       columnFilters,
       columnVisibility,
-      rowSelection,
+      ...(hasRowSelection && { rowSelection }),
     },
   });
 
@@ -122,7 +164,10 @@ export function DataGrid<T>({ data, columns }: DataGridProps<T>) {
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className="max-w-56 whitespace-normal wrap-break-word"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -145,10 +190,12 @@ export function DataGrid<T>({ data, columns }: DataGridProps<T>) {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-muted-foreground flex-1 text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
+        {hasRowSelection && (
+          <div className="text-muted-foreground flex-1 text-sm">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+        )}
         <div className="space-x-2">
           <Button
             variant="outline"

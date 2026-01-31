@@ -2,6 +2,7 @@
 
 import {
   ActionResult,
+  Expense,
   LabelValuePair,
   SatisfactionRating,
 } from "@/lib/actions/types";
@@ -41,7 +42,7 @@ import { Slider } from "../ui/slider";
 import { Spinner } from "../ui/spinner";
 import { Textarea } from "../ui/textarea";
 import { useForm, useWatch } from "react-hook-form";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import toast from "react-hot-toast";
@@ -54,11 +55,13 @@ const mochiyPopOne = Mochiy_Pop_One({
 });
 
 export const ExpenseForm = ({
+  initialValues,
   onCancel,
   onSubmit,
   submitButtonText,
   submitInProgress,
 }: {
+  initialValues?: Expense;
   onCancel: () => void;
   onSubmit: (values: FormData) => Promise<ActionResult<void>>;
   submitButtonText: string;
@@ -69,15 +72,31 @@ export const ExpenseForm = ({
   const form = useForm<ExpenseInput>({
     resolver: zodResolver(expenseInputSchema),
     defaultValues: {
-      amount: "",
-      currency: CURRENCIES.INR.code,
-      category: "Food",
-      description: "",
-      paymentMode: "online",
-      satisfactionRating: 4,
-      expenseDate: new Date(),
+      amount: initialValues?.amount ?? "",
+      currency: initialValues?.currency ?? CURRENCIES.INR.code,
+      category: initialValues?.category ?? "Food",
+      description: initialValues?.description ?? "",
+      paymentMode: initialValues?.paymentMode ?? "online",
+      satisfactionRating: initialValues?.satisfactionRating ?? 4,
+      expenseDate: initialValues?.expenseDate ?? new Date(),
     },
   });
+
+  useEffect(() => {
+    if (!initialValues) {
+      return;
+    }
+
+    form.reset({
+      amount: String(initialValues.amount),
+      currency: initialValues.currency,
+      category: initialValues.category,
+      description: initialValues.description ?? "",
+      paymentMode: initialValues.paymentMode,
+      satisfactionRating: initialValues.satisfactionRating,
+      expenseDate: new Date(initialValues.expenseDate),
+    });
+  }, [initialValues, form]);
 
   const handleOnSubmit = async (values: ExpenseInput) => {
     const formData = new FormData();
@@ -122,7 +141,7 @@ export const ExpenseForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleOnSubmit)}
-        className="flex flex-col gap-y-5 mt-3"
+        className="flex flex-col gap-y-4"
       >
         <FormField
           control={form.control}
@@ -181,7 +200,6 @@ export const ExpenseForm = ({
                       field.value instanceof Date ? field.value : undefined
                     }
                     onChange={field.onChange}
-                    disabled={(date) => date > new Date()}
                   />
                 </FormControl>
                 <FormMessage />
@@ -396,7 +414,7 @@ export const ExpenseForm = ({
                         rangeClass: "bg-(--color-cta)",
                       }}
                     />
-                    <div className="flex items-center gap-x-2 min-w-fit">
+                    <div className="flex items-center justify-center gap-x-2 w-60">
                       <Image
                         alt={field.value.toString()}
                         height={64}
@@ -417,8 +435,7 @@ export const ExpenseForm = ({
             );
           }}
         />
-
-        <div className="flex items-center gap-x-2 self-end">
+        <div className="flex items-center gap-x-2 self-end mt-2">
           <Button
             variant="outline"
             onClick={onCancel}

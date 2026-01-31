@@ -61,6 +61,10 @@ export const EXPENSE_CATEGORIES = [
   { title: "Internet", iconPath: "/internet.png" },
   { title: "Phone", iconPath: "/phone.png" },
   { title: "Cable", iconPath: "/cable.png" },
+  { title: "EMI", iconPath: "/emi.png" },
+  { title: "Investment", iconPath: "/investment.png" },
+  { title: "Insurance", iconPath: "/insurance.png" },
+  { title: "Subscriptions", iconPath: "/subscriptions.png" },
   { title: "Pets", iconPath: "/pets.png" },
   { title: "Gym", iconPath: "/gym.png" },
   { title: "Salon", iconPath: "/salon.png" },
@@ -68,9 +72,6 @@ export const EXPENSE_CATEGORIES = [
   { title: "Vacation", iconPath: "/vacation.png" },
   { title: "Gifts", iconPath: "/gifts.png" },
   { title: "Entertainment", iconPath: "/entertainment.png" },
-  { title: "Investment", iconPath: "/investment.png" },
-  { title: "Insurance", iconPath: "/insurance.png" },
-  { title: "Subscriptions", iconPath: "/subscriptions.png" },
   { title: "Personal", iconPath: "/personal.png" },
   { title: "Family/Friends", iconPath: "/family-n-friends.png" },
   { title: "Charity", iconPath: "/charity.png" },
@@ -80,7 +81,7 @@ export const EXPENSE_CATEGORIES = [
 export const SATISFACTION_ICONS_BASE_PATH = "/images/satisfaction-emoticons";
 
 export const SATISFACTION_RATINGS = {
-  1: { title: "Absolutely Not!", iconPath: "/cry.png", color: "text-red-600" },
+  1: { title: "Absolutely not!", iconPath: "/cry.png", color: "text-red-600" },
   2: { title: "Not really", iconPath: "/sad.png", color: "text-red-400" },
   3: { title: "Maybe", iconPath: "/neutral.png", color: "text-amber-500" },
   4: { title: "Yeah", iconPath: "/smile.png", color: "text-blue-400" },

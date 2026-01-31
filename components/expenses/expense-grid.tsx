@@ -4,6 +4,8 @@ import {
   ACTION_CONSTANTS,
   CURRENCIES,
   DEFAULT_VALUES,
+  EXPENSE_CATEGORIES,
+  EXPENSE_CATEGORY_ICONS_BASE_PATH,
   SATISFACTION_ICONS_BASE_PATH,
   SATISFACTION_RATINGS,
 } from "@/lib/constants/constants";
@@ -13,12 +15,12 @@ import {
   ModalContent,
   SatisfactionRating,
 } from "@/lib/actions/types";
-import { ArrowUpDown, Plus } from "lucide-react";
+import { ArrowUpDown, PencilLine, Plus, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataGrid } from "../common/data-grid";
+import { createActionsColumn, DataGrid } from "../common/data-grid";
 import { ExpenseForm } from "./expense-form";
-import { formatDateForDisplay } from "@/lib/utils/utils";
+import { formatDateForDisplay, isStringEqual } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { useExpenses } from "@/hooks/use-expenses";
 import { useState } from "react";
@@ -35,6 +37,8 @@ export const ExpenseGrid = () => {
     searchKey: "",
     filters: {},
   });
+
+  console.log("-->", query?.data);
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -88,6 +92,25 @@ export const ExpenseGrid = () => {
       accessorKey: "category",
       header: "Category",
       enableHiding: false,
+      cell: ({ row }) => {
+        const category = EXPENSE_CATEGORIES.find((cat) =>
+          isStringEqual(cat.title, row.original.category)
+        );
+        return category ? (
+          <div className="flex items-center gap-2">
+            <Image
+              alt={category.title}
+              height={24}
+              width={24}
+              src={`${EXPENSE_CATEGORY_ICONS_BASE_PATH}${category.iconPath}`}
+              className="h-6 w-6 object-contain"
+            />
+            <span className="text-sm">{category.title}</span>
+          </div>
+        ) : (
+          row.original.category
+        );
+      },
     },
     {
       accessorKey: "description",
@@ -135,9 +158,20 @@ export const ExpenseGrid = () => {
           </div>
         );
       },
-
       enableSorting: true,
     },
+    createActionsColumn<Expense>([
+      {
+        icon: <PencilLine className="h-4 text-violet-600" />,
+        label: "Edit",
+        onClick: (row) => actionHandler(ACTION_CONSTANTS.EDIT, row),
+      },
+      {
+        icon: <Trash2 className="h-4 text-destructive" />,
+        label: "Delete",
+        onClick: (row) => actionHandler(ACTION_CONSTANTS.DELETE, row),
+      },
+    ]),
   ];
 
   const modalContentMap = new Map<ActionConstant, ModalContent>([
@@ -161,6 +195,7 @@ export const ExpenseGrid = () => {
         header: <p>Update Expense - {quickActionData?.amount}</p>,
         body: (
           <ExpenseForm
+            initialValues={quickActionData}
             submitButtonText={`Edit Expense`}
             onCancel={handleCloseModal}
           />
@@ -191,7 +226,7 @@ export const ExpenseGrid = () => {
         dialogTitle={modalContentMap.get(action!)?.header}
         dialogContent={modalContentMap.get(action!)?.body}
         customStyles={{
-          dialogContent: "sm:max-w-155",
+          dialogContent: "sm:max-w-144",
         }}
         showFooter={false}
         showCloseButton={false}

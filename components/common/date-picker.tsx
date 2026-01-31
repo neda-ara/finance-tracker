@@ -28,7 +28,7 @@ export function DatePicker({
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="w-48 justify-between font-normal"
+            className="w-36 justify-between font-normal"
           >
             {value ? value.toLocaleDateString() : "Select date"}
             <ChevronDownIcon />

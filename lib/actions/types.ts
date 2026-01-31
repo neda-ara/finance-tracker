@@ -83,3 +83,11 @@ export type DataGridProps<T> = {
   data: T[];
   columns: ColumnDef<T>[];
 };
+
+export type RowAction<T> = {
+  icon: React.ReactNode;
+  label: string;
+  onClick: (row: T) => void;
+  disabled?: (row: T) => boolean;
+  hidden?: (row: T) => boolean;
+};
