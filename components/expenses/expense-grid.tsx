@@ -4,7 +4,8 @@ import {
   ACTION_CONSTANTS,
   CURRENCIES,
   DEFAULT_VALUES,
-  SATISFACTION_RATING_LABELS,
+  SATISFACTION_ICONS_BASE_PATH,
+  SATISFACTION_RATINGS,
 } from "@/lib/constants/constants";
 import {
   ActionConstant,
@@ -21,6 +22,7 @@ import { formatDateForDisplay } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { useExpenses } from "@/hooks/use-expenses";
 import { useState } from "react";
+import Image from "next/image";
 
 export const ExpenseGrid = () => {
   const [action, setAction] = useState<ActionConstant | undefined>();
@@ -112,10 +114,28 @@ export const ExpenseGrid = () => {
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) =>
-        SATISFACTION_RATING_LABELS[
-          row.original.satisfactionRating as SatisfactionRating
-        ],
+      cell: ({ row }) => {
+        const rating =
+          SATISFACTION_RATINGS[
+            row.original.satisfactionRating as SatisfactionRating
+          ];
+
+        return (
+          <div className="flex items-center gap-2">
+            <Image
+              alt={rating.title}
+              height={24}
+              width={24}
+              src={`${SATISFACTION_ICONS_BASE_PATH}${rating.iconPath}`}
+              className="h-6 w-6 object-contain"
+            />
+            <span className={`text-xs font-semibold ${rating.color}`}>
+              {rating.title}
+            </span>
+          </div>
+        );
+      },
+
       enableSorting: true,
     },
   ];

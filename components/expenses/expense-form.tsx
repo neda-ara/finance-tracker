@@ -9,9 +9,10 @@ import {
   AMOUNT_INPUT_REGEX,
   CURRENCIES,
   EXPENSE_CATEGORIES,
-  EXPENSE_CATEGORY_BASE_PATH,
+  EXPENSE_CATEGORY_ICONS_BASE_PATH,
   PAYMENT_MODE,
-  SATISFACTION_RATING_LABELS,
+  SATISFACTION_ICONS_BASE_PATH,
+  SATISFACTION_RATINGS,
   VALIDATION,
 } from "@/lib/constants/constants";
 import { Button } from "../ui/button";
@@ -24,10 +25,11 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
+import { Mochiy_Pop_One } from "next/font/google";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils/shadcn-utils";
 import { DatePicker } from "../common/date-picker";
-import { isStringEqual, normalizeNumber } from "@/lib/utils/utils";
+import { normalizeNumber } from "@/lib/utils/utils";
 import {
   Select,
   SelectContent,
@@ -39,12 +41,17 @@ import { Slider } from "../ui/slider";
 import { Spinner } from "../ui/spinner";
 import { Textarea } from "../ui/textarea";
 import { useForm, useWatch } from "react-hook-form";
+import { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import z from "zod";
 
 type ExpenseInput = z.input<typeof expenseInputSchema>;
+
+const mochiyPopOne = Mochiy_Pop_One({
+  weight: ["400"],
+});
 
 export const ExpenseForm = ({
   onCancel,
@@ -57,6 +64,8 @@ export const ExpenseForm = ({
   submitButtonText: string;
   submitInProgress: boolean;
 }) => {
+  const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
   const form = useForm<ExpenseInput>({
     resolver: zodResolver(expenseInputSchema),
     defaultValues: {
@@ -234,21 +243,42 @@ export const ExpenseForm = ({
           control={form.control}
           name="category"
           render={({ field }) => (
-            <FormItem className="flex-1">
+            <FormItem className="flex-1 my-2">
               <FormLabel className="flex items-center justify-between text-sm font-medium">
                 Category
-                <div className="flex items-center text-xs font-medium border-dashed px-2 py-1 rounded-sm bg-(--color-primary-secondary)">
-                  <Image
-                    alt={field?.value}
-                    height={48}
-                    width={48}
-                    className="h-6 w-6 object-contain transition-all delay-100 ease-in"
-                    src={`${EXPENSE_CATEGORY_BASE_PATH}${
-                      EXPENSE_CATEGORIES.find((item) =>
-                        isStringEqual(item.title, field.value)
-                      )?.iconPath
-                    }`}
-                  />
+                <div
+                  onClick={() => {
+                    const el = categoryRefs.current[field.value];
+                    el?.scrollIntoView({
+                      behavior: "smooth",
+                      inline: "center",
+                      block: "nearest",
+                    });
+                  }}
+                  onMouseDown={(e) => {
+                    e.currentTarget.style.boxShadow =
+                      "inset 4px 4px 8px rgba(0,0,0,0.16), inset -4px -4px 8px rgba(255,255,255,0.92)";
+                  }}
+                  onMouseUp={(e) => {
+                    e.currentTarget.style.boxShadow =
+                      "4px 4px 10px rgba(0,0,0,0.10), -4px -4px 10px rgba(255,255,255,0.85)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow =
+                      "4px 4px 10px rgba(0,0,0,0.10), -4px -4px 10px rgba(255,255,255,0.85)";
+                  }}
+                  className="cursor-pointer select-none flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs transition-all duration-150 bg-gray-50 border border-accent-muted"
+                  style={{
+                    boxShadow:
+                      "4px 1px 6px rgba(0,0,0,0.10), -4px -4px 10px rgba(255,255,255,0.85)",
+                  }}
+                >
+                  <span className="text-[11px] text-muted-foreground">
+                    Selected:
+                  </span>
+                  <span className="font-semibold text-gray-900">
+                    {field.value}
+                  </span>
                 </div>
               </FormLabel>
               <FormControl>
@@ -260,6 +290,9 @@ export const ExpenseForm = ({
                         key={category.title}
                         onClick={() => field.onChange(category.title)}
                         className="flex flex-col items-center cursor-pointer"
+                        ref={(el) => {
+                          categoryRefs.current[category.title] = el;
+                        }}
                       >
                         <div
                           style={
@@ -281,7 +314,7 @@ export const ExpenseForm = ({
                             height={64}
                             width={64}
                             className="h-11 w-11 object-contain"
-                            src={`${EXPENSE_CATEGORY_BASE_PATH}${category?.iconPath}`}
+                            src={`${EXPENSE_CATEGORY_ICONS_BASE_PATH}${category?.iconPath}`}
                           />
                         </div>
                         <span
@@ -343,7 +376,8 @@ export const ExpenseForm = ({
           control={form.control}
           name="satisfactionRating"
           render={({ field }) => {
-            const value = field.value;
+            const rating =
+              SATISFACTION_RATINGS[field.value as SatisfactionRating];
 
             return (
               <FormItem className="flex-1">
@@ -351,21 +385,29 @@ export const ExpenseForm = ({
                   Was this spend worth it?
                 </FormLabel>
                 <FormControl>
-                  <div className="flex gap-3">
+                  <div className="flex gap-x-4">
                     <Slider
                       min={1}
                       max={5}
                       step={1}
-                      value={[value]}
+                      value={[field.value]}
                       onValueChange={([val]) => field.onChange(val)}
+                      sliderStyle={{
+                        rangeClass: "bg-(--color-cta)",
+                      }}
                     />
-                    <div className="min-w-32">
-                      <p className="text-sm text-muted-foreground text-center">
-                        {
-                          SATISFACTION_RATING_LABELS[
-                            value as SatisfactionRating
-                          ]
-                        }
+                    <div className="flex items-center gap-x-2 min-w-fit">
+                      <Image
+                        alt={field.value.toString()}
+                        height={64}
+                        width={64}
+                        className="h-11 w-11 object-contain"
+                        src={`${SATISFACTION_ICONS_BASE_PATH}${rating.iconPath}`}
+                      />
+                      <p
+                        className={`${mochiyPopOne.className} ${rating.color} font-semibold text-sm text-accent-foreground text-center tracking-wider`}
+                      >
+                        {rating.title}
                       </p>
                     </div>
                   </div>
@@ -375,12 +417,17 @@ export const ExpenseForm = ({
             );
           }}
         />
-        <div className="space-x-2 self-end">
-          <Button variant="outline" onClick={onCancel}>
+
+        <div className="flex items-center gap-x-2 self-end">
+          <Button
+            variant="outline"
+            onClick={onCancel}
+            disabled={submitInProgress}
+          >
             Cancel
           </Button>
-          <Button variant="cta" type="submit">
-            {submitInProgress ? <Spinner /> : submitButtonText}
+          <Button variant="cta" type="submit" disabled={submitInProgress}>
+            {submitInProgress && <Spinner />}&nbsp;{submitButtonText}
           </Button>
         </div>
       </form>

@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import {
   ACTION_CONSTANTS,
   EXPENSE_CATEGORIES,
-  SATISFACTION_RATING_LABELS,
+  SATISFACTION_RATINGS,
 } from "../constants/constants";
 
 export type ActionConstant =
@@ -50,7 +50,7 @@ export type LabelValuePair = {
 
 export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number]["title"];
 
-export type SatisfactionRating = keyof typeof SATISFACTION_RATING_LABELS;
+export type SatisfactionRating = keyof typeof SATISFACTION_RATINGS;
 
 export type PaginatedResult<T> = {
   data: T[];

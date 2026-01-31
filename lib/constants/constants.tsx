@@ -45,7 +45,7 @@ export const PAYMENT_MODE = [
   { label: "Cash", value: "cash" },
 ];
 
-export const EXPENSE_CATEGORY_BASE_PATH = "/images/expense-categories";
+export const EXPENSE_CATEGORY_ICONS_BASE_PATH = "/images/expense-categories";
 
 export const EXPENSE_CATEGORIES = [
   { title: "Food", iconPath: "/food.png" },
@@ -77,12 +77,18 @@ export const EXPENSE_CATEGORIES = [
   { title: "Other", iconPath: "/other.png" },
 ] as const;
 
-export const SATISFACTION_RATING_LABELS = {
-  1: "Absolutely not!",
-  2: "Not really",
-  3: "Maybe",
-  4: "Yeah",
-  5: "Definitely!",
+export const SATISFACTION_ICONS_BASE_PATH = "/images/satisfaction-emoticons";
+
+export const SATISFACTION_RATINGS = {
+  1: { title: "Absolutely Not!", iconPath: "/cry.png", color: "text-red-600" },
+  2: { title: "Not really", iconPath: "/sad.png", color: "text-red-400" },
+  3: { title: "Maybe", iconPath: "/neutral.png", color: "text-amber-500" },
+  4: { title: "Yeah", iconPath: "/smile.png", color: "text-blue-400" },
+  5: {
+    title: "Definitely!",
+    iconPath: "/laughing.png",
+    color: "text-green-500",
+  },
 } as const;
 
 export const DEFAULT_VALUES = {
