@@ -136,10 +136,32 @@ export const ExpenseForm = ({
     onCancel();
   };
 
-  const currency = useWatch({
+  const selectedCurrency = useWatch({
     control: form.control,
     name: "currency",
   });
+
+  const selectedCategory = useWatch({
+    control: form.control,
+    name: "category",
+  });
+
+  useEffect(() => {
+    if (!selectedCategory) {
+      return;
+    }
+
+    const el = categoryRefs.current[selectedCategory];
+    if (!el) {
+      return;
+    }
+
+    el.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  }, [selectedCategory]);
 
   return (
     <Form {...form}>
@@ -158,8 +180,9 @@ export const ExpenseForm = ({
                     Amount Spent
                   </FormLabel>
                   <p className="font-semibold text-4xl">
-                    {currency &&
-                      CURRENCIES[currency as keyof typeof CURRENCIES].symbol}
+                    {selectedCurrency &&
+                      CURRENCIES[selectedCurrency as keyof typeof CURRENCIES]
+                        .symbol}
                   </p>
                   <Input
                     {...field}
