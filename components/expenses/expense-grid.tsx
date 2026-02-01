@@ -38,8 +38,6 @@ export const ExpenseGrid = () => {
     filters: {},
   });
 
-  console.log("-->", query?.data);
-
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
@@ -196,8 +194,10 @@ export const ExpenseGrid = () => {
         body: (
           <ExpenseForm
             initialValues={quickActionData}
-            submitButtonText={`Edit Expense`}
             onCancel={handleCloseModal}
+            onSubmit={(formData) => mutations.update.mutateAsync(formData)}
+            submitButtonText={`Edit Expense`}
+            submitInProgress={mutations.update.isPending}
           />
         ),
       },

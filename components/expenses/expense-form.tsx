@@ -101,6 +101,10 @@ export const ExpenseForm = ({
   const handleOnSubmit = async (values: ExpenseInput) => {
     const formData = new FormData();
 
+    if (initialValues?.id) {
+      formData.append("id", initialValues.id);
+    }
+
     formData.append("amount", String(values.amount));
     formData.append("currency", values.currency);
     formData.append("category", values.category);
