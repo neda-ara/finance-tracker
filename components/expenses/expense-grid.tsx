@@ -98,8 +98,8 @@ export const ExpenseGrid = () => {
           <div className="flex items-center gap-2">
             <Image
               alt={category.title}
-              height={24}
-              width={24}
+              height={56}
+              width={56}
               src={`${EXPENSE_CATEGORY_ICONS_BASE_PATH}${category.iconPath}`}
               className="h-6 w-6 object-contain"
             />
@@ -145,8 +145,8 @@ export const ExpenseGrid = () => {
           <div className="flex items-center gap-2">
             <Image
               alt={rating.title}
-              height={24}
-              width={24}
+              height={48}
+              width={48}
               src={`${SATISFACTION_ICONS_BASE_PATH}${rating.iconPath}`}
               className="h-6 w-6 object-contain"
             />
@@ -228,7 +228,8 @@ export const ExpenseGrid = () => {
         customStyles={{
           dialogContent: "sm:max-w-144",
         }}
-        showFooter={false}
+        showFooter={action === ACTION_CONSTANTS.DELETE}
+        footerContent={<Button>Delete</Button>}
         showCloseButton={false}
       />
       <DataGrid data={query?.data?.data || []} columns={columns} />
