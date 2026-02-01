@@ -22,9 +22,12 @@ import { createActionsColumn, DataGrid } from "../common/data-grid";
 import { ExpenseForm } from "./expense-form";
 import { formatDateForDisplay, isStringEqual } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
+import { Spinner } from "../ui/spinner";
 import { useExpenses } from "@/hooks/use-expenses";
 import { useState } from "react";
 import Image from "next/image";
+import toast from "react-hot-toast";
+import { DeleteConfirmationBody } from "../common/common";
 
 export const ExpenseGrid = () => {
   const [action, setAction] = useState<ActionConstant | undefined>();
@@ -37,6 +40,22 @@ export const ExpenseGrid = () => {
     searchKey: "",
     filters: {},
   });
+
+  const handleDeleteExpense = async () => {
+    if (!quickActionData?.id) {
+      toast.error("Expense ID missing");
+      return;
+    }
+    const resp = await mutations.delete.mutateAsync(quickActionData.id);
+
+    if (!resp.ok) {
+      toast.error(resp.error.message ?? "Failed to delete expense");
+      return;
+    }
+
+    handleCloseModal();
+    toast.success("Expense deleted successfully!");
+  };
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -206,10 +225,24 @@ export const ExpenseGrid = () => {
       ACTION_CONSTANTS.DELETE,
       {
         header: <p>Delete Expense</p>,
-        body: <p>Are you sure</p>,
+        body: (
+          <DeleteConfirmationBody
+            entity={
+              quickActionData && quickActionData.currency
+                ? `expense of ${
+                    CURRENCIES[
+                      quickActionData.currency as keyof typeof CURRENCIES
+                    ].symbol
+                  } ${quickActionData.amount}`
+                : "expense"
+            }
+          />
+        ),
       },
     ],
   ]);
+
+  const deleteInProgress = mutations.delete.isPending;
 
   return (
     <div>
@@ -226,10 +259,30 @@ export const ExpenseGrid = () => {
         dialogTitle={modalContentMap.get(action!)?.header}
         dialogContent={modalContentMap.get(action!)?.body}
         customStyles={{
-          dialogContent: "sm:max-w-144",
+          dialogContent:
+            action === ACTION_CONSTANTS.DELETE
+              ? "sm:max-w-116"
+              : "sm:max-w-144",
         }}
         showFooter={action === ACTION_CONSTANTS.DELETE}
-        footerContent={<Button>Delete</Button>}
+        footerContent={
+          <div className="flex items-center gap-x-2">
+            <Button
+              onClick={handleCloseModal}
+              variant="outline"
+              disabled={deleteInProgress}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDeleteExpense}
+              variant="destructive"
+              disabled={deleteInProgress}
+            >
+              {mutations.delete.isPending && <Spinner />}&nbsp;Delete
+            </Button>
+          </div>
+        }
         showCloseButton={false}
       />
       <DataGrid data={query?.data?.data || []} columns={columns} />
