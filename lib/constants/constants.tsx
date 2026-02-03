@@ -67,7 +67,7 @@ export const EXPENSE_CATEGORIES = [
   { title: "Insurance", iconPath: "/insurance.png" },
   { title: "Subscriptions", iconPath: "/subscriptions.png" },
   { title: "Pets", iconPath: "/pets.png" },
-  { title: "Cleaning", iconPath: "/cleaning.png" },
+  { title: "Help", iconPath: "/help.png" },
   { title: "Repair", iconPath: "/repair.png" },
   { title: "Gym", iconPath: "/gym.png" },
   { title: "Salon", iconPath: "/salon.png" },
