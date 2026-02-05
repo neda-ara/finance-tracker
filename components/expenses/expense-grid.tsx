@@ -246,13 +246,19 @@ export const ExpenseGrid = () => {
 
   return (
     <div>
-      <Button
-        variant="cta"
-        className="font-medium"
-        onClick={() => actionHandler(ACTION_CONSTANTS.ADD)}
-      >
-        <Plus /> Add New
-      </Button>
+      <div className="flex items-center">
+        <div className="card text-sm font-medium">Amount spent this month</div>
+        <div className="card text-sm font-medium">
+          Amount spent in the past 30 days
+        </div>
+        <Button
+          variant="cta"
+          className="font-medium"
+          onClick={() => actionHandler(ACTION_CONSTANTS.ADD)}
+        >
+          <Plus /> Add New
+        </Button>
+      </div>
       <Modal
         open={openModal}
         onOpenChange={handleOpenModal}
