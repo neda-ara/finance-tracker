@@ -98,3 +98,8 @@ export const SATISFACTION_RATINGS = {
 export const DEFAULT_VALUES = {
   PAGE_SIZE: 50,
 };
+
+export const IMAGE_PATHS = {
+  MONTH: "/images/icons/month.png",
+  "30DAYS": "/images/icons/30-days.png",
+};

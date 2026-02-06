@@ -6,6 +6,7 @@ import {
   DEFAULT_VALUES,
   EXPENSE_CATEGORIES,
   EXPENSE_CATEGORY_ICONS_BASE_PATH,
+  IMAGE_PATHS,
   SATISFACTION_ICONS_BASE_PATH,
   SATISFACTION_RATINGS,
 } from "@/lib/constants/constants";
@@ -247,14 +248,40 @@ export const ExpenseGrid = () => {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-x-2">
-          <div className="card text-center space-y-1">
-            <p className="text-xs font-semibold">Spent this month</p>
-            <p className="font-medium text-lg tracking-wider">16,220</p>
+        <div className="flex items-center gap-x-4">
+          <div className="card space-y-2">
+            <div className="flex gap-x-5">
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-muted-foreground">
+                  Spent this month
+                </p>
+                <p className="font-bold text-lg tracking-wider">16220</p>
+              </div>
+              <Image
+                alt={"month-calendar"}
+                height={64}
+                width={64}
+                className="h-12 w-12 object-contain"
+                src={IMAGE_PATHS.MONTH}
+              />
+            </div>
           </div>
-          <div className="card text-center space-y-1">
-            <p className="text-xs font-semibold">Spent in the past 30 days</p>
-            <p className="font-medium text-lg tracking-wider">16,220</p>
+          <div className="card space-y-2">
+            <div className="flex gap-x-5">
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-muted-foreground">
+                  Spent in last 30 days
+                </p>
+                <p className="font-bold text-lg tracking-wider">16,220</p>
+              </div>
+              <Image
+                alt={"month-calendar"}
+                height={64}
+                width={64}
+                className="h-12 w-12 object-contain"
+                src={IMAGE_PATHS["30DAYS"]}
+              />
+            </div>
           </div>
         </div>
         <Button
