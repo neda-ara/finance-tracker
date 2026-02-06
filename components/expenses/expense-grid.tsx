@@ -246,10 +246,16 @@ export const ExpenseGrid = () => {
 
   return (
     <div>
-      <div className="flex items-center">
-        <div className="card text-sm font-medium">Amount spent this month</div>
-        <div className="card text-sm font-medium">
-          Amount spent in the past 30 days
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-x-2">
+          <div className="card text-center space-y-1">
+            <p className="text-xs font-semibold">Spent this month</p>
+            <p className="font-medium text-lg tracking-wider">16,220</p>
+          </div>
+          <div className="card text-center space-y-1">
+            <p className="text-xs font-semibold">Spent in the past 30 days</p>
+            <p className="font-medium text-lg tracking-wider">16,220</p>
+          </div>
         </div>
         <Button
           variant="cta"
