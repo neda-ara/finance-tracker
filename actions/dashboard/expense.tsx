@@ -3,6 +3,7 @@
 import {
   ActionResult,
   Expense,
+  ExpenseSummary,
   GetExpensesRequest,
   PaginatedResult,
 } from "@/lib/actions/types";
@@ -12,7 +13,7 @@ import { getAuthenticatedSession, safeRunAction } from "@/lib/actions/helpers";
 
 export async function fetchExpenses(
   params: GetExpensesRequest
-): Promise<ActionResult<PaginatedResult<Expense>>> {
+): Promise<ActionResult<PaginatedResult<Expense, ExpenseSummary>>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
 
@@ -39,12 +40,36 @@ export async function fetchExpenses(
       [session?.userId, pageSize, offset]
     );
 
-    const count = await db.query<{ count: string }>(
+    const countRes = await db.query<{ count: string }>(
       `SELECT COUNT(*)::text AS count FROM expenses WHERE user_id = $1`,
       [session?.userId]
     );
 
-    const totalRecords = Number(count.rows[0].count);
+    const totalRecords = Number(countRes.rows[0].count);
+
+    const thisMonth = await db.query<{ currency: string; total: number }>(
+      `SELECT currency, SUM(amount)::float AS total
+      FROM expenses
+      WHERE user_id = $1
+        AND expense_date >= date_trunc('month', CURRENT_DATE)
+      GROUP BY currency
+      ORDER BY total DESC
+      LIMIT 1
+      `,
+      [session?.userId]
+    );
+
+    const last30Days = await db.query<{ currency: string; total: number }>(
+      `SELECT currency, SUM(amount)::float AS total
+      FROM expenses
+      WHERE user_id = $1
+        AND expense_date >= CURRENT_DATE - INTERVAL '30 days'
+      GROUP BY currency
+      ORDER BY total DESC
+      LIMIT 1
+      `,
+      [session?.userId]
+    );
 
     return {
       data: expenseList.rows,
@@ -52,6 +77,16 @@ export async function fetchExpenses(
       pageSize,
       totalRecords,
       totalPages: Math.ceil(totalRecords / pageSize),
+      summary: {
+        spentThisMonth: thisMonth.rows[0] && {
+          currency: thisMonth.rows[0].currency,
+          amount: thisMonth.rows[0].total,
+        },
+        spentLast30Days: last30Days.rows[0] && {
+          currency: last30Days.rows[0].currency,
+          amount: last30Days.rows[0].total,
+        },
+      },
     };
   });
 }

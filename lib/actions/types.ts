@@ -9,7 +9,7 @@ export type ActionConstant =
   (typeof ACTION_CONSTANTS)[keyof typeof ACTION_CONSTANTS];
 
 export type ActionResult<T = void> =
-  | { ok: true; data?: T }
+  | { ok: true; data: T }
   | {
       ok: false;
       error: {
@@ -52,12 +52,24 @@ export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number]["title"];
 
 export type SatisfactionRating = keyof typeof SATISFACTION_RATINGS;
 
-export type PaginatedResult<T> = {
+export type ExpenseSummary = {
+  spentThisMonth?: {
+    currency: string;
+    amount: number;
+  };
+  spentLast30Days?: {
+    currency: string;
+    amount: number;
+  };
+};
+
+export type PaginatedResult<T, S = unknown> = {
   data: T[];
   pageNo: number;
   pageSize: number;
   totalRecords: number;
   totalPages: number;
+  summary?: S;
 };
 
 export type Expense = {

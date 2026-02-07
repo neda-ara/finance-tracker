@@ -20,15 +20,15 @@ import { ArrowUpDown, PencilLine, Plus, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { createActionsColumn, DataGrid } from "../common/data-grid";
+import { DeleteConfirmationBody } from "../common/common";
 import { ExpenseForm } from "./expense-form";
 import { formatDateForDisplay, isStringEqual } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
 import { useExpenses } from "@/hooks/use-expenses";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import { DeleteConfirmationBody } from "../common/common";
 
 export const ExpenseGrid = () => {
   const [action, setAction] = useState<ActionConstant | undefined>();
@@ -244,6 +244,7 @@ export const ExpenseGrid = () => {
   ]);
 
   const deleteInProgress = mutations.delete.isPending;
+  const summaryData = useMemo(() => query?.data?.summary, [query?.data]);
 
   return (
     <div>
@@ -255,7 +256,17 @@ export const ExpenseGrid = () => {
                 <p className="text-xs font-medium text-muted-foreground">
                   Spent this month
                 </p>
-                <p className="font-bold text-lg tracking-wider">16220</p>
+                <p className="font-bold text-lg tracking-wider">
+                  <span className="mr-1">
+                    {
+                      CURRENCIES[
+                        summaryData?.spentThisMonth
+                          ?.currency as keyof typeof CURRENCIES
+                      ]?.symbol
+                    }
+                  </span>
+                  {summaryData?.spentThisMonth?.amount}
+                </p>
               </div>
               <Image
                 alt={"month-calendar"}
@@ -272,7 +283,17 @@ export const ExpenseGrid = () => {
                 <p className="text-xs font-medium text-muted-foreground">
                   Spent in last 30 days
                 </p>
-                <p className="font-bold text-lg tracking-wider">16,220</p>
+                <p className="font-bold text-lg tracking-wider">
+                  <span className="mr-1">
+                    {
+                      CURRENCIES[
+                        summaryData?.spentLast30Days
+                          ?.currency as keyof typeof CURRENCIES
+                      ]?.symbol
+                    }
+                  </span>
+                  {summaryData?.spentLast30Days?.amount}
+                </p>
               </div>
               <Image
                 alt={"month-calendar"}
