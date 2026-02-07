@@ -94,6 +94,7 @@ export type GetExpensesRequest = {
 export type DataGridProps<T> = {
   data: T[];
   columns: ColumnDef<T>[];
+  customStyles?: { tableContainerStyles?: string };
 };
 
 export type RowAction<T> = {

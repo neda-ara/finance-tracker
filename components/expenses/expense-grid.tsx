@@ -70,7 +70,17 @@ export const ExpenseGrid = () => {
   const columns: ColumnDef<Expense>[] = [
     {
       accessorKey: "expenseDate",
-      header: "Expense Date",
+      accessorFn: (row) => new Date(row.expenseDate).getTime(),
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="px-0!"
+        >
+          Expense Date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
       cell: ({ row }) => formatDateForDisplay(row.original.expenseDate),
       enableSorting: true,
       enableHiding: false,
@@ -265,7 +275,7 @@ export const ExpenseGrid = () => {
                       ]?.symbol
                     }
                   </span>
-                  {summaryData?.spentThisMonth?.amount}
+                  {summaryData?.spentThisMonth?.amount?.toLocaleString()}
                 </p>
               </div>
               <Image
@@ -292,7 +302,7 @@ export const ExpenseGrid = () => {
                       ]?.symbol
                     }
                   </span>
-                  {summaryData?.spentLast30Days?.amount}
+                  {summaryData?.spentLast30Days?.amount.toLocaleString()}
                 </p>
               </div>
               <Image
@@ -310,7 +320,7 @@ export const ExpenseGrid = () => {
           className="font-medium"
           onClick={() => actionHandler(ACTION_CONSTANTS.ADD)}
         >
-          <Plus /> Add New
+          <Plus /> Add New Expense
         </Button>
       </div>
       <Modal
@@ -345,7 +355,13 @@ export const ExpenseGrid = () => {
         }
         showCloseButton={false}
       />
-      <DataGrid data={query?.data?.data || []} columns={columns} />
+      <DataGrid
+        data={query?.data?.data || []}
+        columns={columns}
+        customStyles={{
+          tableContainerStyles: "max-h-106",
+        }}
+      />
     </div>
   );
 };
