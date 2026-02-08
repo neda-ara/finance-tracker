@@ -1,6 +1,8 @@
 "use client";
 
 import { Abril_Fatface } from "next/font/google";
+import { Button } from "../ui/button";
+import { Eye, EyeOff, Lock, Mail, MoveRight } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -9,14 +11,11 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Button } from "../ui/button";
-import { Eye, EyeOff, Lock, Mail, MoveRight } from "lucide-react";
 import { Input } from "../ui/input";
-import { login } from "@/actions/auth/login";
 import { loginInputSchema } from "@/lib/schema/login-schema";
-import { resolveAction } from "@/lib/actions/helpers";
 import { ROUTES } from "@/lib/constants/constants";
 import { SocialMediaOptions } from "./social-media-options";
+import { useAuth } from "@/hooks/use-auth";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -33,6 +32,7 @@ type LoginInput = z.infer<typeof loginInputSchema>;
 
 export const LoginForm = () => {
   const router = useRouter();
+  const { login } = useAuth();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -50,21 +50,22 @@ export const LoginForm = () => {
     formData.append("email", values.email);
     formData.append("password", values.password);
 
-    const resp = resolveAction(await login(formData));
+    const resp = await login.mutateAsync(formData);
 
-    if (resp.success) {
-      toast.success("Logged in successfully!");
-      router.push(ROUTES.DASHBOARD.EXPENSES);
+    if (!resp.ok) {
+      if (resp.error.fieldErrors) {
+        Object.entries(resp.error.fieldErrors).forEach(([k, msg]) =>
+          form.setError(k as keyof LoginInput, { message: msg })
+        );
+      }
+      if (resp.error.message) {
+        toast.error(resp.error.message);
+      }
       return;
     }
 
-    if (resp.error.kind === "field") {
-      Object.entries(resp.error.errors).forEach(([field, message]) => {
-        form.setError(field as "email" | "password", { message });
-      });
-    } else {
-      toast.error(resp.error.message);
-    }
+    toast.success("Logged in successfully!");
+    router.push(ROUTES.DASHBOARD.EXPENSES);
   };
 
   const toggleShowPassword = () => {

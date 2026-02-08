@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
 import "./globals.css";
+import { Montserrat } from "next/font/google";
+import { ReactQueryProvider } from "@/providers/react-query-provider";
 import { Toaster } from "react-hot-toast";
+import type { Metadata } from "next";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -20,8 +21,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className}`}>
-        {children}
-        <Toaster position="top-right" />
+        <ReactQueryProvider>
+          {children}
+          <Toaster position="top-right" />
+        </ReactQueryProvider>
       </body>
     </html>
   );

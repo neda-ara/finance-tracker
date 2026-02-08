@@ -1,46 +1,33 @@
-import { ACTION_ERRORS } from "../constants/constants";
-import { ActionErrorType, ActionResult, NormalizedActionError } from "./types";
+"use server";
 
-type ErrorMapper = (payload: {
-  message?: string;
-  errors?: Record<string, string>;
-}) => NormalizedActionError;
+import { ActionResult } from "./types";
+import { getSession } from "../auth/session";
+import { UNAUTHORIZED_ERR_MSG } from "../constants/constants";
 
-export const errorMappers: Record<ActionErrorType, ErrorMapper> = {
-  [ACTION_ERRORS.VALIDATION]: (payload) => ({
-    kind: "field",
-    errors: payload.errors ?? {},
-  }),
+type ActionError = Error & { fieldErrors?: Record<string, string> };
 
-  [ACTION_ERRORS.CONFLICT]: (payload) => ({
-    kind: "message",
-    message: payload.message ?? "Conflict",
-    type: ACTION_ERRORS.CONFLICT,
-  }),
-
-  [ACTION_ERRORS.AUTH]: (payload) => ({
-    kind: "message",
-    message: payload.message ?? "Unauthorized",
-    type: ACTION_ERRORS.AUTH,
-  }),
-
-  [ACTION_ERRORS.SYSTEM]: (payload) => ({
-    kind: "message",
-    message: payload.message ?? "Something went wrong. Please try again later.",
-    type: ACTION_ERRORS.SYSTEM,
-  }),
-};
-
-export function resolveAction<T>(
-  result: ActionResult<T>
-):
-  | { success: true; data?: T }
-  | { success: false; error: NormalizedActionError } {
-  if (result.ok) {
-    return { success: true, data: result.data };
+export async function safeRunAction<T>(
+  fn: () => Promise<T>
+): Promise<ActionResult<T>> {
+  try {
+    const data = await fn();
+    return { ok: true, data };
+  } catch (err) {
+    const error = err as ActionError;
+    return {
+      ok: false,
+      error: {
+        message: error?.message,
+        fieldErrors: error?.fieldErrors,
+      },
+    };
   }
-  return {
-    success: false,
-    error: errorMappers[result.type](result),
-  };
+}
+
+export async function getAuthenticatedSession() {
+  const session = await getSession();
+  if (!session) {
+    throw new Error(UNAUTHORIZED_ERR_MSG);
+  }
+  return session;
 }
