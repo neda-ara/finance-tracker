@@ -7,13 +7,13 @@ type TableProps = React.ComponentProps<"table"> & {
   containerStyles?: string;
 };
 
-function Table({ className, ...props }: TableProps) {
+function Table({ containerStyles, className, ...props }: TableProps) {
   return (
     <div
       data-slot="table-container"
       className={cn(
         "relative w-full overflow-x-auto overflow-y-scroll scroll-smooth",
-        props?.containerStyles
+        containerStyles
       )}
     >
       <table

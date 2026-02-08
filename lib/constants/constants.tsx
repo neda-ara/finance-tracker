@@ -99,6 +99,8 @@ export const DEFAULT_VALUES = {
   PAGE_SIZE: 50,
 };
 
+export const PAGE_SIZE_OPTONS = [10, 25, 50, 75, 100, 250];
+
 export const IMAGE_PATHS = {
   MONTH: "/images/icons/month.png",
   "30DAYS": "/images/icons/30-days.png",

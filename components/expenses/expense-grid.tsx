@@ -32,12 +32,14 @@ import toast from "react-hot-toast";
 
 export const ExpenseGrid = () => {
   const [action, setAction] = useState<ActionConstant | undefined>();
+  const [pageNo, setPageNo] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(DEFAULT_VALUES.PAGE_SIZE);
   const [quickActionData, setQuickActionData] = useState<Expense | undefined>();
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   const { query, mutations } = useExpenses({
-    page: 1,
-    pageSize: DEFAULT_VALUES.PAGE_SIZE,
+    page: pageNo,
+    pageSize,
     searchKey: "",
     filters: {},
   });
@@ -253,6 +255,11 @@ export const ExpenseGrid = () => {
     ],
   ]);
 
+  const handlePageSizeChange = (size: number) => {
+    setPageNo(1);
+    setPageSize(size);
+  };
+
   const deleteInProgress = mutations.delete.isPending;
   const summaryData = useMemo(() => query?.data?.summary, [query?.data]);
 
@@ -358,8 +365,16 @@ export const ExpenseGrid = () => {
       <DataGrid
         data={query?.data?.data || []}
         columns={columns}
+        isLoading={query?.isPending}
+        paginationParams={{
+          pageNo,
+          pageSize,
+          totalPages: query?.data?.totalPages ?? 0,
+          onPageChange: setPageNo,
+          onPageSizeChange: handlePageSizeChange,
+        }}
         customStyles={{
-          tableContainerStyles: "max-h-106",
+          tableContainerStyles: "max-h-106 min-h-106",
         }}
       />
     </div>

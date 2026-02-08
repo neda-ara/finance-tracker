@@ -14,13 +14,28 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
   type ColumnFiltersState,
   type SortingState,
   type VisibilityState,
 } from "@tanstack/react-table";
+import { IMAGE_PATHS, PAGE_SIZE_OPTONS } from "@/lib/constants/constants";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import {
   Table,
   TableBody,
@@ -36,7 +51,6 @@ import {
 } from "@/components/ui/tooltip";
 import { useState } from "react";
 import Image from "next/image";
-import { IMAGE_PATHS } from "@/lib/constants/constants";
 
 export function createActionsColumn<T>(actions: RowAction<T>[]): ColumnDef<T> {
   return {
@@ -69,7 +83,12 @@ export function createActionsColumn<T>(actions: RowAction<T>[]): ColumnDef<T> {
   };
 }
 
-export function DataGrid<T>({ data, columns, customStyles }: DataGridProps<T>) {
+export function DataGrid<T>({
+  data,
+  columns,
+  paginationParams,
+  customStyles,
+}: DataGridProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -84,7 +103,8 @@ export function DataGrid<T>({ data, columns, customStyles }: DataGridProps<T>) {
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    manualPagination: true,
+    pageCount: paginationParams.totalPages,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -101,17 +121,7 @@ export function DataGrid<T>({ data, columns, customStyles }: DataGridProps<T>) {
   });
 
   return (
-    <div className="w-full">
-      <div className="flex items-center py-4">
-        {/* <Input --- need backend search
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        /> */}
-      </div>
+    <div className="w-full pt-7">
       <div className="overflow-hidden rounded-md border">
         <Table containerStyles={customStyles?.tableContainerStyles}>
           <TableHeader>
@@ -206,23 +216,59 @@ export function DataGrid<T>({ data, columns, customStyles }: DataGridProps<T>) {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+        <div className="flex items-center">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() =>
+                    paginationParams.onPageChange(paginationParams.pageNo - 1)
+                  }
+                  isActive={paginationParams.pageNo > 10}
+                  isDisabled={paginationParams.pageNo === 1}
+                />
+              </PaginationItem>
+              {Array.from({ length: paginationParams.totalPages }, (_, i) => {
+                const p = i + 1;
+                return (
+                  <PaginationItem key={p}>
+                    <PaginationLink
+                      isActive={p === paginationParams.pageNo}
+                      onClick={() => paginationParams.onPageChange(p)}
+                    >
+                      {p}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() =>
+                    paginationParams.onPageChange(paginationParams.pageNo + 1)
+                  }
+                  isDisabled={
+                    paginationParams.pageNo === paginationParams.totalPages
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+          <Select
+            value={String(paginationParams.pageSize)}
+            onValueChange={(v) => paginationParams.onPageSizeChange(Number(v))}
           >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+            <SelectTrigger className="w-30">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PAGE_SIZE_OPTONS.map((size) => (
+                <SelectItem key={size} value={String(size)}>
+                  {size} / page
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>
