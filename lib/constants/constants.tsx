@@ -102,4 +102,5 @@ export const DEFAULT_VALUES = {
 export const IMAGE_PATHS = {
   MONTH: "/images/icons/month.png",
   "30DAYS": "/images/icons/30-days.png",
+  NO_RESULTS: "/images/icons/no-results.png",
 };

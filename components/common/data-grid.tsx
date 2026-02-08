@@ -35,6 +35,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useState } from "react";
+import Image from "next/image";
+import { IMAGE_PATHS } from "@/lib/constants/constants";
 
 export function createActionsColumn<T>(actions: RowAction<T>[]): ColumnDef<T> {
   return {
@@ -154,8 +156,15 @@ export function DataGrid<T>({ data, columns, customStyles }: DataGridProps<T>) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="text-center italic py-8 font-medium"
                 >
+                  <Image
+                    alt="no-results"
+                    height={100}
+                    width={100}
+                    src={IMAGE_PATHS.NO_RESULTS}
+                    className="h-16 object-contain mb-2 mx-auto"
+                  />
                   No results found.
                 </TableCell>
               </TableRow>
