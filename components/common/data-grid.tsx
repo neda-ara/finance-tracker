@@ -124,7 +124,7 @@ export function DataGrid<T>({
   });
 
   return (
-    <div className="w-full pt-7">
+    <div className="w-full">
       <div className="overflow-hidden rounded-md border">
         <Table
           containerStyles={customStyles?.tableContainerStyles}

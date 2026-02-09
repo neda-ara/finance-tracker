@@ -21,6 +21,7 @@ import { Button } from "../ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { createActionsColumn, DataGrid } from "../common/data-grid";
 import { DeleteConfirmationBody } from "../common/common";
+import { ExpenseFilters } from "./expense-filters";
 import { ExpenseForm } from "./expense-form";
 import { formatDateForDisplay, isStringEqual } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
@@ -32,6 +33,7 @@ import toast from "react-hot-toast";
 
 export const ExpenseGrid = () => {
   const [action, setAction] = useState<ActionConstant | undefined>();
+  const [filters, setFilters] = useState({});
   const [pageNo, setPageNo] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_VALUES.PAGE_SIZE);
   const [quickActionData, setQuickActionData] = useState<Expense | undefined>();
@@ -330,6 +332,22 @@ export const ExpenseGrid = () => {
           <Plus /> Add New Expense
         </Button>
       </div>
+      <ExpenseFilters />
+      <DataGrid
+        data={query?.data?.data || []}
+        columns={columns}
+        isLoading={query?.isPending}
+        paginationParams={{
+          pageNo,
+          pageSize,
+          totalPages: query?.data?.totalPages ?? 0,
+          onPageChange: setPageNo,
+          onPageSizeChange: handlePageSizeChange,
+        }}
+        customStyles={{
+          tableContainerStyles: "max-h-92 min-h-92",
+        }}
+      />
       <Modal
         open={openModal}
         onOpenChange={handleOpenModal}
@@ -361,21 +379,6 @@ export const ExpenseGrid = () => {
           </div>
         }
         showCloseButton={false}
-      />
-      <DataGrid
-        data={query?.data?.data || []}
-        columns={columns}
-        isLoading={query?.isPending}
-        paginationParams={{
-          pageNo,
-          pageSize,
-          totalPages: query?.data?.totalPages ?? 0,
-          onPageChange: setPageNo,
-          onPageSizeChange: handlePageSizeChange,
-        }}
-        customStyles={{
-          tableContainerStyles: "max-h-106 min-h-106",
-        }}
       />
     </div>
   );
