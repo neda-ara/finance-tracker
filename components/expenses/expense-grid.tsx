@@ -345,7 +345,7 @@ export const ExpenseGrid = () => {
           onPageSizeChange: handlePageSizeChange,
         }}
         customStyles={{
-          tableContainerStyles: "max-h-92 min-h-92",
+          tableContainerStyles: "max-h-90 min-h-90",
         }}
       />
       <Modal
