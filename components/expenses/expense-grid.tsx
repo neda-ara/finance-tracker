@@ -9,10 +9,12 @@ import {
   IMAGE_PATHS,
   SATISFACTION_ICONS_BASE_PATH,
   SATISFACTION_RATINGS,
+  VALIDATION,
 } from "@/lib/constants/constants";
 import {
   ActionConstant,
   Expense,
+  ExpenseFiltersType,
   ModalContent,
   SatisfactionRating,
 } from "@/lib/actions/types";
@@ -32,8 +34,21 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 
 export const ExpenseGrid = () => {
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 3);
+
   const [action, setAction] = useState<ActionConstant | undefined>();
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState<ExpenseFiltersType>({
+    description: "",
+    startDate: sixMonthsAgo,
+    endDate: new Date(),
+    minAmount: 0,
+    maxAmount: VALIDATION.MAX_AMOUNT_LIMIT,
+    categories: [],
+    currencies: [],
+    paymentModes: [],
+    satisfactionRatings: [],
+  });
   const [pageNo, setPageNo] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_VALUES.PAGE_SIZE);
   const [quickActionData, setQuickActionData] = useState<Expense | undefined>();
@@ -43,7 +58,7 @@ export const ExpenseGrid = () => {
     page: pageNo,
     pageSize,
     searchKey: "",
-    filters: {},
+    filters,
   });
 
   const handleDeleteExpense = async () => {
@@ -332,7 +347,7 @@ export const ExpenseGrid = () => {
           <Plus /> Add New Expense
         </Button>
       </div>
-      <ExpenseFilters />
+      <ExpenseFilters filters={filters} setFilters={setFilters} />
       <DataGrid
         data={query?.data?.data || []}
         columns={columns}

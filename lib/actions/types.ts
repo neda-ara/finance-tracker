@@ -88,7 +88,19 @@ export type GetExpensesRequest = {
   page: number;
   pageSize: number;
   searchKey?: string;
-  filters?: Record<string, unknown>;
+  filters: ExpenseFiltersType;
+};
+
+export type ExpenseFiltersType = {
+  description: string;
+  startDate: Date | string;
+  endDate: Date | string;
+  minAmount: number;
+  maxAmount: number;
+  categories: string[];
+  currencies: string[];
+  paymentModes: string[];
+  satisfactionRatings: number[];
 };
 
 export type DataGridProps<T> = {

@@ -24,7 +24,24 @@ export function useExpenses(params: GetExpensesRequest) {
       params.page,
       params.pageSize,
       params.searchKey ?? "",
-      JSON.stringify(params.filters ?? {}),
+      {
+        description: params.filters.description || "",
+        startDate:
+          params.filters.startDate instanceof Date
+            ? params.filters.startDate.toISOString()
+            : params.filters.startDate ?? "",
+        endDate:
+          params.filters.endDate instanceof Date
+            ? params.filters.endDate.toISOString()
+            : params.filters.endDate ?? "",
+        minAmount: params.filters.minAmount ?? "",
+        maxAmount: params.filters.maxAmount ?? "",
+        categories: params.filters.categories?.slice().sort() ?? [],
+        currencies: params.filters.currencies?.slice().sort() ?? [],
+        paymentModes: params.filters.paymentModes?.slice().sort() ?? [],
+        satisfactionRatings:
+          params.filters.satisfactionRatings?.slice().sort() ?? [],
+      },
     ],
     queryFn: async () => {
       const resp = await fetchExpenses(params);
