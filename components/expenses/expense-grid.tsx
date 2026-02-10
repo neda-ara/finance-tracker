@@ -365,7 +365,7 @@ export const ExpenseGrid = () => {
       />
       <Modal
         open={openModal}
-        onOpenChange={handleOpenModal}
+        onOpenChange={setOpenModal}
         dialogTitle={modalContentMap.get(action!)?.header}
         dialogContent={modalContentMap.get(action!)?.body}
         customStyles={{
