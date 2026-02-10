@@ -16,14 +16,24 @@ export function DatePicker({
   value,
   onChange,
   label,
+  labelPlacement = "outside",
   ...props
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <div className="flex flex-col gap-2">
-      {label && <Label className="px-1 text-sm">{label}</Label>}
-
+    <div className="relative flex flex-col gap-2">
+      {label && (
+        <Label
+          className={
+            labelPlacement === "inside"
+              ? "absolute -top-[8.25px] left-2 bg-white text-xs"
+              : "px-1 text-sm"
+          }
+        >
+          {label}
+        </Label>
+      )}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button

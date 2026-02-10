@@ -49,10 +49,14 @@ export const ExpenseFilters = ({
           {/* DATE RANGE PICKER */}
           <div className="flex items-center gap-x-2">
             <DatePicker
+              label="Start Date"
+              labelPlacement="inside"
               value={filters.startDate as Date}
               onChange={(e) => handleSetFilterByParam("startDate", e)}
             />
             <DatePicker
+              label="End Date"
+              labelPlacement="inside"
               value={filters.endDate as Date}
               onChange={(e) => handleSetFilterByParam("endDate", e)}
             />

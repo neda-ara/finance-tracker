@@ -40,6 +40,7 @@ export type DatePickerProps = {
   value?: Date;
   onChange: (date: Date | undefined) => void;
   label?: string;
+  labelPlacement?: "outside" | "inside";
   disabled?: (date: Date) => boolean;
 };
 
