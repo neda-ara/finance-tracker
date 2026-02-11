@@ -12,6 +12,17 @@ type SliderStyleProps = {
 
 type SliderProps = React.ComponentProps<typeof SliderPrimitive.Root> & {
   sliderStyle?: SliderStyleProps;
+  valuePosition?: "top" | "bottom" | "none";
+};
+
+type RangeSliderProps = {
+  min: number;
+  max: number;
+  step?: number;
+  value: [number, number];
+  onChange: (value: [number, number]) => void;
+  label?: string;
+  valuePosition?: "top" | "bottom" | "none";
 };
 
 function Slider({
@@ -21,6 +32,7 @@ function Slider({
   min = 0,
   max = 100,
   sliderStyle,
+  valuePosition = "none",
   ...props
 }: SliderProps) {
   const _values = React.useMemo(
@@ -70,16 +82,64 @@ function Slider({
       </SliderPrimitive.Track>
       {Array.from({ length: _values.length }, (_, index) => (
         <SliderPrimitive.Thumb
-          data-slot="slider-thumb"
           key={index}
-          className={cn(
-            "cursor-pointer block size-6 shrink-0 rounded-full border bg-white shadow-md transition-all hover:shadow-lg focus-visible:ring-4 focus-visible:ring-primary/40 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
-            sliderStyle?.thumbClass
+          className="relative cursor-pointer block size-6 shrink-0 rounded-full border bg-white shadow-md"
+        >
+          {valuePosition !== "none" && (
+            <div
+              className={cn(
+                "absolute left-1/2 -translate-x-1/2 whitespace-nowrap",
+                valuePosition === "top" ? "-top-9" : "top-9"
+              )}
+            >
+              <div className="bg-primary text-white text-xs font-medium px-2 py-1 rounded-md shadow">
+                {_values[index].toLocaleString()}
+              </div>
+              <div
+                className={cn(
+                  "mx-auto w-2 h-2 bg-primary",
+                  valuePosition === "top"
+                    ? "-mt-1 rotate-45"
+                    : "-mt-7 rotate-225"
+                )}
+              />
+            </div>
           )}
-        />
+        </SliderPrimitive.Thumb>
       ))}
     </SliderPrimitive.Root>
   );
 }
 
-export { Slider };
+function RangeSlider({
+  min,
+  max,
+  step = 1,
+  value,
+  onChange,
+  label,
+  valuePosition = "top",
+}: RangeSliderProps) {
+  return (
+    <div className="space-y-3">
+      {label && (
+        <div className="flex justify-between text-sm font-medium">
+          <span>{label}</span>
+          <span>
+            {value[0]} - {value[1]}
+          </span>
+        </div>
+      )}
+      <Slider
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onValueChange={(val) => onChange(val as [number, number])}
+        valuePosition={valuePosition}
+      />
+    </div>
+  );
+}
+
+export { Slider, RangeSlider };

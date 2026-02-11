@@ -43,7 +43,7 @@ export const ExpenseGrid = () => {
     startDate: sixMonthsAgo,
     endDate: new Date(),
     minAmount: 0,
-    maxAmount: VALIDATION.MAX_AMOUNT_LIMIT,
+    maxAmount: 100000,
     categories: [],
     currencies: [],
     paymentModes: [],

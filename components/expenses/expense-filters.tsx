@@ -7,6 +7,7 @@ import { ExpenseFiltersType } from "@/lib/actions/types";
 import { FunnelPlus, Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { Modal } from "../common/modal";
+import { RangeSlider } from "../ui/slider";
 
 export const ExpenseFilters = ({
   filters,
@@ -74,8 +75,9 @@ export const ExpenseFilters = ({
         dialogContent={
           <ExtraFiltersModalContent
             filters={filters}
-            setFilters={setFilters}
             handleCloseModal={handleCloseModal}
+            handleSetFilterByParam={handleSetFilterByParam}
+            setFilters={setFilters}
           />
         }
         showFooter={false}
@@ -88,20 +90,33 @@ export const ExpenseFilters = ({
 const ExtraFiltersModalContent = ({
   filters,
   handleCloseModal,
+  handleSetFilterByParam,
   setFilters,
 }: {
   filters: ExpenseFiltersType;
   handleCloseModal: () => void;
+  handleSetFilterByParam: (param: string, value: unknown) => void;
   setFilters: Dispatch<SetStateAction<ExpenseFiltersType>>;
 }) => {
   return (
     <div>
-      More Filters
-      <div className="flex items-center gap-x-2">
+      <div className="flex flex-col gap-y-3 my-4">
+        <RangeSlider
+          min={0}
+          max={100000}
+          valuePosition="bottom"
+          value={[filters.minAmount, filters.maxAmount]}
+          onChange={([min, max]) =>
+            setFilters((prev) => ({
+              ...prev,
+              minAmount: min,
+              maxAmount: max,
+            }))
+          }
+        />
+      </div>
+      <div className="flex items-center gap-x-2 mt-16">
         <Button variant="destructive">Clear Filters</Button>
-        <Button className="bg-green-500 hover:bg-green-400">
-          Apply Filters
-        </Button>
       </div>
     </div>
   );
