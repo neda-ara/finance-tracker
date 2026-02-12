@@ -23,6 +23,7 @@ type RangeSliderProps = {
   onChange: (value: [number, number]) => void;
   label?: string;
   valuePosition?: "top" | "bottom" | "none";
+  customStyles?: { wrapper?: string };
 };
 
 function Slider({
@@ -119,9 +120,10 @@ function RangeSlider({
   onChange,
   label,
   valuePosition = "top",
+  customStyles,
 }: RangeSliderProps) {
   return (
-    <div className="space-y-3">
+    <div className={cn("space-y-3", customStyles?.wrapper)}>
       {label && (
         <div className="flex justify-between text-sm font-medium">
           <span>{label}</span>

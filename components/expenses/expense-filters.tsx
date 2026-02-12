@@ -8,6 +8,7 @@ import { FunnelPlus, Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { Modal } from "../common/modal";
 import { RangeSlider } from "../ui/slider";
+import { Label } from "../ui/label";
 
 export const ExpenseFilters = ({
   filters,
@@ -80,6 +81,9 @@ export const ExpenseFilters = ({
             setFilters={setFilters}
           />
         }
+        customStyles={{
+          dialogContent: "sm:max-w-125",
+        }}
         showFooter={false}
         showCloseButton={true}
       />
@@ -101,22 +105,34 @@ const ExtraFiltersModalContent = ({
   return (
     <div>
       <div className="flex flex-col gap-y-3 my-4">
-        <RangeSlider
-          min={0}
-          max={100000}
-          valuePosition="bottom"
-          value={[filters.minAmount, filters.maxAmount]}
-          onChange={([min, max]) =>
-            setFilters((prev) => ({
-              ...prev,
-              minAmount: min,
-              maxAmount: max,
-            }))
-          }
-        />
+        <div className="flex items-center gap-x-4">
+          <Label className="text-xs text-center leading-4 font-medium">
+            Adjust Amount Range
+          </Label>
+          <RangeSlider
+            min={0}
+            max={1000000}
+            step={1000}
+            valuePosition="bottom"
+            value={[filters.minAmount, filters.maxAmount]}
+            onChange={([min, max]) =>
+              setFilters((prev) => ({
+                ...prev,
+                minAmount: min,
+                maxAmount: max,
+              }))
+            }
+            customStyles={{ wrapper: "pr-4 w-full" }}
+          />
+        </div>
       </div>
-      <div className="flex items-center gap-x-2 mt-16">
-        <Button variant="destructive">Clear Filters</Button>
+      <div className="flex items-center gap-x-2 mt-16 justify-end">
+        <Button variant="destructive" className="bg-red-500 hover:bg-red-600">
+          Clear Filters
+        </Button>
+        <Button className="bg-green-400 hover:bg-green-500">
+          Apply Filters
+        </Button>
       </div>
     </div>
   );
