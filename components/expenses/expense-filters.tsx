@@ -104,8 +104,8 @@ const ExtraFiltersModalContent = ({
 }) => {
   return (
     <div>
-      <div className="flex flex-col gap-y-3 my-4">
-        <div className="flex items-center gap-x-4">
+      <div className="flex flex-col gap-y-3">
+        <div className="flex items-center gap-x-4 mt-4 mb-9">
           <Label className="text-xs text-center leading-4 font-medium">
             Adjust Amount Range
           </Label>
@@ -125,8 +125,30 @@ const ExtraFiltersModalContent = ({
             customStyles={{ wrapper: "pr-4 w-full" }}
           />
         </div>
+        <div className="flex items-center gap-x-4">
+          <div className="space-y-2 w-1/2">
+            <Label className="font-medium text-xs">Min Amount</Label>
+            <Input
+              placeholder="Min Amount"
+              value={filters.minAmount}
+              onChange={(e) =>
+                handleSetFilterByParam("minAmount", e.target.value)
+              }
+            />
+          </div>
+          <div className="space-y-2 w-1/2">
+            <Label className="font-medium text-xs">Max Amount</Label>
+            <Input
+              placeholder="Max Amount"
+              value={filters.maxAmount}
+              onChange={(e) =>
+                handleSetFilterByParam("maxAmount", e.target.value)
+              }
+            />
+          </div>
+        </div>
       </div>
-      <div className="flex items-center gap-x-2 mt-16 justify-end">
+      <div className="flex items-center gap-x-2 justify-end">
         <Button variant="destructive" className="bg-red-500 hover:bg-red-600">
           Clear Filters
         </Button>
