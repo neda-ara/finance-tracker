@@ -105,4 +105,6 @@ export const IMAGE_PATHS = {
   MONTH: "/images/icons/month.png",
   "30DAYS": "/images/icons/30-days.png",
   NO_RESULTS: "/images/icons/no-results.png",
+  EXPENSE_TITLE: "/images/creative/cat-counting-money.png",
+  INCOME_TITLE: "/images/creative/make-it-rain-cat.png",
 };
