@@ -3,12 +3,17 @@
 import { Button } from "../ui/button";
 import { DatePicker } from "../common/date-picker";
 import { Dispatch, SetStateAction, useState } from "react";
+import {
+  EXPENSE_CATEGORIES,
+  EXPENSE_CATEGORY_ICONS_BASE_PATH,
+} from "@/lib/constants/constants";
 import { ExpenseFiltersType } from "@/lib/actions/types";
 import { FunnelPlus, Search } from "lucide-react";
 import { Input } from "../ui/input";
-import { Modal } from "../common/modal";
-import { RangeSlider } from "../ui/slider";
 import { Label } from "../ui/label";
+import { Modal } from "../common/modal";
+import { MultiSelect } from "../common/multi-select";
+import { RangeSlider } from "../ui/slider";
 
 export const ExpenseFilters = ({
   filters,
@@ -126,7 +131,7 @@ const ExtraFiltersModalContent = ({
           />
         </div>
         <div className="flex items-center gap-x-4">
-          <div className="space-y-2 w-1/2">
+          <div className="space-y-1 w-1/2">
             <Label className="font-medium text-xs">Min Amount</Label>
             <Input
               placeholder="Min Amount"
@@ -136,7 +141,7 @@ const ExtraFiltersModalContent = ({
               }
             />
           </div>
-          <div className="space-y-2 w-1/2">
+          <div className="space-y-1 w-1/2">
             <Label className="font-medium text-xs">Max Amount</Label>
             <Input
               placeholder="Max Amount"
@@ -147,8 +152,24 @@ const ExtraFiltersModalContent = ({
             />
           </div>
         </div>
+        <div className="flex items-center gap-x-4">
+          <div className="space-y-1 w-full">
+            <Label className="font-medium text-xs">Select Categories</Label>
+            <MultiSelect
+              value={filters.categories}
+              onChange={(val) =>
+                setFilters((prev) => ({ ...prev, categories: val }))
+              }
+              options={EXPENSE_CATEGORIES.map((item) => ({
+                label: item.title,
+                value: item.title,
+                icon: `${EXPENSE_CATEGORY_ICONS_BASE_PATH}${item?.iconPath}`,
+              }))}
+            />
+          </div>
+        </div>
       </div>
-      <div className="flex items-center gap-x-2 justify-end">
+      <div className="flex items-center gap-x-2 justify-end mt-6">
         <Button variant="destructive" className="bg-red-500 hover:bg-red-600">
           Clear Filters
         </Button>
