@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { ChevronDownIcon } from "lucide-react";
 import { DatePickerProps } from "@/lib/actions/types";
+import { format } from "date-fns";
 import { Label } from "@/components/ui/label";
 import {
   Popover,
@@ -40,7 +41,7 @@ export function DatePicker({
             variant="outline"
             className="w-36 justify-between font-normal"
           >
-            {value ? value.toLocaleDateString() : "Select date"}
+            {value ? format(value, "dd/MM/yyyy") : "Select date"}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>

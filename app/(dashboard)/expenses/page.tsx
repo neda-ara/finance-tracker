@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function ExpensesPage() {
   return (
     <div className="relative flex flex-col justify-center pt-4 px-6 gap-y-6">
-      <div className="absolute -top-2 left-88 opacity-75">
+      <div className="absolute -top-2 left-88 opacity-85">
         <Image
           alt="cat"
           src={IMAGE_PATHS.EXPENSE_TITLE}

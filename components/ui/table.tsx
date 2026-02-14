@@ -12,7 +12,7 @@ function Table({ containerStyles, className, ...props }: TableProps) {
     <div
       data-slot="table-container"
       className={cn(
-        "relative w-full overflow-x-auto overflow-y-scroll scroll-smooth",
+        "relative w-full overflow-x-auto overflow-y-scroll scroll-smooth custom-scrollbar",
         containerStyles
       )}
     >
