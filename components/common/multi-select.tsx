@@ -54,36 +54,44 @@ export function MultiSelect({
         </button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
+      <PopoverContent
+        className="w-(--radix-popover-trigger-width) p-0"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
         <Command>
-          <CommandList>
-            {options.map((option) => {
-              const selected = value.includes(option.value);
+          <div
+            className="max-h-75 overflow-y-scroll overflow-x-hidden custom-scrollbar"
+            onWheel={(e) => e.stopPropagation()}
+          >
+            <CommandList>
+              {options.map((option) => {
+                const selected = value.includes(option.value);
 
-              return (
-                <CommandItem
-                  key={option.value}
-                  onSelect={() => toggle(option.value)}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-2">
-                    {option.icon && (
-                      <Image
-                        src={option.icon}
-                        alt={option.label}
-                        className="h-4 w-4"
-                        height={100}
-                        width={100}
-                      />
-                    )}
-                    {option.label}
-                  </div>
+                return (
+                  <CommandItem
+                    key={option.value}
+                    onSelect={() => toggle(option.value)}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      {option.icon && (
+                        <Image
+                          src={option.icon}
+                          alt={option.label}
+                          className="h-4 w-4"
+                          height={100}
+                          width={100}
+                        />
+                      )}
+                      {option.label}
+                    </div>
 
-                  {selected && <Check className="size-4" />}
-                </CommandItem>
-              );
-            })}
-          </CommandList>
+                    {selected && <Check className="size-4" />}
+                  </CommandItem>
+                );
+              })}
+            </CommandList>
+          </div>
         </Command>
       </PopoverContent>
     </Popover>
