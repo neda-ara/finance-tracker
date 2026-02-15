@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { DatePicker } from "../common/date-picker";
 import { Dispatch, SetStateAction, useState } from "react";
 import {
+  CURRENCIES,
   EXPENSE_CATEGORIES,
   EXPENSE_CATEGORY_ICONS_BASE_PATH,
 } from "@/lib/constants/constants";
@@ -151,6 +152,19 @@ const ExtraFiltersModalContent = ({
               }
             />
           </div>
+          <div className="space-y-1 w-full">
+            <Label className="font-medium text-xs">Select Currencies</Label>
+            <MultiSelect
+              value={filters.currencies}
+              onChange={(val) =>
+                setFilters((prev) => ({ ...prev, currencies: val }))
+              }
+              options={Object.values(CURRENCIES).map((currency) => ({
+                value: currency.code,
+                label: `${currency.symbol} ${currency.name}`,
+              }))}
+            />
+          </div>
         </div>
         <div className="flex items-center gap-x-4">
           <div className="space-y-1 w-full">
@@ -168,6 +182,7 @@ const ExtraFiltersModalContent = ({
             />
           </div>
         </div>
+        <div className="flex items-center gap-x-4"></div>
       </div>
       <div className="flex items-center gap-x-2 justify-end mt-6">
         <Button variant="destructive" className="bg-red-500 hover:bg-red-600">
