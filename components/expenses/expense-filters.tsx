@@ -132,7 +132,7 @@ const ExtraFiltersModalContent = ({
           />
         </div>
         <div className="flex items-center gap-x-4">
-          <div className="space-y-1 w-1/2">
+          <div className="space-y-1">
             <Label className="font-medium text-xs">Min Amount</Label>
             <Input
               placeholder="Min Amount"
@@ -142,7 +142,7 @@ const ExtraFiltersModalContent = ({
               }
             />
           </div>
-          <div className="space-y-1 w-1/2">
+          <div className="space-y-1">
             <Label className="font-medium text-xs">Max Amount</Label>
             <Input
               placeholder="Max Amount"
@@ -152,7 +152,7 @@ const ExtraFiltersModalContent = ({
               }
             />
           </div>
-          <div className="space-y-1 w-full">
+          <div className="space-y-1">
             <Label className="font-medium text-xs">Select Currencies</Label>
             <MultiSelect
               value={filters.currencies}
