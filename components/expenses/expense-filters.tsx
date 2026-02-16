@@ -15,6 +15,7 @@ import { Label } from "../ui/label";
 import { Modal } from "../common/modal";
 import { MultiSelect } from "../common/multi-select";
 import { RangeSlider } from "../ui/slider";
+import { sanitizeNumberInput } from "@/lib/utils/utils";
 
 export const ExpenseFilters = ({
   filters,
@@ -137,8 +138,18 @@ const ExtraFiltersModalContent = ({
             <Input
               placeholder="Min Amount"
               value={filters.minAmount}
+              min={0}
+              max={1000000}
               onChange={(e) =>
-                handleSetFilterByParam("minAmount", e.target.value)
+                handleSetFilterByParam(
+                  "minAmount",
+                  sanitizeNumberInput(
+                    e.target.value,
+                    0,
+                    1000000,
+                    Number(filters.maxAmount)
+                  )
+                )
               }
             />
           </div>
@@ -147,8 +158,13 @@ const ExtraFiltersModalContent = ({
             <Input
               placeholder="Max Amount"
               value={filters.maxAmount}
+              min={0}
+              max={1000000}
               onChange={(e) =>
-                handleSetFilterByParam("maxAmount", e.target.value)
+                handleSetFilterByParam(
+                  "maxAmount",
+                  sanitizeNumberInput(e.target.value, 0, 1000000)
+                )
               }
             />
           </div>
@@ -157,6 +173,7 @@ const ExtraFiltersModalContent = ({
               Select Currencies
             </Label>
             <MultiSelect
+              placeholder="Choose currencies..."
               value={filters.currencies}
               onChange={(val) =>
                 setFilters((prev) => ({ ...prev, currencies: val }))
@@ -172,6 +189,7 @@ const ExtraFiltersModalContent = ({
           <div className="space-y-1 w-full">
             <Label className="font-medium text-xs">Select Categories</Label>
             <MultiSelect
+              placeholder="Choose categories..."
               value={filters.categories}
               onChange={(val) =>
                 setFilters((prev) => ({ ...prev, categories: val }))

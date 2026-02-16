@@ -73,7 +73,7 @@ export function MultiSelect({
       <PopoverTrigger asChild>
         <button
           ref={triggerRef}
-          className="flex h-10 w-full items-center overflow-hidden rounded-md border px-3 py-2 text-sm"
+          className="flex h-9 w-full items-center overflow-hidden rounded-md border px-3 my-0! text-sm cursor-pointer"
         >
           {selectedOptions.length === 0 ? (
             <span className="text-muted-foreground truncate">
@@ -114,7 +114,7 @@ export function MultiSelect({
       >
         <Command>
           <div
-            className="max-h-75 overflow-y-scroll overflow-x-hidden custom-scrollbar"
+            className="max-h-75 overflow-y-scroll overflow-x-hidden custom-scrollbar px-1 py-1"
             onWheel={(e) => e.stopPropagation()}
           >
             <CommandList>
@@ -125,7 +125,7 @@ export function MultiSelect({
                   <CommandItem
                     key={option.value}
                     onSelect={() => toggle(option.value)}
-                    className="flex items-center justify-between"
+                    className="flex items-center justify-between cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
                       {option.icon && (

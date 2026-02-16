@@ -6,6 +6,26 @@ export const normalizeNumber = (value: string) => {
   return num.toFixed(2);
 };
 
+export const sanitizeNumberInput = (
+  value: string,
+  min = 0,
+  max = 1_000_000,
+  clampToOther?: number
+) => {
+  const raw = value.replace(/\D/g, "");
+  let num = Number(raw || 0);
+
+  if (Number.isNaN(num)) {
+    num = 0;
+  }
+  if (clampToOther !== undefined) {
+    num = Math.min(num, clampToOther);
+  }
+
+  num = Math.max(min, Math.min(num, max));
+  return num.toString();
+};
+
 export const formatDateForDisplay = (date: Date) => {
   return new Intl.DateTimeFormat("en-US", {
     weekday: "short",
