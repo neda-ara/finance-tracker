@@ -1,7 +1,7 @@
 import { Check } from "lucide-react";
 import { Command, CommandItem, CommandList } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 
 type MultiSelectProps = {
@@ -25,74 +25,79 @@ export function MultiSelect({
     }
   };
 
-  const selectedOptions = options.filter((o) => value.includes(o.value));
+  const selectedOptions = useMemo(
+    () =>
+      value
+        .map((val) => options.find((o) => o.value === val))
+        .filter(Boolean) as typeof options,
+    [value, options]
+  );
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [visibleCount, setVisibleCount] = useState<number>(options.length);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const measurementRef = useRef<HTMLDivElement>(null);
+  const [visibleCount, setVisibleCount] = useState<number>(
+    selectedOptions.length
+  );
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+  useLayoutEffect(() => {
+    const trigger = triggerRef.current;
+    const measurementContainer = measurementRef.current;
 
-    const calculate = () => {
-      const containerWidth = container.offsetWidth;
-      let usedWidth = 0;
-      let count = 0;
+    if (!trigger || !measurementContainer) return;
 
-      const children = Array.from(container.children) as HTMLElement[];
+    const availableWidth = trigger.offsetWidth - 24;
 
-      for (const child of children) {
-        const childWidth = child.offsetWidth + 4; // gap compensation
-        if (usedWidth + childWidth > containerWidth) break;
-        usedWidth += childWidth;
-        count++;
-      }
+    let usedWidth = 0;
+    let count = 0;
 
+    const chipElements = Array.from(
+      measurementContainer.children
+    ) as HTMLElement[];
+
+    for (const chip of chipElements) {
+      const chipWidth = chip.offsetWidth + 4;
+
+      if (usedWidth + chipWidth > availableWidth) break;
+
+      usedWidth += chipWidth;
+      count++;
+    }
+
+    requestAnimationFrame(() => {
       setVisibleCount(count);
-    };
-
-    const resizeObserver = new ResizeObserver(calculate);
-    resizeObserver.observe(container);
-
-    calculate();
-
-    return () => resizeObserver.disconnect();
+    });
   }, [selectedOptions]);
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="flex h-10 w-full items-center overflow-hidden rounded-md border px-3 py-2 text-sm">
+        <button
+          ref={triggerRef}
+          className="flex h-10 w-full items-center overflow-hidden rounded-md border px-3 py-2 text-sm"
+        >
           {selectedOptions.length === 0 ? (
             <span className="text-muted-foreground truncate">
               {placeholder}
             </span>
           ) : (
-            <div
-              ref={containerRef}
-              className="flex w-full items-center gap-1 overflow-hidden"
-            >
-              {selectedOptions.map((option, index) => {
-                if (index >= visibleCount) return null;
-
-                return (
-                  <span
-                    key={option.value}
-                    className="bg-primary/10 text-primary flex shrink-0 items-center gap-1 rounded px-2 py-0.5 text-xs"
-                  >
-                    {option.icon && (
-                      <Image
-                        src={option.icon}
-                        alt={option.label}
-                        className="h-3 w-3"
-                        height={100}
-                        width={100}
-                      />
-                    )}
-                    <span className="whitespace-nowrap">{option.label}</span>
-                  </span>
-                );
-              })}
+            <div className="flex w-full items-center gap-1 overflow-hidden">
+              {selectedOptions.slice(0, visibleCount).map((option) => (
+                <span
+                  key={option.value}
+                  className="bg-primary/10 text-primary flex shrink-0 items-center gap-1 rounded px-2 py-0.5 text-xs whitespace-nowrap"
+                >
+                  {option.icon && (
+                    <Image
+                      src={option.icon}
+                      alt={option.label}
+                      className="h-3 w-3"
+                      height={100}
+                      width={100}
+                    />
+                  )}
+                  {option.label}
+                </span>
+              ))}
 
               {visibleCount < selectedOptions.length && (
                 <span className="text-muted-foreground shrink-0 text-xs">
@@ -143,6 +148,28 @@ export function MultiSelect({
           </div>
         </Command>
       </PopoverContent>
+      <div
+        ref={measurementRef}
+        className="absolute invisible whitespace-nowrap pointer-events-none"
+      >
+        {selectedOptions.map((option) => (
+          <span
+            key={option.value}
+            className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs whitespace-nowrap"
+          >
+            {option.icon && (
+              <Image
+                src={option.icon}
+                alt={option.label}
+                className="h-3 w-3"
+                height={100}
+                width={100}
+              />
+            )}
+            {option.label}
+          </span>
+        ))}
+      </div>
     </Popover>
   );
 }

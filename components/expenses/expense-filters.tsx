@@ -131,7 +131,7 @@ const ExtraFiltersModalContent = ({
             customStyles={{ wrapper: "pr-4 w-full" }}
           />
         </div>
-        <div className="flex items-center gap-x-4">
+        <div className="flex items-center gap-x-2">
           <div className="space-y-1">
             <Label className="font-medium text-xs">Min Amount</Label>
             <Input
@@ -152,8 +152,10 @@ const ExtraFiltersModalContent = ({
               }
             />
           </div>
-          <div className="space-y-1">
-            <Label className="font-medium text-xs">Select Currencies</Label>
+          <div className="space-y-1 w-full">
+            <Label className="font-medium text-xs min-w-fit">
+              Select Currencies
+            </Label>
             <MultiSelect
               value={filters.currencies}
               onChange={(val) =>

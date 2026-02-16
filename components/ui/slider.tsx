@@ -101,7 +101,7 @@ function Slider({
                   "mx-auto w-2 h-2 bg-primary",
                   valuePosition === "top"
                     ? "-mt-1 rotate-45"
-                    : "-mt-7 rotate-225"
+                    : "-mt-6.5 rotate-225"
                 )}
               />
             </div>
