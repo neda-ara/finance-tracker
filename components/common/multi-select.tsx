@@ -55,7 +55,7 @@ export function MultiSelect({
     ) as HTMLElement[];
 
     for (const chip of chipElements) {
-      const chipWidth = chip.offsetWidth + 4;
+      const chipWidth = chip.offsetWidth + 4.5;
 
       if (usedWidth + chipWidth > availableWidth) break;
 

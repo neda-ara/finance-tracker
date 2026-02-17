@@ -7,6 +7,9 @@ import {
   CURRENCIES,
   EXPENSE_CATEGORIES,
   EXPENSE_CATEGORY_ICONS_BASE_PATH,
+  PAYMENT_MODE,
+  SATISFACTION_ICONS_BASE_PATH,
+  SATISFACTION_RATINGS,
 } from "@/lib/constants/constants";
 import { ExpenseFiltersType } from "@/lib/actions/types";
 import { FunnelPlus, Search } from "lucide-react";
@@ -169,9 +172,7 @@ const ExtraFiltersModalContent = ({
             />
           </div>
           <div className="space-y-1 w-full">
-            <Label className="font-medium text-xs min-w-fit">
-              Select Currencies
-            </Label>
+            <Label className="font-medium text-xs min-w-fit">Currencies</Label>
             <MultiSelect
               placeholder="Choose currencies..."
               value={filters.currencies}
@@ -187,7 +188,7 @@ const ExtraFiltersModalContent = ({
         </div>
         <div className="flex items-center gap-x-4">
           <div className="space-y-1 w-full">
-            <Label className="font-medium text-xs">Select Categories</Label>
+            <Label className="font-medium text-xs">Categories</Label>
             <MultiSelect
               placeholder="Choose categories..."
               value={filters.categories}
@@ -198,6 +199,34 @@ const ExtraFiltersModalContent = ({
                 label: item.title,
                 value: item.title,
                 icon: `${EXPENSE_CATEGORY_ICONS_BASE_PATH}${item?.iconPath}`,
+              }))}
+            />
+          </div>
+        </div>
+        <div className="flex items-center gap-x-4">
+          <div className="space-y-1 w-full max-w-36">
+            <Label className="font-medium text-xs">Payment Mode(s)</Label>
+            <MultiSelect
+              placeholder="Choose payment modes..."
+              value={filters.categories}
+              onChange={(val) =>
+                setFilters((prev) => ({ ...prev, categories: val }))
+              }
+              options={PAYMENT_MODE}
+            />
+          </div>
+          <div className="space-y-1 w-full">
+            <Label className="font-medium text-xs">Satisfaction Level(s)</Label>
+            <MultiSelect
+              placeholder="Choose satisfaction levels..."
+              value={filters.categories}
+              onChange={(val) =>
+                setFilters((prev) => ({ ...prev, categories: val }))
+              }
+              options={Object.values(SATISFACTION_RATINGS).map((rating) => ({
+                value: rating.title,
+                label: rating.title,
+                icon: `${SATISFACTION_ICONS_BASE_PATH}${rating?.iconPath}`,
               }))}
             />
           </div>
