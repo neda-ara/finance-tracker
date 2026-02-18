@@ -35,22 +35,24 @@ import toast from "react-hot-toast";
 
 export const ExpenseGrid = () => {
   const [action, setAction] = useState<ActionConstant | undefined>();
-  const [filters, setFilters] = useState<ExpenseFiltersType>(() => {
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 3);
+  const [appliedFilters, setAppliedFilters] = useState<ExpenseFiltersType>(
+    () => {
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 3);
 
-    return {
-      description: "",
-      startDate: sixMonthsAgo,
-      endDate: new Date(),
-      minAmount: 0,
-      maxAmount: 500000,
-      categories: [],
-      currencies: [],
-      paymentModes: [],
-      satisfactionRatings: [],
-    };
-  });
+      return {
+        description: "",
+        startDate: sixMonthsAgo,
+        endDate: new Date(),
+        minAmount: 0,
+        maxAmount: 500000,
+        categories: [],
+        currencies: [],
+        paymentModes: [],
+        satisfactionRatings: [],
+      };
+    }
+  );
   const [pageNo, setPageNo] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_VALUES.PAGE_SIZE);
   const [quickActionData, setQuickActionData] = useState<Expense | undefined>();
@@ -60,7 +62,7 @@ export const ExpenseGrid = () => {
     page: pageNo,
     pageSize,
     searchKey: "",
-    filters,
+    filters: appliedFilters,
   });
 
   const handleDeleteExpense = async () => {
@@ -357,7 +359,7 @@ export const ExpenseGrid = () => {
           <Plus /> Add New Expense
         </Button>
       </div>
-      <ExpenseFilters filters={filters} setFilters={setFilters} />
+      <ExpenseFilters filters={appliedFilters} setFilters={setAppliedFilters} />
       <DataGrid
         data={query?.data?.data || []}
         columns={columns}
