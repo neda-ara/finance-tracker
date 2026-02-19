@@ -2,7 +2,7 @@
 
 import { Button } from "../ui/button";
 import { DatePicker } from "../common/date-picker";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   CURRENCIES,
   EXPENSE_CATEGORIES,
@@ -27,13 +27,17 @@ export const ExpenseFilters = ({
   filters: ExpenseFiltersType;
   setFilters: Dispatch<SetStateAction<ExpenseFiltersType>>;
 }) => {
+  const [draftFilters, setDraftFilters] = useState<ExpenseFiltersType>(filters);
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-  const handleOpenModal = () => setOpenModal(true);
+  const handleOpenModal = () => {
+    setDraftFilters(filters);
+    setOpenModal(true);
+  };
   const handleCloseModal = () => setOpenModal(false);
 
   const handleSetFilterByParam = (param: string, value: unknown) => {
-    setFilters((prev: ExpenseFiltersType) => ({
+    setDraftFilters((prev: ExpenseFiltersType) => ({
       ...prev,
       [param]: value,
     }));
@@ -63,13 +67,13 @@ export const ExpenseFilters = ({
             <DatePicker
               label="Start Date"
               labelPlacement="inside"
-              value={filters.startDate as Date}
+              value={draftFilters.startDate as Date}
               onChange={(e) => handleSetFilterByParam("startDate", e)}
             />
             <DatePicker
               label="End Date"
               labelPlacement="inside"
-              value={filters.endDate as Date}
+              value={draftFilters.endDate as Date}
               onChange={(e) => handleSetFilterByParam("endDate", e)}
             />
           </div>
@@ -85,10 +89,10 @@ export const ExpenseFilters = ({
         dialogTitle={"Choose More Filters"}
         dialogContent={
           <ExtraFiltersModalContent
-            filters={filters}
+            draftFilters={draftFilters}
             handleCloseModal={handleCloseModal}
             handleSetFilterByParam={handleSetFilterByParam}
-            setFilters={setFilters}
+            setDraftFilters={setDraftFilters}
           />
         }
         customStyles={{
@@ -102,15 +106,15 @@ export const ExpenseFilters = ({
 };
 
 const ExtraFiltersModalContent = ({
-  filters,
+  draftFilters,
   handleCloseModal,
   handleSetFilterByParam,
-  setFilters,
+  setDraftFilters,
 }: {
-  filters: ExpenseFiltersType;
+  draftFilters: ExpenseFiltersType;
   handleCloseModal: () => void;
   handleSetFilterByParam: (param: string, value: unknown) => void;
-  setFilters: Dispatch<SetStateAction<ExpenseFiltersType>>;
+  setDraftFilters: Dispatch<SetStateAction<ExpenseFiltersType>>;
 }) => {
   return (
     <div>
@@ -124,9 +128,9 @@ const ExtraFiltersModalContent = ({
             max={1000000}
             step={1000}
             valuePosition="bottom"
-            value={[filters.minAmount, filters.maxAmount]}
+            value={[draftFilters.minAmount, draftFilters.maxAmount]}
             onChange={([min, max]) =>
-              setFilters((prev) => ({
+              setDraftFilters((prev) => ({
                 ...prev,
                 minAmount: min,
                 maxAmount: max,
@@ -140,7 +144,7 @@ const ExtraFiltersModalContent = ({
             <Label className="font-medium text-xs">Min Amount</Label>
             <Input
               placeholder="Min Amount"
-              value={filters.minAmount}
+              value={draftFilters.minAmount}
               min={0}
               max={1000000}
               onChange={(e) =>
@@ -150,7 +154,7 @@ const ExtraFiltersModalContent = ({
                     e.target.value,
                     0,
                     1000000,
-                    Number(filters.maxAmount)
+                    Number(draftFilters.maxAmount)
                   )
                 )
               }
@@ -160,7 +164,7 @@ const ExtraFiltersModalContent = ({
             <Label className="font-medium text-xs">Max Amount</Label>
             <Input
               placeholder="Max Amount"
-              value={filters.maxAmount}
+              value={draftFilters.maxAmount}
               min={0}
               max={1000000}
               onChange={(e) =>
@@ -175,9 +179,9 @@ const ExtraFiltersModalContent = ({
             <Label className="font-medium text-xs min-w-fit">Currencies</Label>
             <MultiSelect
               placeholder="Choose currencies..."
-              value={filters.currencies}
+              value={draftFilters.currencies}
               onChange={(val) =>
-                setFilters((prev) => ({ ...prev, currencies: val }))
+                setDraftFilters((prev) => ({ ...prev, currencies: val }))
               }
               options={Object.values(CURRENCIES).map((currency) => ({
                 value: currency.code,
@@ -191,9 +195,9 @@ const ExtraFiltersModalContent = ({
             <Label className="font-medium text-xs">Categories</Label>
             <MultiSelect
               placeholder="Choose categories..."
-              value={filters.categories}
+              value={draftFilters.categories}
               onChange={(val) =>
-                setFilters((prev) => ({ ...prev, categories: val }))
+                setDraftFilters((prev) => ({ ...prev, categories: val }))
               }
               options={EXPENSE_CATEGORIES.map((item) => ({
                 label: item.title,
@@ -208,9 +212,9 @@ const ExtraFiltersModalContent = ({
             <Label className="font-medium text-xs">Payment Mode(s)</Label>
             <MultiSelect
               placeholder="Choose payment modes..."
-              value={filters.categories}
+              value={draftFilters.categories}
               onChange={(val) =>
-                setFilters((prev) => ({ ...prev, categories: val }))
+                setDraftFilters((prev) => ({ ...prev, categories: val }))
               }
               options={PAYMENT_MODE}
             />
@@ -219,9 +223,9 @@ const ExtraFiltersModalContent = ({
             <Label className="font-medium text-xs">Satisfaction Level(s)</Label>
             <MultiSelect
               placeholder="Choose satisfaction levels..."
-              value={filters.categories}
+              value={draftFilters.categories}
               onChange={(val) =>
-                setFilters((prev) => ({ ...prev, categories: val }))
+                setDraftFilters((prev) => ({ ...prev, categories: val }))
               }
               options={Object.values(SATISFACTION_RATINGS).map((rating) => ({
                 value: rating.title,
