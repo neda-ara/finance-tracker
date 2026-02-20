@@ -2,7 +2,7 @@
 
 import { Button } from "../ui/button";
 import { DatePicker } from "../common/date-picker";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import {
   CURRENCIES,
   EXPENSE_CATEGORIES,
@@ -37,10 +37,37 @@ export const ExpenseFilters = ({
   const handleCloseModal = () => setOpenModal(false);
 
   const handleSetFilterByParam = (param: string, value: unknown) => {
+    setFilters((prev: ExpenseFiltersType) => ({
+      ...prev,
+      [param]: value,
+    }));
+  };
+
+  const handleSetDraftFilterByParam = (param: string, value: unknown) => {
     setDraftFilters((prev: ExpenseFiltersType) => ({
       ...prev,
       [param]: value,
     }));
+  };
+
+  const handleClearFilters = () => {
+    setDraftFilters({
+      description: "",
+      startDate: new Date(),
+      endDate: new Date(),
+      minAmount: 0,
+      maxAmount: 500000,
+      categories: [],
+      currencies: [],
+      paymentModes: [],
+      satisfactionRatings: [],
+    });
+    handleCloseModal();
+  };
+
+  const handleApplyFilters = () => {
+    setFilters(draftFilters);
+    handleCloseModal();
   };
 
   console.log({ filters });
@@ -67,13 +94,13 @@ export const ExpenseFilters = ({
             <DatePicker
               label="Start Date"
               labelPlacement="inside"
-              value={draftFilters.startDate as Date}
+              value={filters.startDate as Date}
               onChange={(e) => handleSetFilterByParam("startDate", e)}
             />
             <DatePicker
               label="End Date"
               labelPlacement="inside"
-              value={draftFilters.endDate as Date}
+              value={filters.endDate as Date}
               onChange={(e) => handleSetFilterByParam("endDate", e)}
             />
           </div>
@@ -90,8 +117,9 @@ export const ExpenseFilters = ({
         dialogContent={
           <ExtraFiltersModalContent
             draftFilters={draftFilters}
-            handleCloseModal={handleCloseModal}
-            handleSetFilterByParam={handleSetFilterByParam}
+            handleApplyFilters={handleApplyFilters}
+            handleClearFilters={handleClearFilters}
+            handleSetDraftFilterByParam={handleSetDraftFilterByParam}
             setDraftFilters={setDraftFilters}
           />
         }
@@ -107,13 +135,15 @@ export const ExpenseFilters = ({
 
 const ExtraFiltersModalContent = ({
   draftFilters,
-  handleCloseModal,
-  handleSetFilterByParam,
+  handleApplyFilters,
+  handleClearFilters,
+  handleSetDraftFilterByParam,
   setDraftFilters,
 }: {
   draftFilters: ExpenseFiltersType;
-  handleCloseModal: () => void;
-  handleSetFilterByParam: (param: string, value: unknown) => void;
+  handleApplyFilters: () => void;
+  handleClearFilters: () => void;
+  handleSetDraftFilterByParam: (param: string, value: unknown) => void;
   setDraftFilters: Dispatch<SetStateAction<ExpenseFiltersType>>;
 }) => {
   return (
@@ -148,7 +178,7 @@ const ExtraFiltersModalContent = ({
               min={0}
               max={1000000}
               onChange={(e) =>
-                handleSetFilterByParam(
+                handleSetDraftFilterByParam(
                   "minAmount",
                   sanitizeNumberInput(
                     e.target.value,
@@ -168,7 +198,7 @@ const ExtraFiltersModalContent = ({
               min={0}
               max={1000000}
               onChange={(e) =>
-                handleSetFilterByParam(
+                handleSetDraftFilterByParam(
                   "maxAmount",
                   sanitizeNumberInput(e.target.value, 0, 1000000)
                 )
@@ -212,9 +242,9 @@ const ExtraFiltersModalContent = ({
             <Label className="font-medium text-xs">Payment Mode(s)</Label>
             <MultiSelect
               placeholder="Choose payment modes..."
-              value={draftFilters.categories}
+              value={draftFilters.paymentModes}
               onChange={(val) =>
-                setDraftFilters((prev) => ({ ...prev, categories: val }))
+                setDraftFilters((prev) => ({ ...prev, paymentModes: val }))
               }
               options={PAYMENT_MODE}
             />
@@ -225,25 +255,37 @@ const ExtraFiltersModalContent = ({
             </Label>
             <MultiSelect
               placeholder="Choose satisfaction levels..."
-              value={draftFilters.categories}
+              value={draftFilters.satisfactionRatings}
               onChange={(val) =>
-                setDraftFilters((prev) => ({ ...prev, categories: val }))
+                setDraftFilters((prev) => ({
+                  ...prev,
+                  satisfactionRatings: val,
+                }))
               }
-              options={Object.values(SATISFACTION_RATINGS).map((rating) => ({
-                value: rating.title,
-                label: rating.title,
-                icon: `${SATISFACTION_ICONS_BASE_PATH}${rating?.iconPath}`,
-              }))}
+              options={Object.entries(SATISFACTION_RATINGS).map(
+                ([key, rating]) => ({
+                  value: String(key),
+                  label: rating.title,
+                  icon: `${SATISFACTION_ICONS_BASE_PATH}${rating.iconPath}`,
+                })
+              )}
             />
           </div>
         </div>
         <div className="flex items-center gap-x-4"></div>
       </div>
       <div className="flex items-center gap-x-2 justify-end mt-6">
-        <Button variant="destructive" className="bg-red-500 hover:bg-red-600">
+        <Button
+          variant="destructive"
+          className="bg-red-500 hover:bg-red-600"
+          onClick={handleClearFilters}
+        >
           Clear Filters
         </Button>
-        <Button className="bg-green-400 hover:bg-green-500">
+        <Button
+          className="bg-green-400 hover:bg-green-500"
+          onClick={handleApplyFilters}
+        >
           Apply Filters
         </Button>
       </div>

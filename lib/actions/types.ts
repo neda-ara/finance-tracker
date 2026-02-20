@@ -101,7 +101,7 @@ export type ExpenseFiltersType = {
   categories: string[];
   currencies: string[];
   paymentModes: string[];
-  satisfactionRatings: number[];
+  satisfactionRatings: string[];
 };
 
 export type DataGridProps<T> = {
