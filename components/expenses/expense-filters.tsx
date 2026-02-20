@@ -220,7 +220,9 @@ const ExtraFiltersModalContent = ({
             />
           </div>
           <div className="space-y-1 w-full">
-            <Label className="font-medium text-xs">Satisfaction Level(s)</Label>
+            <Label className="font-medium text-xs">
+              Was the spend worth it?
+            </Label>
             <MultiSelect
               placeholder="Choose satisfaction levels..."
               value={draftFilters.categories}
