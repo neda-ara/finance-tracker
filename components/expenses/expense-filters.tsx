@@ -51,9 +51,12 @@ export const ExpenseFilters = ({
   };
 
   const handleClearFilters = () => {
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
     const resetValues = {
       description: "",
-      startDate: new Date(),
+      startDate: sixMonthsAgo,
       endDate: new Date(),
       minAmount: 0,
       maxAmount: 500000,
@@ -72,15 +75,13 @@ export const ExpenseFilters = ({
     handleCloseModal();
   };
 
-  console.log({ filters });
-
   return (
     <>
       <div className="w-full flex items-center justify-between my-8">
         {/* SEARCHBAR */}
         <div className="relative w-72">
           <div className="bg-accent absolute left-[1.1px] top-[0.625px] rounded-tl-[7px] rounded-bl-[7px] flex items-center justify-center h-8.5 w-10">
-            <Search className=" w-5 h-5" />
+            <Search className="w-5 h-5" />
           </div>
           <Input
             placeholder="Search by description"

@@ -38,7 +38,7 @@ export const ExpenseGrid = () => {
   const [appliedFilters, setAppliedFilters] = useState<ExpenseFiltersType>(
     () => {
       const sixMonthsAgo = new Date();
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 3);
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
       return {
         description: "",
@@ -372,7 +372,8 @@ export const ExpenseGrid = () => {
           onPageSizeChange: handlePageSizeChange,
         }}
         customStyles={{
-          tableContainerStyles: "max-h-90 min-h-90",
+          gridWrapperStyles: "min-h-90",
+          tableContainerStyles: "max-h-90",
         }}
       />
       <Modal

@@ -37,6 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Spinner } from "../ui/spinner";
 import {
   Table,
   TableBody,
@@ -52,7 +53,6 @@ import {
 } from "@/components/ui/tooltip";
 import { useState } from "react";
 import Image from "next/image";
-import { Spinner } from "../ui/spinner";
 
 export function createActionsColumn<T>(actions: RowAction<T>[]): ColumnDef<T> {
   return {
@@ -125,7 +125,12 @@ export function DataGrid<T>({
 
   return (
     <div className="w-full">
-      <div className="overflow-hidden rounded-md border">
+      <div
+        className={cn(
+          "overflow-hidden rounded-md border",
+          customStyles?.gridWrapperStyles
+        )}
+      >
         <Table
           containerStyles={customStyles?.tableContainerStyles}
           className={cn(customStyles?.tableContainerStyles)}
