@@ -51,7 +51,7 @@ export const ExpenseFilters = ({
   };
 
   const handleClearFilters = () => {
-    setDraftFilters({
+    const resetValues = {
       description: "",
       startDate: new Date(),
       endDate: new Date(),
@@ -61,7 +61,9 @@ export const ExpenseFilters = ({
       currencies: [],
       paymentModes: [],
       satisfactionRatings: [],
-    });
+    };
+    setDraftFilters(resetValues);
+    setFilters(resetValues);
     handleCloseModal();
   };
 
