@@ -4,6 +4,7 @@ import {
   createExpense,
   deleteExpense,
   fetchExpenses,
+  fetchExpenseSummary,
   updateExpense,
 } from "@/actions/dashboard/expense";
 import { EXPENSE_CLIENT_QUERY_KEY } from "@/lib/constants/query-keys";
@@ -18,7 +19,19 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 export function useExpenses(params: GetExpensesRequest) {
   const queryClient = useQueryClient();
 
-  const query = useQuery<PaginatedResult<Expense, ExpenseSummary>>({
+  const invalidateExpenses = () => {
+    queryClient.invalidateQueries({
+      queryKey: [EXPENSE_CLIENT_QUERY_KEY],
+    });
+  };
+
+  const invalidateSummary = () => {
+    queryClient.invalidateQueries({
+      queryKey: [EXPENSE_CLIENT_QUERY_KEY, "summary"],
+    });
+  };
+
+  const query = useQuery<PaginatedResult<Expense>>({
     queryKey: [
       EXPENSE_CLIENT_QUERY_KEY,
       params.page,
@@ -53,31 +66,45 @@ export function useExpenses(params: GetExpensesRequest) {
     placeholderData: (previousData) => previousData,
   });
 
+  const summaryQuery = useQuery<ExpenseSummary>({
+    queryKey: [EXPENSE_CLIENT_QUERY_KEY, "summary"],
+    queryFn: async () => {
+      const resp = await fetchExpenseSummary();
+      if (!resp?.ok) {
+        throw new Error(resp.error.message);
+      }
+      return resp.data;
+    },
+    placeholderData: (previousData) => previousData,
+  });
+
   const mutations = {
     create: useMutation({
       mutationFn: createExpense,
       onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: [EXPENSE_CLIENT_QUERY_KEY],
-        });
+        invalidateExpenses();
+        invalidateSummary();
       },
     }),
     update: useMutation({
       mutationFn: updateExpense,
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [EXPENSE_CLIENT_QUERY_KEY] });
+        invalidateExpenses();
+        invalidateSummary();
       },
     }),
     delete: useMutation({
       mutationFn: deleteExpense,
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [EXPENSE_CLIENT_QUERY_KEY] });
+        invalidateExpenses();
+        invalidateSummary();
       },
     }),
   };
 
   return {
     query,
+    summaryQuery,
     mutations,
   };
 }

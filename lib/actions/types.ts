@@ -64,13 +64,12 @@ export type ExpenseSummary = {
   };
 };
 
-export type PaginatedResult<T, S = unknown> = {
+export type PaginatedResult<T> = {
   data: T[];
   pageNo: number;
   pageSize: number;
   totalRecords: number;
   totalPages: number;
-  summary?: S;
 };
 
 export type Expense = {

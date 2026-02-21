@@ -3,6 +3,7 @@
 import {
   ActionResult,
   Expense,
+  ExpenseFiltersType,
   ExpenseSummary,
   GetExpensesRequest,
   PaginatedResult,
@@ -13,7 +14,7 @@ import { getAuthenticatedSession, safeRunAction } from "@/lib/actions/helpers";
 
 export async function fetchExpenses(
   params: GetExpensesRequest
-): Promise<ActionResult<PaginatedResult<Expense, ExpenseSummary>>> {
+): Promise<ActionResult<PaginatedResult<Expense>>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
 
@@ -21,8 +22,14 @@ export async function fetchExpenses(
     const pageSize = params.pageSize ?? 25;
     const offset = (pageNo - 1) * pageSize;
 
+    const { whereSQL, values } = buildExpenseFilters(
+      session.userId,
+      params.filters
+    );
+
     const expenseList = await db.query<Expense>(
-      `SELECT
+      `
+      SELECT
         id,
         amount::float AS amount,
         currency,
@@ -33,43 +40,20 @@ export async function fetchExpenses(
         expense_date AS "expenseDate",
         created_at AS "createdAt"
       FROM expenses
-      WHERE user_id = $1
+      ${whereSQL}
       ORDER BY expense_date DESC, created_at DESC
-      LIMIT $2 OFFSET $3
-    `,
-      [session?.userId, pageSize, offset]
+      LIMIT ${pageSize}
+      OFFSET ${offset}
+      `,
+      values
     );
 
     const countRes = await db.query<{ count: string }>(
-      `SELECT COUNT(*)::text AS count FROM expenses WHERE user_id = $1`,
-      [session?.userId]
+      `SELECT COUNT(*)::text AS count FROM expenses ${whereSQL}`,
+      values
     );
 
-    const totalRecords = Number(countRes.rows[0].count);
-
-    const thisMonth = await db.query<{ currency: string; total: number }>(
-      `SELECT currency, SUM(amount)::float AS total
-      FROM expenses
-      WHERE user_id = $1
-        AND expense_date >= date_trunc('month', CURRENT_DATE)
-      GROUP BY currency
-      ORDER BY total DESC
-      LIMIT 1
-      `,
-      [session?.userId]
-    );
-
-    const last30Days = await db.query<{ currency: string; total: number }>(
-      `SELECT currency, SUM(amount)::float AS total
-      FROM expenses
-      WHERE user_id = $1
-        AND expense_date >= CURRENT_DATE - INTERVAL '30 days'
-      GROUP BY currency
-      ORDER BY total DESC
-      LIMIT 1
-      `,
-      [session?.userId]
-    );
+    const totalRecords = Number(countRes.rows[0]?.count ?? 0);
 
     return {
       data: expenseList.rows,
@@ -77,15 +61,51 @@ export async function fetchExpenses(
       pageSize,
       totalRecords,
       totalPages: Math.ceil(totalRecords / pageSize),
-      summary: {
-        spentThisMonth: thisMonth.rows[0] && {
-          currency: thisMonth.rows[0].currency,
-          amount: thisMonth.rows[0].total,
-        },
-        spentLast30Days: last30Days.rows[0] && {
-          currency: last30Days.rows[0].currency,
-          amount: last30Days.rows[0].total,
-        },
+    };
+  });
+}
+
+export async function fetchExpenseSummary(): Promise<
+  ActionResult<ExpenseSummary>
+> {
+  return safeRunAction(async () => {
+    const session = await getAuthenticatedSession();
+    const userId = session.userId;
+
+    const thisMonth = await db.query<{ currency: string; total: number }>(
+      `
+    SELECT currency, SUM(amount)::float AS total
+    FROM expenses
+    WHERE user_id = $1
+      AND expense_date >= date_trunc('month', CURRENT_DATE)
+    GROUP BY currency
+    ORDER BY total DESC
+    LIMIT 1
+    `,
+      [userId]
+    );
+
+    const last30Days = await db.query<{ currency: string; total: number }>(
+      `
+    SELECT currency, SUM(amount)::float AS total
+    FROM expenses
+    WHERE user_id = $1
+      AND expense_date >= CURRENT_DATE - INTERVAL '30 days'
+    GROUP BY currency
+    ORDER BY total DESC
+    LIMIT 1
+    `,
+      [userId]
+    );
+
+    return {
+      spentThisMonth: thisMonth.rows[0] && {
+        currency: thisMonth.rows[0].currency,
+        amount: thisMonth.rows[0].total,
+      },
+      spentLast30Days: last30Days.rows[0] && {
+        currency: last30Days.rows[0].currency,
+        amount: last30Days.rows[0].total,
       },
     };
   });
@@ -239,4 +259,59 @@ export async function deleteExpense(
       throw { message: "Requested expense not found" };
     }
   });
+}
+
+function buildExpenseFilters(userId: string, filters: ExpenseFiltersType) {
+  const conditions: string[] = ["user_id = $1"];
+  const values: unknown[] = [userId];
+
+  if (filters.description?.trim()) {
+    values.push(`%${filters.description.trim()}%`);
+    conditions.push(`description ILIKE $${values.length}`);
+  }
+
+  if (filters.startDate) {
+    values.push(filters.startDate);
+    conditions.push(`expense_date >= $${values.length}`);
+  }
+
+  if (filters.endDate) {
+    values.push(filters.endDate);
+    conditions.push(`expense_date <= $${values.length}`);
+  }
+
+  if (filters.minAmount != null) {
+    values.push(filters.minAmount);
+    conditions.push(`amount >= $${values.length}`);
+  }
+
+  if (filters.maxAmount != null) {
+    values.push(filters.maxAmount);
+    conditions.push(`amount <= $${values.length}`);
+  }
+
+  if (filters.categories?.length) {
+    values.push(filters.categories);
+    conditions.push(`category = ANY($${values.length})`);
+  }
+
+  if (filters.currencies?.length) {
+    values.push(filters.currencies);
+    conditions.push(`currency = ANY($${values.length})`);
+  }
+
+  if (filters.paymentModes?.length) {
+    values.push(filters.paymentModes);
+    conditions.push(`payment_mode = ANY($${values.length})`);
+  }
+
+  if (filters.satisfactionRatings?.length) {
+    values.push(filters.satisfactionRatings);
+    conditions.push(`satisfaction_rating = ANY($${values.length})`);
+  }
+
+  return {
+    whereSQL: `WHERE ${conditions.join(" AND ")}`,
+    values,
+  };
 }

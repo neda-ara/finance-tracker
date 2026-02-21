@@ -264,7 +264,7 @@ const ExtraFiltersModalContent = ({
               }
               options={Object.entries(SATISFACTION_RATINGS).map(
                 ([key, rating]) => ({
-                  value: String(key),
+                  value: key,
                   label: rating.title,
                   icon: `${SATISFACTION_ICONS_BASE_PATH}${rating.iconPath}`,
                 })

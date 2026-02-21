@@ -58,7 +58,7 @@ export const ExpenseGrid = () => {
   const [quickActionData, setQuickActionData] = useState<Expense | undefined>();
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-  const { query, mutations } = useExpenses({
+  const { query, summaryQuery, mutations } = useExpenses({
     page: pageNo,
     pageSize,
     searchKey: "",
@@ -282,7 +282,7 @@ export const ExpenseGrid = () => {
   };
 
   const deleteInProgress = mutations.delete.isPending;
-  const summaryData = useMemo(() => query?.data?.summary, [query?.data]);
+  const summaryData = useMemo(() => summaryQuery?.data, [summaryQuery]);
 
   return (
     <div>

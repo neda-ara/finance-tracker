@@ -4,6 +4,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { ChevronDownIcon } from "lucide-react";
+import { cn } from "@/lib/utils/shadcn-utils";
 import { DatePickerProps } from "@/lib/actions/types";
 import { format } from "date-fns";
 import { Label } from "@/components/ui/label";
@@ -26,11 +27,12 @@ export function DatePicker({
     <div className="relative flex flex-col gap-2">
       {label && (
         <Label
-          className={
+          className={cn(
+            "px-1",
             labelPlacement === "inside"
               ? "absolute -top-[8.25px] left-2 bg-white text-xs"
-              : "px-1 text-sm"
-          }
+              : "text-sm"
+          )}
         >
           {label}
         </Label>
