@@ -188,7 +188,7 @@ export function DataGrid<T>({
                         height={100}
                         width={100}
                         src={IMAGE_PATHS.NO_RESULTS}
-                        className="h-16 object-contain mb-2 mx-auto"
+                        className="h-20 object-contain mb-2 mx-auto"
                       />
                       No results found.
                     </>
