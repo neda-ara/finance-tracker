@@ -9,10 +9,12 @@ import {
   IMAGE_PATHS,
   SATISFACTION_ICONS_BASE_PATH,
   SATISFACTION_RATINGS,
+  VALIDATION,
 } from "@/lib/constants/constants";
 import {
   ActionConstant,
   Expense,
+  ExpenseFiltersType,
   ModalContent,
   SatisfactionRating,
 } from "@/lib/actions/types";
@@ -21,6 +23,7 @@ import { Button } from "../ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { createActionsColumn, DataGrid } from "../common/data-grid";
 import { DeleteConfirmationBody } from "../common/common";
+import { ExpenseFilters } from "./expense-filters";
 import { ExpenseForm } from "./expense-form";
 import { formatDateForDisplay, isStringEqual } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
@@ -32,16 +35,34 @@ import toast from "react-hot-toast";
 
 export const ExpenseGrid = () => {
   const [action, setAction] = useState<ActionConstant | undefined>();
+  const [appliedFilters, setAppliedFilters] = useState<ExpenseFiltersType>(
+    () => {
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+      return {
+        description: "",
+        startDate: sixMonthsAgo,
+        endDate: new Date(),
+        minAmount: 0,
+        maxAmount: 500000,
+        categories: [],
+        currencies: [],
+        paymentModes: [],
+        satisfactionRatings: [],
+      };
+    }
+  );
   const [pageNo, setPageNo] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_VALUES.PAGE_SIZE);
   const [quickActionData, setQuickActionData] = useState<Expense | undefined>();
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-  const { query, mutations } = useExpenses({
+  const { query, summaryQuery, mutations } = useExpenses({
     page: pageNo,
     pageSize,
     searchKey: "",
-    filters: {},
+    filters: appliedFilters,
   });
 
   const handleDeleteExpense = async () => {
@@ -261,7 +282,7 @@ export const ExpenseGrid = () => {
   };
 
   const deleteInProgress = mutations.delete.isPending;
-  const summaryData = useMemo(() => query?.data?.summary, [query?.data]);
+  const summaryData = useMemo(() => summaryQuery?.data, [summaryQuery]);
 
   return (
     <div>
@@ -273,17 +294,21 @@ export const ExpenseGrid = () => {
                 <p className="text-xs font-medium text-muted-foreground">
                   Spent this month
                 </p>
-                <p className="font-bold text-lg tracking-wider">
-                  <span className="mr-1">
-                    {
-                      CURRENCIES[
-                        summaryData?.spentThisMonth
-                          ?.currency as keyof typeof CURRENCIES
-                      ]?.symbol
-                    }
-                  </span>
-                  {summaryData?.spentThisMonth?.amount?.toLocaleString()}
-                </p>
+                {query.isPending ? (
+                  <div className="bg-gray-100 w-full h-7 animate-pulse transition-all rounded-md" />
+                ) : (
+                  <p className="font-bold text-lg tracking-wider">
+                    <span className="mr-1">
+                      {
+                        CURRENCIES[
+                          summaryData?.spentThisMonth
+                            ?.currency as keyof typeof CURRENCIES
+                        ]?.symbol
+                      }
+                    </span>
+                    {summaryData?.spentThisMonth?.amount?.toLocaleString()}
+                  </p>
+                )}
               </div>
               <Image
                 alt={"month-calendar"}
@@ -300,17 +325,21 @@ export const ExpenseGrid = () => {
                 <p className="text-xs font-medium text-muted-foreground">
                   Spent in last 30 days
                 </p>
-                <p className="font-bold text-lg tracking-wider">
-                  <span className="mr-1">
-                    {
-                      CURRENCIES[
-                        summaryData?.spentLast30Days
-                          ?.currency as keyof typeof CURRENCIES
-                      ]?.symbol
-                    }
-                  </span>
-                  {summaryData?.spentLast30Days?.amount.toLocaleString()}
-                </p>
+                {query.isPending ? (
+                  <div className="bg-gray-100 w-full h-7 animate-pulse transition-all rounded-md" />
+                ) : (
+                  <p className="font-bold text-lg tracking-wider">
+                    <span className="mr-1">
+                      {
+                        CURRENCIES[
+                          summaryData?.spentLast30Days
+                            ?.currency as keyof typeof CURRENCIES
+                        ]?.symbol
+                      }
+                    </span>
+                    {summaryData?.spentLast30Days?.amount.toLocaleString()}
+                  </p>
+                )}
               </div>
               <Image
                 alt={"month-calendar"}
@@ -330,9 +359,26 @@ export const ExpenseGrid = () => {
           <Plus /> Add New Expense
         </Button>
       </div>
+      <ExpenseFilters filters={appliedFilters} setFilters={setAppliedFilters} />
+      <DataGrid
+        data={query?.data?.data || []}
+        columns={columns}
+        isLoading={query?.isPending}
+        paginationParams={{
+          pageNo,
+          pageSize,
+          totalPages: query?.data?.totalPages ?? 0,
+          onPageChange: setPageNo,
+          onPageSizeChange: handlePageSizeChange,
+        }}
+        customStyles={{
+          gridWrapperStyles: "min-h-90",
+          tableContainerStyles: "max-h-90",
+        }}
+      />
       <Modal
         open={openModal}
-        onOpenChange={handleOpenModal}
+        onOpenChange={setOpenModal}
         dialogTitle={modalContentMap.get(action!)?.header}
         dialogContent={modalContentMap.get(action!)?.body}
         customStyles={{
@@ -361,21 +407,6 @@ export const ExpenseGrid = () => {
           </div>
         }
         showCloseButton={false}
-      />
-      <DataGrid
-        data={query?.data?.data || []}
-        columns={columns}
-        isLoading={query?.isPending}
-        paginationParams={{
-          pageNo,
-          pageSize,
-          totalPages: query?.data?.totalPages ?? 0,
-          onPageChange: setPageNo,
-          onPageSizeChange: handlePageSizeChange,
-        }}
-        customStyles={{
-          tableContainerStyles: "max-h-106 min-h-106",
-        }}
       />
     </div>
   );

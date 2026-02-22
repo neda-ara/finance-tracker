@@ -4,7 +4,9 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { ChevronDownIcon } from "lucide-react";
+import { cn } from "@/lib/utils/shadcn-utils";
 import { DatePickerProps } from "@/lib/actions/types";
+import { format } from "date-fns";
 import { Label } from "@/components/ui/label";
 import {
   Popover,
@@ -16,21 +18,32 @@ export function DatePicker({
   value,
   onChange,
   label,
+  labelPlacement = "outside",
   ...props
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <div className="flex flex-col gap-2">
-      {label && <Label className="px-1 text-sm">{label}</Label>}
-
+    <div className="relative flex flex-col gap-2">
+      {label && (
+        <Label
+          className={cn(
+            "px-1",
+            labelPlacement === "inside"
+              ? "absolute -top-[8.25px] left-2 bg-white text-xs"
+              : "text-sm"
+          )}
+        >
+          {label}
+        </Label>
+      )}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             className="w-36 justify-between font-normal"
           >
-            {value ? value.toLocaleDateString() : "Select date"}
+            {value ? format(value, "dd/MM/yyyy") : "Select date"}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>

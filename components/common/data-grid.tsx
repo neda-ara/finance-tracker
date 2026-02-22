@@ -1,8 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ColumnDef } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
+import { ColumnDef } from "@tanstack/react-table";
+import { cn } from "@/lib/utils/shadcn-utils";
 import { DataGridProps, RowAction } from "@/lib/actions/types";
 import {
   DropdownMenu,
@@ -36,6 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Spinner } from "../ui/spinner";
 import {
   Table,
   TableBody,
@@ -85,6 +87,7 @@ export function createActionsColumn<T>(actions: RowAction<T>[]): ColumnDef<T> {
 
 export function DataGrid<T>({
   data,
+  isLoading: isDataLoading,
   columns,
   paginationParams,
   customStyles,
@@ -121,9 +124,17 @@ export function DataGrid<T>({
   });
 
   return (
-    <div className="w-full pt-7">
-      <div className="overflow-hidden rounded-md border">
-        <Table containerStyles={customStyles?.tableContainerStyles}>
+    <div className="w-full">
+      <div
+        className={cn(
+          "overflow-hidden rounded-md border",
+          customStyles?.gridWrapperStyles
+        )}
+      >
+        <Table
+          containerStyles={customStyles?.tableContainerStyles}
+          className={cn(customStyles?.tableContainerStyles)}
+        >
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -143,7 +154,7 @@ export function DataGrid<T>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows?.length > 0 ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -166,16 +177,22 @@ export function DataGrid<T>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="text-center italic py-8 font-medium"
+                  className="min-h-full text-center italic py-8 font-medium"
                 >
-                  <Image
-                    alt="no-results"
-                    height={100}
-                    width={100}
-                    src={IMAGE_PATHS.NO_RESULTS}
-                    className="h-16 object-contain mb-2 mx-auto"
-                  />
-                  No results found.
+                  {isDataLoading ? (
+                    <Spinner className="m-auto h-10 w-10 text-(--color-cta)" />
+                  ) : (
+                    <>
+                      <Image
+                        alt="no-results"
+                        height={100}
+                        width={100}
+                        src={IMAGE_PATHS.NO_RESULTS}
+                        className="h-20 object-contain mb-2 mx-auto"
+                      />
+                      No results found.
+                    </>
+                  )}
                 </TableCell>
               </TableRow>
             )}
@@ -224,7 +241,7 @@ export function DataGrid<T>({
                   onClick={() =>
                     paginationParams.onPageChange(paginationParams.pageNo - 1)
                   }
-                  isActive={paginationParams.pageNo > 10}
+                  isActive={paginationParams.pageNo > 1}
                   isDisabled={paginationParams.pageNo === 1}
                 />
               </PaginationItem>
@@ -258,7 +275,7 @@ export function DataGrid<T>({
             value={String(paginationParams.pageSize)}
             onValueChange={(v) => paginationParams.onPageSizeChange(Number(v))}
           >
-            <SelectTrigger className="w-30">
+            <SelectTrigger className="w-32 font-medium">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

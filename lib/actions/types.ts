@@ -40,6 +40,7 @@ export type DatePickerProps = {
   value?: Date;
   onChange: (date: Date | undefined) => void;
   label?: string;
+  labelPlacement?: "outside" | "inside";
   disabled?: (date: Date) => boolean;
 };
 
@@ -63,13 +64,12 @@ export type ExpenseSummary = {
   };
 };
 
-export type PaginatedResult<T, S = unknown> = {
+export type PaginatedResult<T> = {
   data: T[];
   pageNo: number;
   pageSize: number;
   totalRecords: number;
   totalPages: number;
-  summary?: S;
 };
 
 export type Expense = {
@@ -88,7 +88,19 @@ export type GetExpensesRequest = {
   page: number;
   pageSize: number;
   searchKey?: string;
-  filters?: Record<string, unknown>;
+  filters: ExpenseFiltersType;
+};
+
+export type ExpenseFiltersType = {
+  description: string;
+  startDate: Date | string;
+  endDate: Date | string;
+  minAmount: number;
+  maxAmount: number;
+  categories: string[];
+  currencies: string[];
+  paymentModes: string[];
+  satisfactionRatings: string[];
 };
 
 export type DataGridProps<T> = {
