@@ -1,13 +1,9 @@
 "use client";
 
-import { BarChart3, ChartNoAxesCombined } from "lucide-react";
-import { Coiny, Gugi } from "next/font/google";
+import { ChartNoAxesCombined } from "lucide-react";
+import { Coiny } from "next/font/google";
 
 const coiny = Coiny({
-  weight: ["400"],
-});
-
-const gugi = Gugi({
   weight: ["400"],
 });
 
