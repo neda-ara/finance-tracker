@@ -98,7 +98,7 @@ export const ExpenseGrid = () => {
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="px-0!"
+          className="font-semibold px-0!"
         >
           Expense Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -114,7 +114,7 @@ export const ExpenseGrid = () => {
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="px-0!"
+          className="font-semibold px-0!"
         >
           Amount
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -182,7 +182,7 @@ export const ExpenseGrid = () => {
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="px-0!"
+          className="font-semibold px-0!"
         >
           Worth it?
           <ArrowUpDown className="ml-2 h-4 w-4" />
