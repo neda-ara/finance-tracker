@@ -4,10 +4,10 @@ import { Logo } from "./logo";
 
 export const Sidebar = () => {
   return (
-    <div className="bg- w-60 h-full">
+    <div className="w-60 h-full flex flex-col justify-between">
       <Logo />
-      <div>MENU ITEMS</div>
-      <div>Profile & Logout</div>
+      <div>Menu</div>
+      <div>Profile</div>
     </div>
   );
 };

@@ -14,8 +14,8 @@ const bt2 = Baloo_Tamma_2({
 
 export const Logo = () => {
   return (
-    <div className="flex items-center gap-2 px-4 py-6">
-      <div className="relative bg-white/20 backdrop-blur-sm p-2 rounded-lg">
+    <div className="flex items-center gap-2">
+      <div className="relative bg-white/20 backdrop-blur-sm p-2 rounded-lg shadow-sm">
         <ChartNoAxesCombined className="text-slate-900 w-7 h-7" />
         <DollarSign className="absolute left-4 top-1.25 -rotate-45 h-3 w-3" />
       </div>
