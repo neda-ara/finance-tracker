@@ -5,6 +5,7 @@ export const ROUTES = {
   },
   DASHBOARD: {
     EXPENSES: "/expenses",
+    EARNINGS: "/earnings",
   },
 };
 
