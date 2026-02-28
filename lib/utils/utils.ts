@@ -41,3 +41,13 @@ export const isStringEqual = (str1: string, str2: string) => {
   }
   return str1.toLowerCase() == str2.toLowerCase();
 };
+
+export const snakeCaseToTitleCase = (text: string) => {
+  if (text) {
+    return text
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+  return "";
+};

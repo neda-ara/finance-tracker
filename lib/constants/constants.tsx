@@ -6,7 +6,12 @@ export const ROUTES = {
   DASHBOARD: {
     EXPENSES: "/expenses",
     EARNINGS: "/earnings",
+    ANALYTICS: "/analytics",
+    BUDGET: "/budget",
+    AUTO_ENTRIES: "/auto-entries",
   },
+  PROFILE: "/profile",
+  SETTINGS: "/settings",
 };
 
 export const UNAUTHORIZED_ERR_MSG =
