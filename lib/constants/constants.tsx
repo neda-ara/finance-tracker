@@ -113,4 +113,5 @@ export const IMAGE_PATHS = {
   NO_RESULTS: "/images/icons/no-results.png",
   EXPENSE_TITLE: "/images/creative/cat-counting-money.png",
   INCOME_TITLE: "/images/creative/make-it-rain-cat.png",
+  PLACEHOLDER_AVATAR: "/images/avatars/ducka-lisa.jpg",
 };

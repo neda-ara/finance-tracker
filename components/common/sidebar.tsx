@@ -1,13 +1,22 @@
 "use client";
 
 import { Baloo_Tamma_2 } from "next/font/google";
-import { BarChart3, PiggyBank, Repeat, TrendingUp, Wallet } from "lucide-react";
+import {
+  BarChart3,
+  Edit3,
+  LogOut,
+  PiggyBank,
+  Repeat,
+  TrendingUp,
+  Wallet,
+} from "lucide-react";
 import { cn } from "@/lib/utils/shadcn-utils";
+import { IMAGE_PATHS, ROUTES } from "@/lib/constants/constants";
 import { isStringEqual, snakeCaseToTitleCase } from "@/lib/utils/utils";
 import { Logo } from "./logo";
-import { ROUTES } from "@/lib/constants/constants";
 import { usePathname } from "next/navigation";
 import { User } from "@/lib/actions/types";
+import Image from "next/image";
 import Link from "next/link";
 
 const bt2 = Baloo_Tamma_2({
@@ -74,7 +83,37 @@ export const Sidebar = ({ user }: { user: User }) => {
           </div>
         </div>
       </div>
-      <div className="flex justify-center">Profile</div>
+      <div className="flex justify-center px-4 w-full">
+        <div className="bg-white/60 w-full rounded-lg p-3 flex flex-col items-center gap-y-2.5">
+          <div className="flex items-center gap-x-1.5">
+            <div className="flex justify-center items-center rounded-full w-10 aspect-square overflow-hidden">
+              <Image
+                alt="user"
+                src={IMAGE_PATHS.PLACEHOLDER_AVATAR}
+                height={100}
+                width={100}
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
+            <div className="flex flex-col justify-center h-full">
+              <p className="font-medium leading-none">{user.username}</p>
+              <p className="text-xs leading-none max-w-32 overflow-hidden text-ellipsis">
+                {user.email}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-x-1 text-white">
+            <div className="flex items-center gap-x-1.5 px-2 py-1 bg-red-700  rounded-full">
+              <LogOut className="h-3.5 w-3.5" />
+              <span className="text-xs leading-none mt-0.75">Logout</span>
+            </div>
+            <div className="flex items-center gap-x-1.5 px-2 py-1 bg-black/80 rounded-full">
+              <Edit3 className="h-3.5 w-3.5" />
+              <span className="text-xs leading-none mt-0.75">Edit Profile</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
