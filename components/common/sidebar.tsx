@@ -7,13 +7,14 @@ import { isStringEqual, snakeCaseToTitleCase } from "@/lib/utils/utils";
 import { Logo } from "./logo";
 import { ROUTES } from "@/lib/constants/constants";
 import { usePathname } from "next/navigation";
+import { User } from "@/lib/actions/types";
 import Link from "next/link";
 
 const bt2 = Baloo_Tamma_2({
   weight: ["400"],
 });
 
-export const Sidebar = () => {
+export const Sidebar = ({ user }: { user: User }) => {
   const pathName = usePathname().slice(1);
 
   const iconsMap: Record<string, React.ElementType> = {
@@ -42,6 +43,9 @@ export const Sidebar = () => {
               const Icon = iconsMap[route];
               return (
                 <Link key={key} href={route} className="relative group">
+                  {isActive && (
+                    <div className="absolute -left-11.25 -top-2.25 bg-white h-8.5 w-1.75 rounded-r-sm" />
+                  )}
                   <div className="flex items-center gap-x-4">
                     {Icon && (
                       <Icon
