@@ -14,10 +14,12 @@ import { cn } from "@/lib/utils/shadcn-utils";
 import { IMAGE_PATHS, ROUTES } from "@/lib/constants/constants";
 import { isStringEqual, snakeCaseToTitleCase } from "@/lib/utils/utils";
 import { Logo } from "./logo";
-import { usePathname } from "next/navigation";
+import { logout } from "@/actions/auth/logout";
+import { usePathname, useRouter } from "next/navigation";
 import { User } from "@/lib/actions/types";
 import Image from "next/image";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 const bt2 = Baloo_Tamma_2({
   weight: ["400"],
@@ -25,6 +27,18 @@ const bt2 = Baloo_Tamma_2({
 
 export const Sidebar = ({ user }: { user: User }) => {
   const pathName = usePathname().slice(1);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+    toast.success("Logged out successfully");
+    router.push(ROUTES.AUTH.LOGIN);
+    router.refresh();
+  };
+
+  const handleEditProfile = () => {
+    router.push(ROUTES.PROFILE);
+  };
 
   const iconsMap: Record<string, React.ElementType> = {
     [ROUTES.DASHBOARD.EXPENSES]: Wallet,
@@ -103,14 +117,20 @@ export const Sidebar = ({ user }: { user: User }) => {
             </div>
           </div>
           <div className="flex items-center gap-x-1 text-white">
-            <div className="flex items-center gap-x-1.5 px-2 py-1 bg-red-700  rounded-full">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-x-1.5 px-2 py-1 bg-red-600 hover:bg-red-700 rounded-full cursor-pointer"
+            >
               <LogOut className="h-3.5 w-3.5" />
               <span className="text-xs leading-none mt-0.75">Logout</span>
-            </div>
-            <div className="flex items-center gap-x-1.5 px-2 py-1 bg-black/80 rounded-full">
+            </button>
+            <button
+              onClick={handleEditProfile}
+              className="flex items-center gap-x-1.5 px-2 py-1 bg-black/80 hover:bg-black/70 rounded-full cursor-pointer"
+            >
               <Edit3 className="h-3.5 w-3.5" />
               <span className="text-xs leading-none mt-0.75">Edit Profile</span>
-            </div>
+            </button>
           </div>
         </div>
       </div>
