@@ -267,7 +267,9 @@ export const ExpenseGrid = () => {
                     CURRENCIES[
                       quickActionData.currency as keyof typeof CURRENCIES
                     ].symbol
-                  } ${quickActionData.amount}`
+                  } ${quickActionData.amount} from ${formatDateForDisplay(
+                    quickActionData.expenseDate
+                  )}`
                 : "expense"
             }
           />
