@@ -141,6 +141,17 @@
   background-color: var(--color-secondary);
 }
 
+.bg-premium-primary {
+  background: linear-gradient(
+    to bottom,
+    #f06f72 0%,
+    #f57a7d 30%,
+    #ff7a7d 55%,
+    #ff8c8f 80%,
+    #ffa1a3 100%
+  );
+}
+
 /* Hide scrollbar but allow scrolling */
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE and Edge */
