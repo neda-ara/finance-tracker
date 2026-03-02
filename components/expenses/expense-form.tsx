@@ -438,7 +438,7 @@ export const ExpenseForm = ({
                       value={[field.value]}
                       onValueChange={([val]) => field.onChange(val)}
                       sliderStyle={{
-                        rangeClass: "bg-(--color-cta)",
+                        rangeClass: "bg-(--color-primary)",
                       }}
                     />
                     <div className="flex items-center justify-center gap-x-2 w-60">

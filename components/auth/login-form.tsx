@@ -76,9 +76,9 @@ export const LoginForm = () => {
   const commonStyles: Record<string, string> = {
     inputContainer: "relative flex items-center group",
     inputIconContainer: "absolute left-3",
-    inputIcon: "group-focus-within:text-(--color-cta)",
+    inputIcon: "group-focus-within:text-(--color-primary)",
     input:
-      "pl-12 focus-visible:border-2 focus-visible:border-(--color-cta) focus-visible:ring-0 selection:bg-(--color-primary) selection:text-black",
+      "pl-12 focus-visible:border-2 focus-visible:border-(--color-primary) focus-visible:ring-0 selection:bg-(--color-secondary) selection:text-black",
   };
 
   const loginInProgress = login.isPending;
@@ -176,7 +176,7 @@ export const LoginForm = () => {
         Don&apos;t have an account?&nbsp;
         <Link
           href={ROUTES.AUTH.SIGNUP}
-          className="text-(--color-cta) hover:underline"
+          className="text-(--color-primary) hover:underline"
         >
           <strong>Sign Up Here</strong>
         </Link>

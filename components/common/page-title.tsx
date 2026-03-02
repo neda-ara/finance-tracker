@@ -19,7 +19,7 @@ export const PageTitle = ({
   return (
     <div>
       <h1
-        className={`${bt2.className} flex items-center font-bold text-4xl leading-tight text-(--color-cta) [text-shadow:1.5px_1.5px_0_var(--color-primary)]`}
+        className={`${bt2.className} flex items-center font-bold text-4xl leading-tight text-(--color-primary) [text-shadow:1.5px_1.5px_0_var(--color-secondary)]`}
       >
         {icon}
         {heading}
