@@ -22,7 +22,7 @@ import { ArrowUpDown, PencilLine, Plus, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { createActionsColumn, DataGrid } from "../common/data-grid";
-import { DeleteConfirmationBody } from "../common/common";
+import { DeleteConfirmationBody, KpiCard } from "../common/common";
 import { ExpenseFilters } from "./expense-filters";
 import { ExpenseForm } from "./expense-form";
 import { formatDateForDisplay, isStringEqual } from "@/lib/utils/utils";
@@ -45,7 +45,7 @@ export const ExpenseGrid = () => {
         startDate: sixMonthsAgo,
         endDate: new Date(),
         minAmount: 0,
-        maxAmount: 500000,
+        maxAmount: Math.ceil(VALIDATION.EXPENSE.MAX_AMOUNT_LIMIT) / 2,
         categories: [],
         currencies: [],
         paymentModes: [],
@@ -98,7 +98,7 @@ export const ExpenseGrid = () => {
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="px-0!"
+          className="font-semibold px-0!"
         >
           Expense Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -114,7 +114,7 @@ export const ExpenseGrid = () => {
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="px-0!"
+          className="font-semibold px-0!"
         >
           Amount
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -182,7 +182,7 @@ export const ExpenseGrid = () => {
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="px-0!"
+          className="font-semibold px-0!"
         >
           Worth it?
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -267,7 +267,9 @@ export const ExpenseGrid = () => {
                     CURRENCIES[
                       quickActionData.currency as keyof typeof CURRENCIES
                     ].symbol
-                  } ${quickActionData.amount}`
+                  } ${quickActionData.amount} from ${formatDateForDisplay(
+                    quickActionData.expenseDate
+                  )}`
                 : "expense"
             }
           />
@@ -288,68 +290,48 @@ export const ExpenseGrid = () => {
     <div>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-x-4">
-          <div className="card space-y-2">
-            <div className="flex gap-x-5">
-              <div className="space-y-1">
-                <p className="text-xs font-medium text-muted-foreground">
-                  Spent this month
-                </p>
-                {query.isPending ? (
-                  <div className="bg-gray-100 w-full h-7 animate-pulse transition-all rounded-md" />
-                ) : (
-                  <p className="font-bold text-lg tracking-wider">
-                    <span className="mr-1">
-                      {
-                        CURRENCIES[
-                          summaryData?.spentThisMonth
-                            ?.currency as keyof typeof CURRENCIES
-                        ]?.symbol
-                      }
-                    </span>
-                    {summaryData?.spentThisMonth?.amount?.toLocaleString()}
-                  </p>
-                )}
-              </div>
-              <Image
-                alt={"month-calendar"}
-                height={64}
-                width={64}
-                className="h-12 w-12 object-contain"
-                src={IMAGE_PATHS.MONTH}
-              />
-            </div>
-          </div>
-          <div className="card space-y-2">
-            <div className="flex gap-x-5">
-              <div className="space-y-1">
-                <p className="text-xs font-medium text-muted-foreground">
-                  Spent in last 30 days
-                </p>
-                {query.isPending ? (
-                  <div className="bg-gray-100 w-full h-7 animate-pulse transition-all rounded-md" />
-                ) : (
-                  <p className="font-bold text-lg tracking-wider">
-                    <span className="mr-1">
-                      {
-                        CURRENCIES[
-                          summaryData?.spentLast30Days
-                            ?.currency as keyof typeof CURRENCIES
-                        ]?.symbol
-                      }
-                    </span>
-                    {summaryData?.spentLast30Days?.amount.toLocaleString()}
-                  </p>
-                )}
-              </div>
-              <Image
-                alt={"month-calendar"}
-                height={64}
-                width={64}
-                className="h-12 w-12 object-contain"
-                src={IMAGE_PATHS["30DAYS"]}
-              />
-            </div>
-          </div>
+          <KpiCard
+            title="Spent this month"
+            imageSrc={IMAGE_PATHS.MONTH}
+            imageAlt="month-calendar"
+            isLoading={query.isPending}
+            fallbackText="No expenses yet"
+          >
+            {summaryData?.spentThisMonth?.amount != null && (
+              <p className="font-bold text-lg tracking-wider">
+                <span className="mr-1">
+                  {
+                    CURRENCIES[
+                      summaryData?.spentThisMonth
+                        ?.currency as keyof typeof CURRENCIES
+                    ]?.symbol
+                  }
+                </span>
+                {summaryData?.spentThisMonth?.amount?.toLocaleString()}
+              </p>
+            )}
+          </KpiCard>
+          <KpiCard
+            title="Spent in last 30 days"
+            imageSrc={IMAGE_PATHS["30DAYS"]}
+            imageAlt="month-calendar"
+            isLoading={query.isPending}
+            fallbackText="No expenses yet"
+          >
+            {summaryData?.spentLast30Days?.amount != null && (
+              <p className="font-bold text-lg tracking-wider">
+                <span className="mr-1">
+                  {
+                    CURRENCIES[
+                      summaryData?.spentLast30Days
+                        ?.currency as keyof typeof CURRENCIES
+                    ]?.symbol
+                  }
+                </span>
+                {summaryData?.spentLast30Days?.amount.toLocaleString()}
+              </p>
+            )}
+          </KpiCard>
         </div>
         <Button
           variant="cta"

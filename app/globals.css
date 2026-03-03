@@ -46,11 +46,10 @@
 }
 
 :root {
-  --color-primary: #f9dede;
-  --color-primary-soft: #f8e6e6;
-  --color-secondary: #ffe5e5;
-  --color-tertiary: #ffffff;
-  --color-cta: #ff7a7d;
+  --color-primary: #ff7a7d;
+  --color-secondary: #f9dede;
+  --color-secondary-soft: #f8e6e6;
+  --color-tertiary: #282828;
   --color-subtext: #8c8c8c;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -132,6 +131,25 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+
+.bg-premium-primary {
+  background: linear-gradient(
+    to bottom,
+    #f06f72 0%,
+    #f57a7d 30%,
+    #ff7a7d 55%,
+    #ff8c8f 80%,
+    #ffa1a3 100%
+  );
 }
 
 /* Hide scrollbar but allow scrolling */

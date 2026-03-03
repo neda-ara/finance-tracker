@@ -5,7 +5,13 @@ export const ROUTES = {
   },
   DASHBOARD: {
     EXPENSES: "/expenses",
+    EARNINGS: "/earnings",
+    ANALYTICS: "/analytics",
+    BUDGET: "/budget",
+    AUTO_ENTRIES: "/auto-entries",
   },
+  PROFILE: "/profile",
+  SETTINGS: "/settings",
 };
 
 export const UNAUTHORIZED_ERR_MSG =
@@ -21,7 +27,9 @@ export const ACTION_CONSTANTS = {
 export const AMOUNT_INPUT_REGEX = /^\d*\.?\d{0,2}$/;
 
 export const VALIDATION = {
-  MAX_AMOUNT_LIMIT: 9999999.99,
+  EXPENSE: {
+    MAX_AMOUNT_LIMIT: 9999999.99,
+  },
   MAX_DESCRIPTION_LENGTH: 100,
 };
 
@@ -107,4 +115,6 @@ export const IMAGE_PATHS = {
   NO_RESULTS: "/images/icons/no-results.png",
   EXPENSE_TITLE: "/images/creative/cat-counting-money.png",
   INCOME_TITLE: "/images/creative/make-it-rain-cat.png",
+  PLACEHOLDER_AVATAR: "/images/avatars/ducka-lisa.jpg",
+  AUTH: "/images/creative/finance.png",
 };

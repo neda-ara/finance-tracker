@@ -15,6 +15,7 @@ import { Input } from "../ui/input";
 import { loginInputSchema } from "@/lib/schema/login-schema";
 import { ROUTES } from "@/lib/constants/constants";
 import { SocialMediaOptions } from "./social-media-options";
+import { Spinner } from "../ui/spinner";
 import { useAuth } from "@/hooks/use-auth";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -75,10 +76,12 @@ export const LoginForm = () => {
   const commonStyles: Record<string, string> = {
     inputContainer: "relative flex items-center group",
     inputIconContainer: "absolute left-3",
-    inputIcon: "group-focus-within:text-(--color-cta)",
+    inputIcon: "group-focus-within:text-(--color-primary)",
     input:
-      "pl-12 focus-visible:border-2 focus-visible:border-(--color-cta) focus-visible:ring-0 selection:bg-(--color-primary) selection:text-black",
+      "pl-12 focus-visible:border-2 focus-visible:border-(--color-primary) focus-visible:ring-0 selection:bg-(--color-secondary) selection:text-black",
   };
+
+  const loginInProgress = login.isPending;
 
   return (
     <div className="flex flex-col w-full space-y-4 px-6">
@@ -158,8 +161,13 @@ export const LoginForm = () => {
           >
             Forgot Password?
           </Button>
-          <Button type="submit" variant="cta" className="w-full my-2">
-            Log In <MoveRight />
+          <Button
+            type="submit"
+            variant="cta"
+            className="w-full my-2"
+            disabled={loginInProgress}
+          >
+            Log In {loginInProgress ? <Spinner /> : <MoveRight />}
           </Button>
         </form>
       </Form>
@@ -168,7 +176,7 @@ export const LoginForm = () => {
         Don&apos;t have an account?&nbsp;
         <Link
           href={ROUTES.AUTH.SIGNUP}
-          className="text-(--color-cta) hover:underline"
+          className="text-(--color-primary) hover:underline"
         >
           <strong>Sign Up Here</strong>
         </Link>

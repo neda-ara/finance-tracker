@@ -1,10 +1,10 @@
 "use client";
 
-import { Vollkorn } from "next/font/google";
+import { Baloo_Tamma_2 } from "next/font/google";
 import { JSX } from "react";
 
-const volkorn = Vollkorn({
-  weight: ["400", "500", "600", "700", "800", "900"],
+const bt2 = Baloo_Tamma_2({
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const PageTitle = ({
@@ -19,14 +19,14 @@ export const PageTitle = ({
   return (
     <div>
       <h1
-        className={`${volkorn.className} flex items-center font-bold text-4xl leading-tight text-(--color-cta) [text-shadow:1.5px_1.5px_0_var(--color-primary)]`}
+        className={`${bt2.className} flex items-center font-bold text-4xl leading-tight text-(--color-primary) [text-shadow:1.5px_1.5px_0_var(--color-secondary)]`}
       >
         {icon}
         {heading}
       </h1>
       {subheading && (
         <h3
-          className={`${volkorn.className} text-lg font-medium text-muted-foreground/75 leading-tight [text-shadow:1px_1px_0_rgba(0,0,0,0.1)]`}
+          className={`${bt2.className} text-lg font-medium text-muted-foreground/75 leading-tight [text-shadow:1px_1px_0_rgba(0,0,0,0.1)]`}
         >
           {subheading}
         </h3>

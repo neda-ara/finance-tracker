@@ -75,7 +75,7 @@ function Slider({
         <SliderPrimitive.Range
           data-slot="slider-range"
           className={cn(
-            "bg-primary absolute rounded-full",
+            "bg-(--color-tertiary) absolute rounded-full",
             "data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full",
             sliderStyle?.rangeClass
           )}
@@ -93,12 +93,12 @@ function Slider({
                 valuePosition === "top" ? "-top-9" : "top-9"
               )}
             >
-              <div className="bg-primary text-white text-xs font-medium px-2 py-1 rounded-md shadow">
+              <div className="bg-(--color-tertiary) text-white text-xs font-medium px-2 py-1 rounded-md shadow">
                 {_values[index].toLocaleString()}
               </div>
               <div
                 className={cn(
-                  "mx-auto w-2 h-2 bg-primary",
+                  "mx-auto w-2 h-2 bg-(--color-tertiary)",
                   valuePosition === "top"
                     ? "-mt-1 rotate-45"
                     : "-mt-6.5 rotate-225"

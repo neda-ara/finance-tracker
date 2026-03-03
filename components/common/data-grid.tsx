@@ -180,7 +180,7 @@ export function DataGrid<T>({
                   className="min-h-full text-center italic py-8 font-medium"
                 >
                   {isDataLoading ? (
-                    <Spinner className="m-auto h-10 w-10 text-(--color-cta)" />
+                    <Spinner className="m-auto h-10 w-10 text-(--color-primary)" />
                   ) : (
                     <>
                       <Image

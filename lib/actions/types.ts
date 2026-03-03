@@ -124,3 +124,9 @@ export type RowAction<T> = {
   disabled?: (row: T) => boolean;
   hidden?: (row: T) => boolean;
 };
+
+export type User = {
+  id: string;
+  email: string;
+  username: string;
+};

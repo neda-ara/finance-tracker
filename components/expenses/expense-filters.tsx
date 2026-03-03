@@ -10,6 +10,7 @@ import {
   PAYMENT_MODE,
   SATISFACTION_ICONS_BASE_PATH,
   SATISFACTION_RATINGS,
+  VALIDATION,
 } from "@/lib/constants/constants";
 import { ExpenseFiltersType } from "@/lib/actions/types";
 import { FunnelPlus, Search } from "lucide-react";
@@ -59,7 +60,7 @@ export const ExpenseFilters = ({
       startDate: sixMonthsAgo,
       endDate: new Date(),
       minAmount: 0,
-      maxAmount: 500000,
+      maxAmount: Math.ceil(VALIDATION.EXPENSE.MAX_AMOUNT_LIMIT) / 2,
       categories: [],
       currencies: [],
       paymentModes: [],
@@ -149,6 +150,8 @@ const ExtraFiltersModalContent = ({
   handleSetDraftFilterByParam: (param: string, value: unknown) => void;
   setDraftFilters: Dispatch<SetStateAction<ExpenseFiltersType>>;
 }) => {
+  const maxExpenseAmount = Math.ceil(VALIDATION.EXPENSE.MAX_AMOUNT_LIMIT);
+
   return (
     <div>
       <div className="flex flex-col gap-y-3">
@@ -158,7 +161,7 @@ const ExtraFiltersModalContent = ({
           </Label>
           <RangeSlider
             min={0}
-            max={1000000}
+            max={maxExpenseAmount}
             step={1000}
             valuePosition="bottom"
             value={[draftFilters.minAmount, draftFilters.maxAmount]}
@@ -179,14 +182,14 @@ const ExtraFiltersModalContent = ({
               placeholder="Min Amount"
               value={draftFilters.minAmount}
               min={0}
-              max={1000000}
+              max={maxExpenseAmount}
               onChange={(e) =>
                 handleSetDraftFilterByParam(
                   "minAmount",
                   sanitizeNumberInput(
                     e.target.value,
                     0,
-                    1000000,
+                    maxExpenseAmount,
                     Number(draftFilters.maxAmount)
                   )
                 )
@@ -199,11 +202,11 @@ const ExtraFiltersModalContent = ({
               placeholder="Max Amount"
               value={draftFilters.maxAmount}
               min={0}
-              max={1000000}
+              max={maxExpenseAmount}
               onChange={(e) =>
                 handleSetDraftFilterByParam(
                   "maxAmount",
-                  sanitizeNumberInput(e.target.value, 0, 1000000)
+                  sanitizeNumberInput(e.target.value, 0, maxExpenseAmount)
                 )
               }
             />

@@ -10,7 +10,7 @@ export const expenseInputSchema = z.object({
       .number()
       .min(0.01, "Please enter a value more than 0")
       .max(
-        VALIDATION.MAX_AMOUNT_LIMIT,
+        VALIDATION.EXPENSE.MAX_AMOUNT_LIMIT,
         "Max amount limit of 9,999,999.99 exceeded"
       )
       .multipleOf(0.01),

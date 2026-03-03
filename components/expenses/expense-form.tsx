@@ -196,7 +196,8 @@ export const ExpenseForm = ({
                       const value = e.target.value;
                       if (
                         AMOUNT_INPUT_REGEX.test(value) &&
-                        Number(value || 0) <= VALIDATION.MAX_AMOUNT_LIMIT
+                        Number(value || 0) <=
+                          VALIDATION.EXPENSE.MAX_AMOUNT_LIMIT
                       ) {
                         field.onChange(value);
                       }
@@ -438,7 +439,7 @@ export const ExpenseForm = ({
                       value={[field.value]}
                       onValueChange={([val]) => field.onChange(val)}
                       sliderStyle={{
-                        rangeClass: "bg-(--color-cta)",
+                        rangeClass: "bg-(--color-primary)",
                       }}
                     />
                     <div className="flex items-center justify-center gap-x-2 w-60">
