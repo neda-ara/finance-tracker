@@ -45,7 +45,7 @@ export const ExpenseGrid = () => {
         startDate: sixMonthsAgo,
         endDate: new Date(),
         minAmount: 0,
-        maxAmount: 500000,
+        maxAmount: Math.ceil(VALIDATION.EXPENSE.MAX_AMOUNT_LIMIT) / 2,
         categories: [],
         currencies: [],
         paymentModes: [],

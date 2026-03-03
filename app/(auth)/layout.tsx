@@ -1,10 +1,10 @@
 import { Baloo_Tamma_2 } from "next/font/google";
-import { Logo } from "@/components/common/logo";
-import { ReactNode } from "react";
 import { cn } from "@/lib/utils/shadcn-utils";
-import { Quote } from "@/components/common/svg/quote";
-import Image from "next/image";
 import { IMAGE_PATHS } from "@/lib/constants/constants";
+import { Logo } from "@/components/common/logo";
+import { Quote } from "@/components/common/svg/quote";
+import { ReactNode } from "react";
+import Image from "next/image";
 
 const bt2 = Baloo_Tamma_2({
   weight: ["400"],
@@ -52,7 +52,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           </div>
           <Image
             alt="finance"
-            src={IMAGE_PATHS.AUTH_IMG}
+            src={IMAGE_PATHS.AUTH}
             height={500}
             width={500}
             className="absolute bottom-8 right-12 h-60 w-60"
