@@ -114,7 +114,7 @@ export const IMAGE_PATHS = {
   "30DAYS": "/images/icons/30-days.png",
   NO_RESULTS: "/images/icons/no-results.png",
   EXPENSE_TITLE: "/images/creative/cat-counting-money.png",
-  INCOME_TITLE: "/images/creative/make-it-rain-cat.png",
+  EARNING_TITLE: "/images/creative/make-it-rain-cat.png",
   PLACEHOLDER_AVATAR: "/images/avatars/ducka-lisa.jpg",
   AUTH: "/images/creative/finance.png",
 };
