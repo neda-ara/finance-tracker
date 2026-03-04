@@ -1,3 +1,4 @@
+import { EarningsGrid } from "@/components/earnings/earnings-grid";
 import { IMAGE_PATHS } from "@/lib/constants/constants";
 import { PageTitle } from "@/components/common/page-title";
 import Image from "next/image";
@@ -11,19 +12,16 @@ export const metadata: Metadata = {
 export default function EarningsPage() {
   return (
     <div className="relative flex flex-col justify-center pt-4 px-6 gap-y-6">
-      <div className="absolute -top-2 left-88 opacity-85">
+      <div className="absolute top-3.5 left-83 opacity-90">
         <Image
           alt="cat"
           src={IMAGE_PATHS.EARNING_TITLE}
-          height={120}
-          width={120}
+          height={140}
+          width={140}
         />
       </div>
-      <PageTitle
-        heading="Earnings"
-        subheading="Track what you earn. Strengthen what you keep."
-      />
-      {/* <ExpenseGrid /> */}
+      <PageTitle heading="Earnings" subheading="Every earning accounted for." />
+      <EarningsGrid />
     </div>
   );
 }
