@@ -11,9 +11,10 @@ import {
 import { db } from "@/lib/db";
 import { expenseInputSchema } from "@/lib/schema/expense-schema";
 import { getAuthenticatedSession, safeRunAction } from "@/lib/actions/helpers";
+import { VALIDATION } from "@/lib/constants/constants";
 
 export async function fetchExpenses(
-  params: GetExpensesRequest
+  params: GetExpensesRequest,
 ): Promise<ActionResult<PaginatedResult<Expense>>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
@@ -24,7 +25,7 @@ export async function fetchExpenses(
 
     const { whereSQL, values } = buildExpenseFilters(
       session.userId,
-      params.filters
+      params.filters,
     );
 
     const expenseList = await db.query<Expense>(
@@ -45,12 +46,12 @@ export async function fetchExpenses(
       LIMIT ${pageSize}
       OFFSET ${offset}
       `,
-      values
+      values,
     );
 
     const countRes = await db.query<{ count: string }>(
       `SELECT COUNT(*)::text AS count FROM expenses ${whereSQL}`,
-      values
+      values,
     );
 
     const totalRecords = Number(countRes.rows[0]?.count ?? 0);
@@ -82,7 +83,7 @@ export async function fetchExpenseSummary(): Promise<
     ORDER BY total DESC
     LIMIT 1
     `,
-      [userId]
+      [userId],
     );
 
     const last30Days = await db.query<{ currency: string; total: number }>(
@@ -95,7 +96,7 @@ export async function fetchExpenseSummary(): Promise<
     ORDER BY total DESC
     LIMIT 1
     `,
-      [userId]
+      [userId],
     );
 
     return {
@@ -112,7 +113,7 @@ export async function fetchExpenseSummary(): Promise<
 }
 
 export async function createExpense(
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult<void>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
@@ -134,7 +135,7 @@ export async function createExpense(
         fieldErrors: Object.fromEntries(
           Object.entries(parsedInput.error.flatten().fieldErrors)
             .filter(([, v]) => v?.length)
-            .map(([k, v]) => [k, v![0]])
+            .map(([k, v]) => [k, v![0]]),
         ),
       };
     }
@@ -164,13 +165,13 @@ export async function createExpense(
         values.paymentMode,
         values.description,
         values.satisfactionRating,
-      ]
+      ],
     );
   });
 }
 
 export async function updateExpense(
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult<void>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
@@ -198,7 +199,7 @@ export async function updateExpense(
         fieldErrors: Object.fromEntries(
           Object.entries(parsedInput.error.flatten().fieldErrors)
             .filter(([, v]) => v?.length)
-            .map(([k, v]) => [k, v![0]])
+            .map(([k, v]) => [k, v![0]]),
         ),
       };
     }
@@ -228,7 +229,7 @@ export async function updateExpense(
         values.satisfactionRating,
         expenseId,
         session?.userId,
-      ]
+      ],
     );
 
     if (result.rowCount === 0) {
@@ -238,7 +239,7 @@ export async function updateExpense(
 }
 
 export async function deleteExpense(
-  expenseId: string
+  expenseId: string,
 ): Promise<ActionResult<void>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
@@ -252,7 +253,7 @@ export async function deleteExpense(
       DELETE FROM expenses
       WHERE id = $1 AND user_id = $2
       `,
-      [expenseId, session?.userId]
+      [expenseId, session?.userId],
     );
 
     if (result.rowCount === 0) {
@@ -280,12 +281,15 @@ function buildExpenseFilters(userId: string, filters: ExpenseFiltersType) {
     conditions.push(`expense_date <= $${values.length}`);
   }
 
-  if (filters.minAmount != null) {
+  if (filters.minAmount != null && filters.minAmount != 0) {
     values.push(filters.minAmount);
     conditions.push(`amount >= $${values.length}`);
   }
 
-  if (filters.maxAmount != null) {
+  if (
+    filters.maxAmount != null &&
+    filters.maxAmount != Math.ceil(VALIDATION.EXPENSE.MAX_AMOUNT_LIMIT) / 2
+  ) {
     values.push(filters.maxAmount);
     conditions.push(`amount <= $${values.length}`);
   }
