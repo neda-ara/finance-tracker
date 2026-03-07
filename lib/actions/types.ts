@@ -1,9 +1,11 @@
-import { ColumnDef } from "@tanstack/react-table";
 import {
   ACTION_CONSTANTS,
   EXPENSE_CATEGORIES,
   SATISFACTION_RATINGS,
 } from "../constants/constants";
+import { ColumnDef } from "@tanstack/react-table";
+
+// ---------- Server Action Types ----------
 
 export type ActionConstant =
   (typeof ACTION_CONSTANTS)[keyof typeof ACTION_CONSTANTS];
@@ -17,6 +19,16 @@ export type ActionResult<T = void> =
         fieldErrors?: Record<string, string>;
       };
     };
+
+export type PaginatedResult<T> = {
+  data: T[];
+  pageNo: number;
+  pageSize: number;
+  totalRecords: number;
+  totalPages: number;
+};
+
+// ---------- UI Component Types ----------
 
 export type ModalContent = {
   header: React.ReactNode;
@@ -42,6 +54,7 @@ export type DatePickerProps = {
   label?: string;
   labelPlacement?: "outside" | "inside";
   disabled?: (date: Date) => boolean;
+  customStyles?: { triggerButton?: string };
 };
 
 export type LabelValuePair = {
@@ -49,58 +62,14 @@ export type LabelValuePair = {
   value: string;
 };
 
-export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number]["title"];
+// ---------- Data Grid / Table ----------
 
-export type SatisfactionRating = keyof typeof SATISFACTION_RATINGS;
-
-export type ExpenseSummary = {
-  spentThisMonth?: {
-    currency: string;
-    amount: number;
-  };
-  spentLast30Days?: {
-    currency: string;
-    amount: number;
-  };
-};
-
-export type PaginatedResult<T> = {
-  data: T[];
-  pageNo: number;
-  pageSize: number;
-  totalRecords: number;
-  totalPages: number;
-};
-
-export type Expense = {
-  id: string;
-  amount: number;
-  currency: string;
-  category: string;
-  paymentMode: string;
-  description: string | null;
-  satisfactionRating: number;
-  expenseDate: Date;
-  createdAt: Date;
-};
-
-export type GetExpensesRequest = {
-  page: number;
-  pageSize: number;
-  searchKey?: string;
-  filters: ExpenseFiltersType;
-};
-
-export type ExpenseFiltersType = {
-  description: string;
-  startDate: Date | string;
-  endDate: Date | string;
-  minAmount: number;
-  maxAmount: number;
-  categories: string[];
-  currencies: string[];
-  paymentModes: string[];
-  satisfactionRatings: string[];
+export type RowAction<T> = {
+  icon: React.ReactNode;
+  label: string;
+  onClick: (row: T) => void;
+  disabled?: (row: T) => boolean;
+  hidden?: (row: T) => boolean;
 };
 
 export type DataGridProps<T> = {
@@ -117,16 +86,80 @@ export type DataGridProps<T> = {
   customStyles?: { gridWrapperStyles?: string; tableContainerStyles?: string };
 };
 
-export type RowAction<T> = {
-  icon: React.ReactNode;
-  label: string;
-  onClick: (row: T) => void;
-  disabled?: (row: T) => boolean;
-  hidden?: (row: T) => boolean;
-};
+// ---------- User Domain ----------
 
 export type User = {
   id: string;
   email: string;
   username: string;
+};
+
+// ---------- Expense ----------
+
+export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number]["title"];
+
+export type SatisfactionRating = keyof typeof SATISFACTION_RATINGS;
+
+export type Expense = {
+  id: string;
+  amount: number;
+  currency: string;
+  category: string;
+  paymentMode: string;
+  description: string | null;
+  satisfactionRating: number;
+  expenseDate: Date;
+  createdAt: Date;
+};
+
+export type ExpenseFiltersType = {
+  description: string;
+  startDate: Date | string;
+  endDate: Date | string;
+  minAmount: number;
+  maxAmount: number;
+  categories: string[];
+  currencies: string[];
+  paymentModes: string[];
+  satisfactionRatings: string[];
+};
+
+export type GetExpensesRequest = {
+  page: number;
+  pageSize: number;
+  searchKey?: string;
+  filters: ExpenseFiltersType;
+};
+
+export type ExpenseSummary = {
+  spentThisMonth?: {
+    currency: string;
+    amount: number;
+  };
+  spentLast30Days?: {
+    currency: string;
+    amount: number;
+  };
+};
+
+// ---------- Earning ----------
+
+export type Earning = {
+  id: string;
+  amount: number;
+  currency: string;
+  category: string;
+  source: string | undefined;
+  description: string | null;
+  receivedDate: Date;
+  createdAt: Date;
+};
+
+export type EarningsFiltersType = {
+  searchQuery: string;
+  startDate: Date | string;
+  endDate: Date | string;
+  minAmount: number;
+  maxAmount: number;
+  currencies: string[];
 };
