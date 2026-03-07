@@ -28,6 +28,12 @@ export type PaginatedResult<T> = {
   totalPages: number;
 };
 
+export type FetchRequest<TFilters> = {
+  page: number;
+  pageSize: number;
+  filters: TFilters;
+};
+
 // ---------- UI Component Types ----------
 
 export type ModalContent = {
@@ -124,12 +130,6 @@ export type ExpenseFiltersType = {
   satisfactionRatings: string[];
 };
 
-export type GetExpensesRequest = {
-  page: number;
-  pageSize: number;
-  filters: ExpenseFiltersType;
-};
-
 export type ExpenseSummary = {
   spentThisMonth?: {
     currency: string;
@@ -161,4 +161,15 @@ export type EarningsFiltersType = {
   minAmount: number;
   maxAmount: number;
   currencies: string[];
+};
+
+export type EarningSummary = {
+  earnedThisMonth?: {
+    currency: string;
+    amount: number;
+  };
+  earnedPastYear?: {
+    currency: string;
+    amount: number;
+  };
 };

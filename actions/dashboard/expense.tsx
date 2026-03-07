@@ -5,7 +5,7 @@ import {
   Expense,
   ExpenseFiltersType,
   ExpenseSummary,
-  GetExpensesRequest,
+  FetchRequest,
   PaginatedResult,
 } from "@/lib/actions/types";
 import { db } from "@/lib/db";
@@ -14,7 +14,7 @@ import { getAuthenticatedSession, safeRunAction } from "@/lib/actions/helpers";
 import { VALIDATION } from "@/lib/constants/constants";
 
 export async function fetchExpenses(
-  params: GetExpensesRequest,
+  params: FetchRequest<ExpenseFiltersType>,
 ): Promise<ActionResult<PaginatedResult<Expense>>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
