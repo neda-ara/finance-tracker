@@ -36,17 +36,16 @@ export function useExpenses(params: GetExpensesRequest) {
       EXPENSE_CLIENT_QUERY_KEY,
       params.page,
       params.pageSize,
-      params.searchKey ?? "",
       {
         description: params.filters.description || "",
         startDate:
           params.filters.startDate instanceof Date
             ? params.filters.startDate.toISOString()
-            : params.filters.startDate ?? "",
+            : (params.filters.startDate ?? ""),
         endDate:
           params.filters.endDate instanceof Date
             ? params.filters.endDate.toISOString()
-            : params.filters.endDate ?? "",
+            : (params.filters.endDate ?? ""),
         minAmount: params.filters.minAmount ?? "",
         maxAmount: params.filters.maxAmount ?? "",
         categories: params.filters.categories?.slice().sort() ?? [],

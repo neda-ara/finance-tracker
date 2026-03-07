@@ -18,8 +18,9 @@ import { Button } from "../ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { createActionsColumn, DataGrid } from "../common/data-grid";
 import { DeleteConfirmationBody, KpiCard } from "../common/common";
+import { EarningFilters } from "./earning-filters";
 import { EarningForm } from "./earning-form";
-import { formatDateForDisplay, isStringEqual } from "@/lib/utils/utils";
+import { formatDateForDisplay } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
 import { useExpenses } from "@/hooks/use-expenses";
@@ -51,7 +52,6 @@ export const EarningsGrid = () => {
   const { query, summaryQuery, mutations } = useExpenses({
     page: pageNo,
     pageSize,
-    searchKey: "",
     filters: appliedFilters,
   });
 
@@ -274,7 +274,7 @@ export const EarningsGrid = () => {
           <Plus /> Add New Earning
         </Button>
       </div>
-      {/* <ExpenseFilters filters={appliedFilters} setFilters={setAppliedFilters} /> */}
+      <EarningFilters filters={appliedFilters} setFilters={setAppliedFilters} />
       <DataGrid
         data={query?.data?.data || []}
         columns={columns}

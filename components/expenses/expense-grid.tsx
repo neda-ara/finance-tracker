@@ -51,7 +51,7 @@ export const ExpenseGrid = () => {
         paymentModes: [],
         satisfactionRatings: [],
       };
-    }
+    },
   );
   const [pageNo, setPageNo] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_VALUES.PAGE_SIZE);
@@ -61,7 +61,6 @@ export const ExpenseGrid = () => {
   const { query, summaryQuery, mutations } = useExpenses({
     page: pageNo,
     pageSize,
-    searchKey: "",
     filters: appliedFilters,
   });
 
@@ -145,7 +144,7 @@ export const ExpenseGrid = () => {
       enableHiding: false,
       cell: ({ row }) => {
         const category = EXPENSE_CATEGORIES.find((cat) =>
-          isStringEqual(cat.title, row.original.category)
+          isStringEqual(cat.title, row.original.category),
         );
         return category ? (
           <div className="flex items-center gap-2">
@@ -268,7 +267,7 @@ export const ExpenseGrid = () => {
                       quickActionData.currency as keyof typeof CURRENCIES
                     ].symbol
                   } ${quickActionData.amount} from ${formatDateForDisplay(
-                    quickActionData.expenseDate
+                    quickActionData.expenseDate,
                   )}`
                 : "expense"
             }

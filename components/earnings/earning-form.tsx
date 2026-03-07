@@ -244,7 +244,7 @@ export const EarningForm = ({
             render={({ field }) => (
               <FormItem className="w-1/2">
                 <FormLabel className="text-sm font-medium">
-                  Income Source
+                  Income Source (optional)
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -270,13 +270,13 @@ export const EarningForm = ({
             return (
               <FormItem>
                 <FormLabel className="text-sm font-medium">
-                  Description
+                  Description (optional)
                 </FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
                     className="resize-none text-sm py-1.5 min-h-14.5"
-                    placeholder="Add notes about this earning (optional)"
+                    placeholder="Add notes about this earning"
                     maxLength={maxLength}
                     rows={2}
                   />

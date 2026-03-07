@@ -127,7 +127,6 @@ export type ExpenseFiltersType = {
 export type GetExpensesRequest = {
   page: number;
   pageSize: number;
-  searchKey?: string;
   filters: ExpenseFiltersType;
 };
 
