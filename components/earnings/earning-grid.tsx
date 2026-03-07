@@ -23,7 +23,7 @@ import { EarningForm } from "./earning-form";
 import { formatDateForDisplay } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
-import { useExpenses } from "@/hooks/use-expenses";
+import { useEarnings } from "@/hooks/use-earnings";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -49,7 +49,7 @@ export const EarningsGrid = () => {
   const [quickActionData, setQuickActionData] = useState<Earning | undefined>();
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-  const { query, summaryQuery, mutations } = useExpenses({
+  const { query, summaryQuery, mutations } = useEarnings({
     page: pageNo,
     pageSize,
     filters: appliedFilters,
@@ -230,17 +230,17 @@ export const EarningsGrid = () => {
             isLoading={query.isPending}
             fallbackText="No earnings yet"
           >
-            {summaryData?.spentThisMonth?.amount != null && (
+            {summaryData?.earnedThisMonth?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
                   {
                     CURRENCIES[
-                      summaryData?.spentThisMonth
+                      summaryData?.earnedThisMonth
                         ?.currency as keyof typeof CURRENCIES
                     ]?.symbol
                   }
                 </span>
-                {summaryData?.spentThisMonth?.amount?.toLocaleString()}
+                {summaryData?.earnedThisMonth?.amount?.toLocaleString()}
               </p>
             )}
           </KpiCard>
@@ -251,17 +251,17 @@ export const EarningsGrid = () => {
             isLoading={query.isPending}
             fallbackText="No earnings yet"
           >
-            {summaryData?.spentLast30Days?.amount != null && (
+            {summaryData?.earnedPastYear?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
                   {
                     CURRENCIES[
-                      summaryData?.spentLast30Days
+                      summaryData?.earnedPastYear
                         ?.currency as keyof typeof CURRENCIES
                     ]?.symbol
                   }
                 </span>
-                {summaryData?.spentLast30Days?.amount.toLocaleString()}
+                {summaryData?.earnedPastYear?.amount.toLocaleString()}
               </p>
             )}
           </KpiCard>

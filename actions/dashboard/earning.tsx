@@ -90,7 +90,7 @@ export async function fetchEarningSummary(): Promise<
     SELECT currency, SUM(amount)::float AS total
     FROM earnings
     WHERE user_id = $1
-      AND received_date >= CURRENT_DATE - INTERVAL '365 days'
+      AND received_date >= CURRENT_DATE - INTERVAL '1 year'
     GROUP BY currency
     ORDER BY total DESC
     LIMIT 1

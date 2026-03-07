@@ -1,5 +1,12 @@
 "use client";
 
+import {
+  createEarning,
+  deleteEarning,
+  fetchEarnings,
+  fetchEarningSummary,
+  updateEarning,
+} from "@/actions/dashboard/earning";
 import { EARNING_CLIENT_QUERY_KEY } from "@/lib/constants/query-keys";
 import {
   Earning,
@@ -9,13 +16,6 @@ import {
   PaginatedResult,
 } from "@/lib/actions/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  createEarning,
-  deleteEarning,
-  fetchEarnings,
-  fetchEarningSummary,
-  updateEarning,
-} from "@/actions/dashboard/earning";
 
 export function useEarnings(params: FetchRequest<EarningsFiltersType>) {
   const queryClient = useQueryClient();
