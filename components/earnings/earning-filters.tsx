@@ -75,7 +75,7 @@ export const EarningFilters = ({
             <Search className="w-5 h-5" />
           </div>
           <Input
-            placeholder="Search by category/source/description..."
+            placeholder="Search by category/source/description"
             className="pl-12"
             onChange={(e) =>
               handleSetFilterByParam("searchQuery", e.target.value)
