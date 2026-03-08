@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS earnings (
     received_date DATE NOT NULL,
     amount NUMERIC(10,2) NOT NULL,
     currency CHAR(3) NOT NULL,
-    source TEXT NOT NULL,     -- employer/client/platform
-    category TEXT NOT NULL,   -- salary, freelance, investment etc
+    source TEXT NOT NULL,     
+    category TEXT NOT NULL,   
     description TEXT,
     metadata JSONB NOT NULL DEFAULT '{}',
     created_at TIMESTAMPTZ DEFAULT now(),

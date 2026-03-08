@@ -210,7 +210,7 @@ export async function updateEarning(
       category = $3,
       currency = $4,
       source = $5,
-      description = $6,
+      description = $6
     WHERE id = $7 AND user_id = $8
     `,
       [
