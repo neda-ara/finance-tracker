@@ -2,20 +2,20 @@
 
 import {
   ActionResult,
-  Expense,
-  ExpenseFiltersType,
-  ExpenseSummary,
+  Earning,
+  EarningsFiltersType,
+  EarningSummary,
   FetchRequest,
   PaginatedResult,
 } from "@/lib/actions/types";
 import { db } from "@/lib/db";
-import { expenseInputSchema } from "@/lib/schema/expense-schema";
+import { earningInputSchema } from "@/lib/schema/earning-schema";
 import { getAuthenticatedSession, safeRunAction } from "@/lib/actions/helpers";
 import { VALIDATION } from "@/lib/constants/constants";
 
-export async function fetchExpenses(
-  params: FetchRequest<ExpenseFiltersType>,
-): Promise<ActionResult<PaginatedResult<Expense>>> {
+export async function fetchEarnings(
+  params: FetchRequest<EarningsFiltersType>,
+): Promise<ActionResult<PaginatedResult<Earning>>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
 
@@ -23,26 +23,25 @@ export async function fetchExpenses(
     const pageSize = params.pageSize ?? 25;
     const offset = (pageNo - 1) * pageSize;
 
-    const { whereSQL, values } = buildExpenseFilters(
+    const { whereSQL, values } = buildEarningFilters(
       session.userId,
       params.filters,
     );
 
-    const expenseList = await db.query<Expense>(
+    const earningList = await db.query<Earning>(
       `
       SELECT
         id,
         amount::float AS amount,
         currency,
         category,
-        payment_mode AS "paymentMode",
+        source,
         description,
-        satisfaction_rating AS "satisfactionRating",
-        expense_date AS "expenseDate",
+        received_date AS "receivedDate",
         created_at AS "createdAt"
-      FROM expenses
+      FROM earnings
       ${whereSQL}
-      ORDER BY expense_date DESC, created_at DESC
+      ORDER BY received_date DESC, created_at DESC
       LIMIT ${pageSize}
       OFFSET ${offset}
       `,
@@ -50,14 +49,14 @@ export async function fetchExpenses(
     );
 
     const countRes = await db.query<{ count: string }>(
-      `SELECT COUNT(*)::text AS count FROM expenses ${whereSQL}`,
+      `SELECT COUNT(*)::text AS count FROM earnings ${whereSQL}`,
       values,
     );
 
     const totalRecords = Number(countRes.rows[0]?.count ?? 0);
 
     return {
-      data: expenseList.rows,
+      data: earningList.rows,
       pageNo,
       pageSize,
       totalRecords,
@@ -66,8 +65,8 @@ export async function fetchExpenses(
   });
 }
 
-export async function fetchExpenseSummary(): Promise<
-  ActionResult<ExpenseSummary>
+export async function fetchEarningSummary(): Promise<
+  ActionResult<EarningSummary>
 > {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
@@ -76,9 +75,9 @@ export async function fetchExpenseSummary(): Promise<
     const thisMonth = await db.query<{ currency: string; total: number }>(
       `
     SELECT currency, SUM(amount)::float AS total
-    FROM expenses
+    FROM earnings
     WHERE user_id = $1
-      AND expense_date >= date_trunc('month', CURRENT_DATE)
+      AND received_date >= date_trunc('month', CURRENT_DATE)
     GROUP BY currency
     ORDER BY total DESC
     LIMIT 1
@@ -86,12 +85,12 @@ export async function fetchExpenseSummary(): Promise<
       [userId],
     );
 
-    const last30Days = await db.query<{ currency: string; total: number }>(
+    const pastYear = await db.query<{ currency: string; total: number }>(
       `
     SELECT currency, SUM(amount)::float AS total
-    FROM expenses
+    FROM earnings
     WHERE user_id = $1
-      AND expense_date >= CURRENT_DATE - INTERVAL '30 days'
+      AND received_date >= CURRENT_DATE - INTERVAL '1 year'
     GROUP BY currency
     ORDER BY total DESC
     LIMIT 1
@@ -100,19 +99,19 @@ export async function fetchExpenseSummary(): Promise<
     );
 
     return {
-      spentThisMonth: thisMonth.rows[0] && {
+      earnedThisMonth: thisMonth.rows[0] && {
         currency: thisMonth.rows[0].currency,
         amount: thisMonth.rows[0].total,
       },
-      spentLast30Days: last30Days.rows[0] && {
-        currency: last30Days.rows[0].currency,
-        amount: last30Days.rows[0].total,
+      earnedPastYear: pastYear.rows[0] && {
+        currency: pastYear.rows[0].currency,
+        amount: pastYear.rows[0].total,
       },
     };
   });
 }
 
-export async function createExpense(
+export async function createEarning(
   formData: FormData,
 ): Promise<ActionResult<void>> {
   return safeRunAction(async () => {
@@ -122,13 +121,12 @@ export async function createExpense(
       amount: Number(formData.get("amount")),
       currency: formData.get("currency"),
       category: formData.get("category"),
-      paymentMode: formData.get("paymentMode"),
+      source: formData.get("source"),
       description: formData.get("description"),
-      satisfactionRating: Number(formData.get("satisfactionRating")),
-      expenseDate: formData.get("expenseDate"),
+      receivedDate: formData.get("receivedDate"),
     };
 
-    const parsedInput = expenseInputSchema.safeParse(input);
+    const parsedInput = earningInputSchema.safeParse(input);
 
     if (!parsedInput.success) {
       throw {
@@ -144,55 +142,52 @@ export async function createExpense(
 
     await db.query(
       `
-      INSERT INTO expenses (
+      INSERT INTO earnings (
       user_id,
       amount,
-      expense_date,
+      received_date,
       category,
       currency,
-      payment_mode,
-      description,
-      satisfaction_rating
+      source,
+      description
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
     `,
       [
         session?.userId,
         values.amount,
-        values.expenseDate,
+        values.receivedDate,
         values.category,
         values.currency,
-        values.paymentMode,
+        values.source,
         values.description,
-        values.satisfactionRating,
       ],
     );
   });
 }
 
-export async function updateExpense(
+export async function updateEarning(
   formData: FormData,
 ): Promise<ActionResult<void>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
 
-    const expenseId = formData.get("id");
+    const earningId = formData.get("id");
 
-    if (!expenseId) {
-      throw { message: "Expense ID is missing" };
+    if (!earningId) {
+      throw { message: "Earning ID is missing" };
     }
 
     const input = {
       amount: Number(formData.get("amount")),
       currency: formData.get("currency"),
       category: formData.get("category"),
-      paymentMode: formData.get("paymentMode"),
+      source: formData.get("source"),
       description: formData.get("description"),
-      satisfactionRating: Number(formData.get("satisfactionRating")),
-      expenseDate: formData.get("expenseDate"),
+      receivedDate: formData.get("receivedDate"),
     };
 
-    const parsedInput = expenseInputSchema.safeParse(input);
+    const parsedInput = earningInputSchema.safeParse(input);
 
     if (!parsedInput.success) {
       throw {
@@ -208,77 +203,81 @@ export async function updateExpense(
 
     const result = await db.query(
       `
-    UPDATE expenses
+    UPDATE earnings
     SET
       amount = $1,
-      expense_date = $2,
+      received_date = $2,
       category = $3,
       currency = $4,
-      payment_mode = $5,
-      description = $6,
-      satisfaction_rating = $7
-    WHERE id = $8 AND user_id = $9
+      source = $5,
+      description = $6
+    WHERE id = $7 AND user_id = $8
     `,
       [
         values.amount,
-        values.expenseDate,
+        values.receivedDate,
         values.category,
         values.currency,
-        values.paymentMode,
+        values.source,
         values.description,
-        values.satisfactionRating,
-        expenseId,
+        earningId,
         session?.userId,
       ],
     );
 
     if (result.rowCount === 0) {
-      throw { message: "Requested expense not found" };
+      throw { message: "Requested earning not found" };
     }
   });
 }
 
-export async function deleteExpense(
-  expenseId: string,
+export async function deleteEarning(
+  earningId: string,
 ): Promise<ActionResult<void>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
 
-    if (!expenseId) {
-      throw { message: "Expense ID is missing" };
+    if (!earningId) {
+      throw { message: "Earning ID is missing" };
     }
 
     const result = await db.query(
       `
-      DELETE FROM expenses
+      DELETE FROM earnings
       WHERE id = $1 AND user_id = $2
       `,
-      [expenseId, session?.userId],
+      [earningId, session?.userId],
     );
 
     if (result.rowCount === 0) {
-      throw { message: "Requested expense not found" };
+      throw { message: "Requested earning not found" };
     }
   });
 }
 
-function buildExpenseFilters(userId: string, filters: ExpenseFiltersType) {
+function buildEarningFilters(userId: string, filters: EarningsFiltersType) {
   const conditions: string[] = ["user_id = $1"];
   const values: unknown[] = [userId];
 
-  if (filters.description?.trim()) {
-    values.push(`%${filters.description.trim()}%`);
-    conditions.push(`description ILIKE $${values.length}`);
+  if (filters.searchQuery?.trim()) {
+    values.push(`%${filters.searchQuery.trim()}%`);
+    conditions.push(`
+    (
+      description ILIKE $${values.length}
+      OR source ILIKE $${values.length}
+      OR category ILIKE $${values.length}
+    )
+  `);
   }
 
   if (filters.startDate) {
     values.push(filters.startDate);
-    conditions.push(`expense_date >= $${values.length}`);
+    conditions.push(`received_date >= $${values.length}`);
   }
 
   if (filters.endDate) {
     values.push(filters.endDate);
-    conditions.push(`expense_date <= $${values.length}`);
+    conditions.push(`received_date <= $${values.length}`);
   }
 
   if (filters.minAmount != null && filters.minAmount != 0) {
@@ -288,30 +287,15 @@ function buildExpenseFilters(userId: string, filters: ExpenseFiltersType) {
 
   if (
     filters.maxAmount != null &&
-    filters.maxAmount != Math.ceil(VALIDATION.EXPENSE.MAX_AMOUNT_LIMIT) / 2
+    filters.maxAmount != Math.ceil(VALIDATION.EARNING.MAX_AMOUNT_LIMIT) / 2
   ) {
     values.push(filters.maxAmount);
     conditions.push(`amount <= $${values.length}`);
   }
 
-  if (filters.categories?.length) {
-    values.push(filters.categories);
-    conditions.push(`category = ANY($${values.length})`);
-  }
-
   if (filters.currencies?.length) {
     values.push(filters.currencies);
     conditions.push(`currency = ANY($${values.length})`);
-  }
-
-  if (filters.paymentModes?.length) {
-    values.push(filters.paymentModes);
-    conditions.push(`payment_mode = ANY($${values.length})`);
-  }
-
-  if (filters.satisfactionRatings?.length) {
-    values.push(filters.satisfactionRatings);
-    conditions.push(`satisfaction_rating = ANY($${values.length})`);
   }
 
   return {

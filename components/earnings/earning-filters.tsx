@@ -1,18 +1,10 @@
 "use client";
 
 import { Button } from "../ui/button";
+import { CURRENCIES, VALIDATION } from "@/lib/constants/constants";
 import { DatePicker } from "../common/date-picker";
 import { Dispatch, SetStateAction, useState } from "react";
-import {
-  CURRENCIES,
-  EXPENSE_CATEGORIES,
-  EXPENSE_CATEGORY_ICONS_BASE_PATH,
-  PAYMENT_MODE,
-  SATISFACTION_ICONS_BASE_PATH,
-  SATISFACTION_RATINGS,
-  VALIDATION,
-} from "@/lib/constants/constants";
-import { ExpenseFiltersType } from "@/lib/actions/types";
+import { EarningsFiltersType } from "@/lib/actions/types";
 import { FunnelPlus, Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -21,14 +13,15 @@ import { MultiSelect } from "../common/multi-select";
 import { RangeSlider } from "../ui/slider";
 import { sanitizeNumberInput } from "@/lib/utils/utils";
 
-export const ExpenseFilters = ({
+export const EarningFilters = ({
   filters,
   setFilters,
 }: {
-  filters: ExpenseFiltersType;
-  setFilters: Dispatch<SetStateAction<ExpenseFiltersType>>;
+  filters: EarningsFiltersType;
+  setFilters: Dispatch<SetStateAction<EarningsFiltersType>>;
 }) => {
-  const [draftFilters, setDraftFilters] = useState<ExpenseFiltersType>(filters);
+  const [draftFilters, setDraftFilters] =
+    useState<EarningsFiltersType>(filters);
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   const handleOpenModal = () => {
@@ -38,33 +31,30 @@ export const ExpenseFilters = ({
   const handleCloseModal = () => setOpenModal(false);
 
   const handleSetFilterByParam = (param: string, value: unknown) => {
-    setFilters((prev: ExpenseFiltersType) => ({
+    setFilters((prev: EarningsFiltersType) => ({
       ...prev,
       [param]: value,
     }));
   };
 
   const handleSetDraftFilterByParam = (param: string, value: unknown) => {
-    setDraftFilters((prev: ExpenseFiltersType) => ({
+    setDraftFilters((prev: EarningsFiltersType) => ({
       ...prev,
       [param]: value,
     }));
   };
 
   const handleClearFilters = () => {
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
     const resetValues = {
-      description: "",
-      startDate: sixMonthsAgo,
+      searchQuery: "",
+      startDate: oneYearAgo,
       endDate: new Date(),
       minAmount: 0,
-      maxAmount: Math.ceil(VALIDATION.EXPENSE.MAX_AMOUNT_LIMIT) / 2,
-      categories: [],
+      maxAmount: Math.ceil(VALIDATION.EARNING.MAX_AMOUNT_LIMIT) / 2,
       currencies: [],
-      paymentModes: [],
-      satisfactionRatings: [],
     };
     setDraftFilters(resetValues);
     setFilters(resetValues);
@@ -80,15 +70,15 @@ export const ExpenseFilters = ({
     <>
       <div className="w-full flex items-center justify-between my-8">
         {/* SEARCHBAR */}
-        <div className="relative w-72">
+        <div className="relative w-96">
           <div className="bg-accent absolute left-[1.1px] top-[0.625px] rounded-tl-[7px] rounded-bl-[7px] flex items-center justify-center h-8.5 w-10">
             <Search className="w-5 h-5" />
           </div>
           <Input
-            placeholder="Search by description"
+            placeholder="Search by category/source/description"
             className="pl-12"
             onChange={(e) =>
-              handleSetFilterByParam("description", e.target.value)
+              handleSetFilterByParam("searchQuery", e.target.value)
             }
           />
         </div>
@@ -128,7 +118,7 @@ export const ExpenseFilters = ({
           />
         }
         customStyles={{
-          dialogContent: "sm:max-w-125",
+          dialogContent: "sm:max-w-112",
         }}
         showFooter={false}
         showCloseButton={true}
@@ -144,13 +134,13 @@ const ExtraFiltersModalContent = ({
   handleSetDraftFilterByParam,
   setDraftFilters,
 }: {
-  draftFilters: ExpenseFiltersType;
+  draftFilters: EarningsFiltersType;
   handleApplyFilters: () => void;
   handleClearFilters: () => void;
   handleSetDraftFilterByParam: (param: string, value: unknown) => void;
-  setDraftFilters: Dispatch<SetStateAction<ExpenseFiltersType>>;
+  setDraftFilters: Dispatch<SetStateAction<EarningsFiltersType>>;
 }) => {
-  const maxExpenseAmount = Math.ceil(VALIDATION.EXPENSE.MAX_AMOUNT_LIMIT);
+  const maxEarningAmount = Math.ceil(VALIDATION.EARNING.MAX_AMOUNT_LIMIT);
 
   return (
     <div>
@@ -161,7 +151,7 @@ const ExtraFiltersModalContent = ({
           </Label>
           <RangeSlider
             min={0}
-            max={maxExpenseAmount}
+            max={maxEarningAmount}
             step={1000}
             valuePosition="bottom"
             value={[draftFilters.minAmount, draftFilters.maxAmount]}
@@ -175,42 +165,44 @@ const ExtraFiltersModalContent = ({
             customStyles={{ wrapper: "pr-4 w-full" }}
           />
         </div>
-        <div className="flex items-center gap-x-2">
-          <div className="space-y-1">
+        <div className="flex items-center gap-x-2 w-full">
+          <div className="w-1/2 space-y-1">
             <Label className="font-medium text-xs">Min Amount</Label>
             <Input
               placeholder="Min Amount"
               value={draftFilters.minAmount}
               min={0}
-              max={maxExpenseAmount}
+              max={maxEarningAmount}
               onChange={(e) =>
                 handleSetDraftFilterByParam(
                   "minAmount",
                   sanitizeNumberInput(
                     e.target.value,
                     0,
-                    maxExpenseAmount,
+                    maxEarningAmount,
                     Number(draftFilters.maxAmount),
                   ),
                 )
               }
             />
           </div>
-          <div className="space-y-1">
+          <div className="w-1/2 space-y-1">
             <Label className="font-medium text-xs">Max Amount</Label>
             <Input
               placeholder="Max Amount"
               value={draftFilters.maxAmount}
               min={0}
-              max={maxExpenseAmount}
+              max={maxEarningAmount}
               onChange={(e) =>
                 handleSetDraftFilterByParam(
                   "maxAmount",
-                  sanitizeNumberInput(e.target.value, 0, maxExpenseAmount),
+                  sanitizeNumberInput(e.target.value, 0, maxEarningAmount),
                 )
               }
             />
           </div>
+        </div>
+        <div className="flex">
           <div className="space-y-1 w-full">
             <Label className="font-medium text-xs min-w-fit">Currencies</Label>
             <MultiSelect
@@ -223,58 +215,6 @@ const ExtraFiltersModalContent = ({
                 value: currency.code,
                 label: `${currency.symbol} ${currency.name}`,
               }))}
-            />
-          </div>
-        </div>
-        <div className="flex items-center gap-x-4">
-          <div className="space-y-1 w-full">
-            <Label className="font-medium text-xs">Categories</Label>
-            <MultiSelect
-              placeholder="Choose categories..."
-              value={draftFilters.categories}
-              onChange={(val) =>
-                setDraftFilters((prev) => ({ ...prev, categories: val }))
-              }
-              options={EXPENSE_CATEGORIES.map((item) => ({
-                label: item.title,
-                value: item.title,
-                icon: `${EXPENSE_CATEGORY_ICONS_BASE_PATH}${item?.iconPath}`,
-              }))}
-            />
-          </div>
-        </div>
-        <div className="flex items-center gap-x-4">
-          <div className="space-y-1 w-full max-w-36">
-            <Label className="font-medium text-xs">Payment Mode(s)</Label>
-            <MultiSelect
-              placeholder="Choose payment modes..."
-              value={draftFilters.paymentModes}
-              onChange={(val) =>
-                setDraftFilters((prev) => ({ ...prev, paymentModes: val }))
-              }
-              options={PAYMENT_MODE}
-            />
-          </div>
-          <div className="space-y-1 w-full">
-            <Label className="font-medium text-xs">
-              Was the spend worth it?
-            </Label>
-            <MultiSelect
-              placeholder="Choose satisfaction levels..."
-              value={draftFilters.satisfactionRatings}
-              onChange={(val) =>
-                setDraftFilters((prev) => ({
-                  ...prev,
-                  satisfactionRatings: val,
-                }))
-              }
-              options={Object.entries(SATISFACTION_RATINGS).map(
-                ([key, rating]) => ({
-                  value: key,
-                  label: rating.title,
-                  icon: `${SATISFACTION_ICONS_BASE_PATH}${rating.iconPath}`,
-                }),
-              )}
             />
           </div>
         </div>

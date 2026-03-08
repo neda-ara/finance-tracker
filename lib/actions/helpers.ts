@@ -7,18 +7,24 @@ import { UNAUTHORIZED_ERR_MSG } from "../constants/constants";
 type ActionError = Error & { fieldErrors?: Record<string, string> };
 
 export async function safeRunAction<T>(
-  fn: () => Promise<T>
+  fn: () => Promise<T>,
 ): Promise<ActionResult<T>> {
   try {
     const data = await fn();
     return { ok: true, data };
   } catch (err) {
-    const error = err as ActionError;
+    const actionError = err as ActionError;
+
+    const message =
+      actionError?.message || // validation or manual errors
+      (err instanceof Error ? err.message : undefined) || // DB/network errors
+      "Unexpected server error";
+
     return {
       ok: false,
       error: {
-        message: error?.message,
-        fieldErrors: error?.fieldErrors,
+        message,
+        fieldErrors: actionError?.fieldErrors,
       },
     };
   }

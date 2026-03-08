@@ -7,7 +7,8 @@ export default async function DashboardLayout({
 }: {
   children: ReactNode;
 }) {
-  const loggedInUser = await getCurrentUser();
+  const userResp = await getCurrentUser();
+  const loggedInUser = userResp.ok ? userResp.data : null;
 
   return (
     <div className="h-screen w-full flex items-center bg-primary py-2 pr-2">

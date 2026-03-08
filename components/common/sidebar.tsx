@@ -25,7 +25,7 @@ const bt2 = Baloo_Tamma_2({
   weight: ["400"],
 });
 
-export const Sidebar = ({ user }: { user: User }) => {
+export const Sidebar = ({ user }: { user: User | null }) => {
   const pathName = usePathname().slice(1);
   const router = useRouter();
 
@@ -52,7 +52,7 @@ export const Sidebar = ({ user }: { user: User }) => {
     <div
       className={cn(
         "w-60 h-full flex flex-col justify-between py-5",
-        bt2.className
+        bt2.className,
       )}
     >
       <div>
@@ -76,7 +76,7 @@ export const Sidebar = ({ user }: { user: User }) => {
                           "h-5 w-5 transition-colors",
                           isActive
                             ? "text-white"
-                            : "text-white/60 group-hover:text-white"
+                            : "text-white/60 group-hover:text-white",
                         )}
                       />
                     )}
@@ -85,7 +85,7 @@ export const Sidebar = ({ user }: { user: User }) => {
                         "capitalize text-xl leading-4 tracking-wide transition-all ease-in delay-10",
                         isActive
                           ? "text-white font-semibold"
-                          : "text-white/60 group-hover:text-white font-medium"
+                          : "text-white/60 group-hover:text-white font-medium",
                       )}
                     >
                       {snakeCaseToTitleCase(key).toLowerCase()}
@@ -110,9 +110,9 @@ export const Sidebar = ({ user }: { user: User }) => {
               />
             </div>
             <div className="flex flex-col justify-center h-full">
-              <p className="font-medium leading-none">{user.username}</p>
+              <p className="font-medium leading-none">{user?.username}</p>
               <p className="text-xs leading-none max-w-32 overflow-hidden text-ellipsis">
-                {user.email}
+                {user?.email}
               </p>
             </div>
           </div>

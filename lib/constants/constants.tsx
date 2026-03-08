@@ -30,6 +30,9 @@ export const VALIDATION = {
   EXPENSE: {
     MAX_AMOUNT_LIMIT: 9999999.99,
   },
+  EARNING: {
+    MAX_AMOUNT_LIMIT: 99999999.99,
+  },
   MAX_DESCRIPTION_LENGTH: 100,
 };
 
@@ -110,11 +113,12 @@ export const DEFAULT_VALUES = {
 export const PAGE_SIZE_OPTONS = [10, 25, 50, 75, 100, 250];
 
 export const IMAGE_PATHS = {
+  YEAR: "/images/icons/year.png",
   MONTH: "/images/icons/month.png",
   "30DAYS": "/images/icons/30-days.png",
   NO_RESULTS: "/images/icons/no-results.png",
   EXPENSE_TITLE: "/images/creative/cat-counting-money.png",
-  INCOME_TITLE: "/images/creative/make-it-rain-cat.png",
+  EARNING_TITLE: "/images/creative/make-it-rain-cat.png",
   PLACEHOLDER_AVATAR: "/images/avatars/ducka-lisa.jpg",
   AUTH: "/images/creative/finance.png",
 };

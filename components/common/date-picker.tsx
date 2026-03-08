@@ -19,6 +19,7 @@ export function DatePicker({
   onChange,
   label,
   labelPlacement = "outside",
+  customStyles,
   ...props
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
@@ -31,7 +32,7 @@ export function DatePicker({
             "px-1",
             labelPlacement === "inside"
               ? "absolute -top-[8.25px] left-2 bg-white text-xs"
-              : "text-sm"
+              : "text-sm",
           )}
         >
           {label}
@@ -41,7 +42,10 @@ export function DatePicker({
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="w-36 justify-between font-normal"
+            className={cn(
+              "w-36 justify-between font-normal",
+              customStyles?.triggerButton,
+            )}
           >
             {value ? format(value, "dd/MM/yyyy") : "Select date"}
             <ChevronDownIcon />

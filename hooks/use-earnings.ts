@@ -1,44 +1,44 @@
 "use client";
 
 import {
-  createExpense,
-  deleteExpense,
-  fetchExpenses,
-  fetchExpenseSummary,
-  updateExpense,
-} from "@/actions/dashboard/expense";
-import { EXPENSE_CLIENT_QUERY_KEY } from "@/lib/constants/query-keys";
+  createEarning,
+  deleteEarning,
+  fetchEarnings,
+  fetchEarningSummary,
+  updateEarning,
+} from "@/actions/dashboard/earning";
+import { EARNING_CLIENT_QUERY_KEY } from "@/lib/constants/query-keys";
 import {
-  Expense,
-  ExpenseFiltersType,
-  ExpenseSummary,
+  Earning,
+  EarningsFiltersType,
+  EarningSummary,
   FetchRequest,
   PaginatedResult,
 } from "@/lib/actions/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-export function useExpenses(params: FetchRequest<ExpenseFiltersType>) {
+export function useEarnings(params: FetchRequest<EarningsFiltersType>) {
   const queryClient = useQueryClient();
 
-  const invalidateExpenses = () => {
+  const invalidateEarnings = () => {
     queryClient.invalidateQueries({
-      queryKey: [EXPENSE_CLIENT_QUERY_KEY],
+      queryKey: [EARNING_CLIENT_QUERY_KEY],
     });
   };
 
   const invalidateSummary = () => {
     queryClient.invalidateQueries({
-      queryKey: [EXPENSE_CLIENT_QUERY_KEY, "summary"],
+      queryKey: [EARNING_CLIENT_QUERY_KEY, "summary"],
     });
   };
 
-  const query = useQuery<PaginatedResult<Expense>>({
+  const query = useQuery<PaginatedResult<Earning>>({
     queryKey: [
-      EXPENSE_CLIENT_QUERY_KEY,
+      EARNING_CLIENT_QUERY_KEY,
       params.page,
       params.pageSize,
       {
-        description: params.filters.description || "",
+        searchQuery: params.filters.searchQuery || "",
         startDate:
           params.filters.startDate instanceof Date
             ? params.filters.startDate.toISOString()
@@ -49,56 +49,54 @@ export function useExpenses(params: FetchRequest<ExpenseFiltersType>) {
             : (params.filters.endDate ?? ""),
         minAmount: params.filters.minAmount ?? "",
         maxAmount: params.filters.maxAmount ?? "",
-        categories: params.filters.categories?.slice().sort() ?? [],
         currencies: params.filters.currencies?.slice().sort() ?? [],
-        paymentModes: params.filters.paymentModes?.slice().sort() ?? [],
-        satisfactionRatings:
-          params.filters.satisfactionRatings?.slice().sort() ?? [],
       },
     ],
     queryFn: async () => {
-      const resp = await fetchExpenses(params);
+      const resp = await fetchEarnings(params);
       if (!resp?.ok) {
-        throw new Error(resp.error.message ?? "Failed to fetch expenses");
+        throw new Error(resp.error.message ?? "Failed to fetch earnings");
       }
       return resp.data;
     },
     placeholderData: (previousData) => previousData,
+    retry: false,
   });
 
-  const summaryQuery = useQuery<ExpenseSummary>({
-    queryKey: [EXPENSE_CLIENT_QUERY_KEY, "summary"],
+  const summaryQuery = useQuery<EarningSummary>({
+    queryKey: [EARNING_CLIENT_QUERY_KEY, "summary"],
     queryFn: async () => {
-      const resp = await fetchExpenseSummary();
+      const resp = await fetchEarningSummary();
       if (!resp?.ok) {
         throw new Error(
-          resp.error.message ?? "Failed to fetch expenses summary",
+          resp.error.message ?? "Failed to fetch earnings summary",
         );
       }
       return resp.data;
     },
     placeholderData: (previousData) => previousData,
+    retry: false,
   });
 
   const mutations = {
     create: useMutation({
-      mutationFn: createExpense,
+      mutationFn: createEarning,
       onSuccess: () => {
-        invalidateExpenses();
+        invalidateEarnings();
         invalidateSummary();
       },
     }),
     update: useMutation({
-      mutationFn: updateExpense,
+      mutationFn: updateEarning,
       onSuccess: () => {
-        invalidateExpenses();
+        invalidateEarnings();
         invalidateSummary();
       },
     }),
     delete: useMutation({
-      mutationFn: deleteExpense,
+      mutationFn: deleteEarning,
       onSuccess: () => {
-        invalidateExpenses();
+        invalidateEarnings();
         invalidateSummary();
       },
     }),
