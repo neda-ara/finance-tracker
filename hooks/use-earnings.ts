@@ -55,11 +55,12 @@ export function useEarnings(params: FetchRequest<EarningsFiltersType>) {
     queryFn: async () => {
       const resp = await fetchEarnings(params);
       if (!resp?.ok) {
-        throw new Error(resp.error.message);
+        throw new Error(resp.error.message ?? "Failed to fetch earnings");
       }
       return resp.data;
     },
     placeholderData: (previousData) => previousData,
+    retry: false,
   });
 
   const summaryQuery = useQuery<EarningSummary>({
@@ -67,11 +68,14 @@ export function useEarnings(params: FetchRequest<EarningsFiltersType>) {
     queryFn: async () => {
       const resp = await fetchEarningSummary();
       if (!resp?.ok) {
-        throw new Error(resp.error.message);
+        throw new Error(
+          resp.error.message ?? "Failed to fetch earnings summary",
+        );
       }
       return resp.data;
     },
     placeholderData: (previousData) => previousData,
+    retry: false,
   });
 
   const mutations = {

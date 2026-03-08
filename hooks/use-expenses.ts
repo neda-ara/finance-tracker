@@ -59,7 +59,7 @@ export function useExpenses(params: FetchRequest<ExpenseFiltersType>) {
     queryFn: async () => {
       const resp = await fetchExpenses(params);
       if (!resp?.ok) {
-        throw new Error(resp.error.message);
+        throw new Error(resp.error.message ?? "Failed to fetch expenses");
       }
       return resp.data;
     },
@@ -71,7 +71,9 @@ export function useExpenses(params: FetchRequest<ExpenseFiltersType>) {
     queryFn: async () => {
       const resp = await fetchExpenseSummary();
       if (!resp?.ok) {
-        throw new Error(resp.error.message);
+        throw new Error(
+          resp.error.message ?? "Failed to fetch expenses summary",
+        );
       }
       return resp.data;
     },

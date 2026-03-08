@@ -24,7 +24,7 @@ import { formatDateForDisplay } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
 import { useEarnings } from "@/hooks/use-earnings";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 export const EarningsGrid = () => {
@@ -54,6 +54,15 @@ export const EarningsGrid = () => {
     pageSize,
     filters: appliedFilters,
   });
+
+  useEffect(() => {
+    if (query.error) {
+      toast.error(query.error?.message);
+    }
+    if (summaryQuery.error) {
+      toast.error(summaryQuery.error?.message);
+    }
+  }, [query.error, summaryQuery.error]);
 
   const handleDeleteEarning = async () => {
     if (!quickActionData?.id) {

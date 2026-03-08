@@ -29,7 +29,7 @@ import { formatDateForDisplay, isStringEqual } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
 import { useExpenses } from "@/hooks/use-expenses";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
 
@@ -63,6 +63,15 @@ export const ExpenseGrid = () => {
     pageSize,
     filters: appliedFilters,
   });
+
+  useEffect(() => {
+    if (query.error) {
+      toast.error(query.error?.message);
+    }
+    if (summaryQuery.error) {
+      toast.error(summaryQuery.error?.message);
+    }
+  }, [query.error, summaryQuery.error]);
 
   const handleDeleteExpense = async () => {
     if (!quickActionData?.id) {
