@@ -4,14 +4,16 @@ import { z } from "zod";
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
+const maxAmount = VALIDATION.EXPENSE.MAX_AMOUNT_LIMIT;
+
 export const expenseInputSchema = z.object({
   amount: z.union([
     z.coerce
       .number()
       .min(0.01, "Please enter a value more than 0")
       .max(
-        VALIDATION.EXPENSE.MAX_AMOUNT_LIMIT,
-        "Max amount limit of 9,999,999.99 exceeded"
+        maxAmount,
+        `Max amount limit of ${maxAmount.toLocaleString()} exceeded`,
       )
       .multipleOf(0.01),
     z.literal(""),
