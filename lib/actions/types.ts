@@ -92,7 +92,7 @@ export type DataGridProps<T> = {
   customStyles?: { gridWrapperStyles?: string; tableContainerStyles?: string };
 };
 
-// ---------- User Domain ----------
+// ---------- User ----------
 
 export type User = {
   id: string;
@@ -169,6 +169,31 @@ export type EarningSummary = {
     amount: number;
   };
   earnedPastYear?: {
+    currency: string;
+    amount: number;
+  };
+};
+
+// ---------- Budget ----------
+
+export type Budget = {
+  id: string;
+  amount: number;
+  currency: string;
+  category: string;
+  createdAt: Date;
+};
+
+export type BudgetSummary = {
+  total?: {
+    currency: string;
+    amount: number;
+  };
+  spent?: {
+    currency: string;
+    amount: number;
+  };
+  remaining?: {
     currency: string;
     amount: number;
   };

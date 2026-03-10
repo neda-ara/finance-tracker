@@ -4,10 +4,11 @@ export const ROUTES = {
     SIGNUP: "/signup",
   },
   DASHBOARD: {
+    OVERVIEW: "/overview",
     EXPENSES: "/expenses",
     EARNINGS: "/earnings",
-    ANALYTICS: "/analytics",
     BUDGETS: "/budgets",
+    ANALYTICS: "/analytics",
     AUTO_ENTRIES: "/auto-entries",
   },
   PROFILE: "/profile",
