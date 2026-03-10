@@ -7,7 +7,7 @@ export const ROUTES = {
     EXPENSES: "/expenses",
     EARNINGS: "/earnings",
     ANALYTICS: "/analytics",
-    BUDGET: "/budget",
+    BUDGETS: "/budgets",
     AUTO_ENTRIES: "/auto-entries",
   },
   PROFILE: "/profile",

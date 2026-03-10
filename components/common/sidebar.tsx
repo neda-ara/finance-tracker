@@ -44,7 +44,7 @@ export const Sidebar = ({ user }: { user: User | null }) => {
     [ROUTES.DASHBOARD.EXPENSES]: Wallet,
     [ROUTES.DASHBOARD.EARNINGS]: TrendingUp,
     [ROUTES.DASHBOARD.ANALYTICS]: BarChart3,
-    [ROUTES.DASHBOARD.BUDGET]: PiggyBank,
+    [ROUTES.DASHBOARD.BUDGETS]: PiggyBank,
     [ROUTES.DASHBOARD.AUTO_ENTRIES]: Repeat,
   };
 
