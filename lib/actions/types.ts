@@ -28,9 +28,12 @@ export type PaginatedResult<T> = {
   totalPages: number;
 };
 
-export type FetchRequest<TFilters> = {
+export type BaseFetchRequest = {
   page: number;
   pageSize: number;
+};
+
+export type FetchRequest<TFilters> = BaseFetchRequest & {
   filters: TFilters;
 };
 
