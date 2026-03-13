@@ -22,36 +22,28 @@ export async function fetchBudgets(
     const pageSize = params.pageSize ?? 25;
     const offset = (pageNo - 1) * pageSize;
 
-    const budgetList = await db.query<Expense>(
+    const budgetList = await db.query<Budget & { totalCount: number }>(
       `
       SELECT
         id,
         amount::float AS amount,
         currency,
         category, 
-        payment_mode AS "paymentMode",
-        description,
-        satisfaction_rating AS "satisfactionRating",
-        expense_date AS "expenseDate",
         created_at AS "createdAt"
-      FROM expenses
-      ${whereSQL}
-      ORDER BY expense_date DESC, created_at DESC
-      LIMIT ${pageSize}
-      OFFSET ${offset}
+        COUNT (*) OVER() AS totalCount
+      FROM budgets
+      WHERE user_id = $1
+      ORDER BY created_at
+      LIMIT $2
+      OFFSET $3
       `,
-      values,
+      [session?.userId, pageSize, offset],
     );
 
-    const countRes = await db.query<{ count: string }>(
-      `SELECT COUNT(*)::text AS count FROM expenses ${whereSQL}`,
-      values,
-    );
-
-    const totalRecords = Number(countRes.rows[0]?.count ?? 0);
+    const totalRecords = Number(budgetList.rows[0]?.totalCount ?? 0);
 
     return {
-      data: expenseList.rows,
+      data: budgetList.rows,
       pageNo,
       pageSize,
       totalRecords,
