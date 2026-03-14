@@ -72,11 +72,14 @@ export async function fetchBudgetSummary(): Promise<
 
     const spent = await db.query<TotalByCurrency>(
       `
-      SELECT currency, SUM(amount)::float AS total
-      FROM expenses
-      WHERE user_id = $1
-        AND expense_date >= date_trunc('month', CURRENT_DATE)
-      GROUP BY currency
+      SELECT b.currency, SUM(e.amount)::float AS total
+      FROM expenses e
+      JOIN budgets b
+        ON b.user_id = e.user_id
+       AND b.category = e.category
+      WHERE e.user_id = $1
+        AND e.expense_date >= date_trunc('month', CURRENT_DATE)
+      GROUP BY b.currency
       LIMIT 1
       `,
       [userId],
@@ -86,16 +89,16 @@ export async function fetchBudgetSummary(): Promise<
     const spentAmount = spent.rows[0]?.total ?? 0;
 
     return {
-      total: {
-        currency: totalBudget.rows[0]?.currency,
+      total: totalBudget.rows[0] && {
+        currency: totalBudget.rows[0].currency,
         amount: budget,
       },
-      spent: {
-        currency: spent.rows[0]?.currency,
+      spent: spent.rows[0] && {
+        currency: spent.rows[0].currency,
         amount: spentAmount,
       },
-      remaining: {
-        currency: totalBudget.rows[0]?.currency,
+      remaining: totalBudget.rows[0] && {
+        currency: totalBudget.rows[0].currency,
         amount: budget - spentAmount,
       },
     };

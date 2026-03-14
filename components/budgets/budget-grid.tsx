@@ -190,7 +190,7 @@ export const BudgetsGrid = () => {
             imageSrc={IMAGE_PATHS.MONTH}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="Monthly budget not set"
+            fallbackText="No limits set yet"
           >
             {summaryData?.total?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
@@ -206,11 +206,11 @@ export const BudgetsGrid = () => {
             )}
           </KpiCard>
           <KpiCard
-            title="Spent this month"
+            title="Budget Spent"
             imageSrc={IMAGE_PATHS.MONTH}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="No expenses recorded this month"
+            fallbackText="No spending in tracked categories"
           >
             {summaryData?.spent?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
@@ -230,7 +230,7 @@ export const BudgetsGrid = () => {
             imageSrc={IMAGE_PATHS.MONTH}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="No budget available to calculate remaining amount"
+            fallbackText="Add limits to track remaining funds"
           >
             {summaryData?.spent?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
@@ -266,8 +266,8 @@ export const BudgetsGrid = () => {
           onPageSizeChange: handlePageSizeChange,
         }}
         customStyles={{
-          gridWrapperStyles: "min-h-90",
-          tableContainerStyles: "max-h-90",
+          gridWrapperStyles: "min-h-106",
+          tableContainerStyles: "max-h-106",
         }}
       />
       <Modal
