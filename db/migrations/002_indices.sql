@@ -36,5 +36,6 @@ USING GIN (category gin_trgm_ops);
 CREATE UNIQUE INDEX idx_unique_user_category_budget
 ON budgets(user_id, category);
 
-CREATE INDEX idx_budgets_user_date_created
-ON budgets (user_id, created_at);
+CREATE INDEX idx_budgets_user_currency_amount
+ON budgets (user_id, currency)
+INCLUDE (amount);
