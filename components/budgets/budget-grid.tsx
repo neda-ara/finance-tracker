@@ -4,6 +4,8 @@ import {
   ACTION_CONSTANTS,
   CURRENCIES,
   DEFAULT_VALUES,
+  EXPENSE_CATEGORIES,
+  EXPENSE_CATEGORY_ICONS_BASE_PATH,
   IMAGE_PATHS,
 } from "@/lib/constants/constants";
 import { ActionConstant, Budget, ModalContent } from "@/lib/actions/types";
@@ -13,10 +15,12 @@ import { Button } from "../ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { createActionsColumn, DataGrid } from "../common/data-grid";
 import { DeleteConfirmationBody, KpiCard } from "../common/common";
+import { isStringEqual } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
 import { useBudgets } from "@/hooks/use-budgets";
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import toast from "react-hot-toast";
 
 export const BudgetsGrid = () => {
@@ -101,7 +105,26 @@ export const BudgetsGrid = () => {
     {
       accessorKey: "category",
       header: "Category",
-      enableHiding: true,
+      enableHiding: false,
+      cell: ({ row }) => {
+        const category = EXPENSE_CATEGORIES.find((cat) =>
+          isStringEqual(cat.title, row.original.category),
+        );
+        return category ? (
+          <div className="flex items-center gap-2">
+            <Image
+              alt={category.title}
+              height={56}
+              width={56}
+              src={`${EXPENSE_CATEGORY_ICONS_BASE_PATH}${category.iconPath}`}
+              className="h-6 w-6 object-contain"
+            />
+            <span className="text-sm">{category.title}</span>
+          </div>
+        ) : (
+          row.original.category
+        );
+      },
     },
     createActionsColumn<Budget>([
       {
@@ -279,7 +302,7 @@ export const BudgetsGrid = () => {
           dialogContent:
             action === ACTION_CONSTANTS.DELETE
               ? "sm:max-w-116"
-              : "sm:max-w-136",
+              : "sm:max-w-164",
         }}
         showFooter={action === ACTION_CONSTANTS.DELETE}
         footerContent={

@@ -4,6 +4,8 @@ import { ActionResult, Budget } from "@/lib/actions/types";
 import {
   AMOUNT_INPUT_REGEX,
   CURRENCIES,
+  EXPENSE_CATEGORIES,
+  EXPENSE_CATEGORY_ICONS_BASE_PATH,
   VALIDATION,
 } from "@/lib/constants/constants";
 import { budgetInputSchema } from "@/lib/schema/budget-schema";
@@ -18,7 +20,6 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils/shadcn-utils";
-import { DatePicker } from "../common/date-picker";
 import { normalizeNumber } from "@/lib/utils/utils";
 import {
   Select,
@@ -28,12 +29,12 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Spinner } from "../ui/spinner";
-import { Textarea } from "../ui/textarea";
 import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import z from "zod";
+import Image from "next/image";
 
 type BudgetInput = z.input<typeof budgetInputSchema>;
 
@@ -109,19 +110,17 @@ export const BudgetForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleOnSubmit)}
-        className="flex flex-col gap-y-4"
+        className="flex flex-col gap-y-4 mt-3"
       >
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <FormItem className="flex flex-col gap-x-8 self-center my-2">
-              <FormControl>
-                <div className="flex justify-center items-center self-center">
-                  <FormLabel className="text-sm font-medium mr-20 min-w-fit">
-                    Amount Received
-                  </FormLabel>
-                  <p className="font-semibold text-4xl">
+        <div className="flex items-start gap-x-2">
+          <FormField
+            control={form.control}
+            name="amount"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel className="text-sm font-medium">Limit</FormLabel>
+                <div className="flex items-center self-center relative">
+                  <p className="font-semibold text-3xl">
                     {selectedCurrency &&
                       CURRENCIES[selectedCurrency as keyof typeof CURRENCIES]
                         .symbol}
@@ -129,7 +128,7 @@ export const BudgetForm = ({
                   <Input
                     {...field}
                     autoFocus={true}
-                    className="text-4xl! font-medium border-0 selection:ring-0 focus-visible:ring-0 shadow-none"
+                    className="text-3xl! font-medium border-0 selection:ring-0 focus-visible:ring-0 shadow-none"
                     type="text"
                     inputMode="decimal"
                     placeholder="0.00"
@@ -150,12 +149,10 @@ export const BudgetForm = ({
                     }}
                   />
                 </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex items-start gap-x-2">
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="currency"
@@ -181,7 +178,64 @@ export const BudgetForm = ({
             )}
           />
         </div>
-
+        <FormField
+          control={form.control}
+          name="category"
+          render={({ field }) => (
+            <FormItem className="flex-1 my-2">
+              <FormLabel className="flex items-center justify-between text-sm font-medium">
+                Category
+              </FormLabel>
+              <FormControl>
+                <div className="flex items-center flex-wrap gap-3">
+                  {EXPENSE_CATEGORIES.map((category) => {
+                    const isSelected = category.title === field.value;
+                    return (
+                      <div
+                        key={category.title}
+                        onClick={() => field.onChange(category.title)}
+                        className="flex flex-col items-center cursor-pointer"
+                      >
+                        <div
+                          style={
+                            isSelected
+                              ? {
+                                  boxShadow: `6px 6px 12px rgba(0,0,0,0.12), -6px -6px 1px rgba(255,255,255,0.9)`,
+                                }
+                              : {}
+                          }
+                          className={cn(
+                            "flex items-center justify-center rounded-full h-15 aspect-square font-medium border-2 transition-all delay-100 ease-in",
+                            isSelected
+                              ? "bg-green-50 text-primary-foreground border-3 border-green-200"
+                              : "bg-background hover:bg-accent border-muted",
+                          )}
+                        >
+                          <Image
+                            alt={category?.title}
+                            height={64}
+                            width={64}
+                            className="h-9 w-9 object-contain"
+                            src={`${EXPENSE_CATEGORY_ICONS_BASE_PATH}${category?.iconPath}`}
+                          />
+                        </div>
+                        <span
+                          className={cn(
+                            "transition-colors duration-150 text-xs font-medium text-muted-foreground",
+                            isSelected && "text-black",
+                          )}
+                        >
+                          {category?.title}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <div className="flex items-center gap-x-2 self-end mt-2">
           <Button
             variant="outline"
