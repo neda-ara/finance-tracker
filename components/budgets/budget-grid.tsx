@@ -7,13 +7,9 @@ import {
   IMAGE_PATHS,
   VALIDATION,
 } from "@/lib/constants/constants";
-import {
-  ActionConstant,
-  Earning,
-  EarningsFiltersType,
-  ModalContent,
-} from "@/lib/actions/types";
+import { ActionConstant, Budget, ModalContent } from "@/lib/actions/types";
 import { ArrowUpDown, PencilLine, Plus, Trash2 } from "lucide-react";
+import { BudgetForm } from "./budget-form";
 import { Button } from "../ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { createActionsColumn, DataGrid } from "../common/data-grid";
@@ -21,20 +17,19 @@ import { DeleteConfirmationBody, KpiCard } from "../common/common";
 import { formatDateForDisplay } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
-import { useEarnings } from "@/hooks/use-earnings";
+import { useBudgets } from "@/hooks/use-budgets";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { BudgetForm } from "./budget-form";
 
 export const BudgetsGrid = () => {
   const [action, setAction] = useState<ActionConstant | undefined>();
 
   const [pageNo, setPageNo] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_VALUES.PAGE_SIZE);
-  const [quickActionData, setQuickActionData] = useState<Earning | undefined>();
+  const [quickActionData, setQuickActionData] = useState<Budget | undefined>();
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-  const { query, summaryQuery, mutations } = useEarnings({
+  const { query, summaryQuery, mutations } = useBudgets({
     page: pageNo,
     pageSize,
   });
@@ -48,49 +43,32 @@ export const BudgetsGrid = () => {
     }
   }, [query.error, summaryQuery.error]);
 
-  const handleDeleteEarning = async () => {
+  const handleDeleteBudget = async () => {
     if (!quickActionData?.id) {
-      toast.error("Earning ID missing");
+      toast.error("Budget ID missing");
       return;
     }
     const resp = await mutations.delete.mutateAsync(quickActionData.id);
 
     if (!resp.ok) {
-      toast.error(resp.error.message ?? "Failed to delete earning");
+      toast.error(resp.error.message ?? "Failed to delete budget");
       return;
     }
 
     handleCloseModal();
-    toast.success("Earning deleted successfully!");
+    toast.success("Budget deleted successfully!");
   };
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
-  const actionHandler = (action: ActionConstant, data?: Earning) => {
+  const actionHandler = (action: ActionConstant, data?: Budget) => {
     setAction(action);
     setQuickActionData(data);
     handleOpenModal();
   };
 
-  const columns: ColumnDef<Earning>[] = [
-    {
-      accessorKey: "receivedDate",
-      accessorFn: (row) => new Date(row.receivedDate).getTime(),
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="font-semibold px-0!"
-        >
-          Received On Date
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => formatDateForDisplay(row.original.receivedDate),
-      enableSorting: true,
-      enableHiding: false,
-    },
+  const columns: ColumnDef<Budget>[] = [
     {
       accessorKey: "amount",
       header: ({ column }) => (
@@ -127,17 +105,7 @@ export const BudgetsGrid = () => {
       header: "Category",
       enableHiding: true,
     },
-    {
-      accessorKey: "source",
-      header: "Source",
-      enableHiding: true,
-    },
-    {
-      accessorKey: "description",
-      header: "Description",
-      enableHiding: true,
-    },
-    createActionsColumn<Earning>([
+    createActionsColumn<Budget>([
       {
         icon: <PencilLine className="h-4 text-violet-600" />,
         label: "Edit",
@@ -169,13 +137,18 @@ export const BudgetsGrid = () => {
     [
       ACTION_CONSTANTS.EDIT,
       {
-        header: <p>Update Earning - {quickActionData?.amount}</p>,
+        header: (
+          <p>
+            Update Budget - {quickActionData?.amount} for{" "}
+            {quickActionData?.category}
+          </p>
+        ),
         body: (
           <BudgetForm
             initialValues={quickActionData}
             onCancel={handleCloseModal}
             onSubmit={(formData) => mutations.update.mutateAsync(formData)}
-            submitButtonText={`Edit Earning`}
+            submitButtonText={`Edit Budget`}
             submitInProgress={mutations.update.isPending}
           />
         ),
@@ -184,19 +157,17 @@ export const BudgetsGrid = () => {
     [
       ACTION_CONSTANTS.DELETE,
       {
-        header: <p>Delete Earning</p>,
+        header: <p>Delete Budget</p>,
         body: (
           <DeleteConfirmationBody
             entity={
               quickActionData && quickActionData.currency
-                ? `earning of ${
+                ? `budget of ${
                     CURRENCIES[
                       quickActionData.currency as keyof typeof CURRENCIES
                     ].symbol
-                  } ${quickActionData.amount} from ${formatDateForDisplay(
-                    quickActionData.receivedDate,
-                  )}`
-                : "earning"
+                  } ${quickActionData.amount} for ${quickActionData.category} `
+                : "budget"
             }
           />
         ),
@@ -217,44 +188,42 @@ export const BudgetsGrid = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-x-4">
           <KpiCard
-            title="Earned this month"
+            title="Monthly Budget"
             imageSrc={IMAGE_PATHS.MONTH}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="No earnings yet"
+            fallbackText="No monthly budget set"
           >
-            {summaryData?.earnedThisMonth?.amount != null && (
+            {summaryData?.total?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
                   {
                     CURRENCIES[
-                      summaryData?.earnedThisMonth
-                        ?.currency as keyof typeof CURRENCIES
+                      summaryData?.total?.currency as keyof typeof CURRENCIES
                     ]?.symbol
                   }
                 </span>
-                {summaryData?.earnedThisMonth?.amount?.toLocaleString()}
+                {summaryData?.total?.amount?.toLocaleString()}
               </p>
             )}
           </KpiCard>
           <KpiCard
-            title="Earned over the past year"
+            title="Spent this year"
             imageSrc={IMAGE_PATHS.YEAR}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="No earnings yet"
+            fallbackText="No expenses yet"
           >
-            {summaryData?.earnedPastYear?.amount != null && (
+            {summaryData?.spent?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
                   {
                     CURRENCIES[
-                      summaryData?.earnedPastYear
-                        ?.currency as keyof typeof CURRENCIES
+                      summaryData?.spent?.currency as keyof typeof CURRENCIES
                     ]?.symbol
                   }
                 </span>
-                {summaryData?.earnedPastYear?.amount.toLocaleString()}
+                {summaryData?.spent?.amount.toLocaleString()}
               </p>
             )}
           </KpiCard>
@@ -264,7 +233,7 @@ export const BudgetsGrid = () => {
           className="font-medium"
           onClick={() => actionHandler(ACTION_CONSTANTS.ADD)}
         >
-          <Plus /> Add New Earning
+          <Plus /> Add New Budget
         </Button>
       </div>
       <DataGrid
@@ -305,7 +274,7 @@ export const BudgetsGrid = () => {
               Cancel
             </Button>
             <Button
-              onClick={handleDeleteEarning}
+              onClick={handleDeleteBudget}
               variant="destructive"
               disabled={deleteInProgress}
             >
