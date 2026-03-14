@@ -5,7 +5,6 @@ import {
   CURRENCIES,
   DEFAULT_VALUES,
   IMAGE_PATHS,
-  VALIDATION,
 } from "@/lib/constants/constants";
 import { ActionConstant, Budget, ModalContent } from "@/lib/actions/types";
 import { ArrowUpDown, PencilLine, Plus, Trash2 } from "lucide-react";
@@ -14,7 +13,6 @@ import { Button } from "../ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { createActionsColumn, DataGrid } from "../common/data-grid";
 import { DeleteConfirmationBody, KpiCard } from "../common/common";
-import { formatDateForDisplay } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
 import { useBudgets } from "@/hooks/use-budgets";
@@ -186,13 +184,13 @@ export const BudgetsGrid = () => {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-x-4">
+        <div className="flex items-center gap-x-5 mb-8">
           <KpiCard
             title="Monthly Budget"
             imageSrc={IMAGE_PATHS.MONTH}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="No monthly budget set"
+            fallbackText="Monthly budget not set"
           >
             {summaryData?.total?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
@@ -208,11 +206,31 @@ export const BudgetsGrid = () => {
             )}
           </KpiCard>
           <KpiCard
-            title="Spent this year"
-            imageSrc={IMAGE_PATHS.YEAR}
+            title="Spent this month"
+            imageSrc={IMAGE_PATHS.MONTH}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="No expenses yet"
+            fallbackText="No expenses recorded this month"
+          >
+            {summaryData?.spent?.amount != null && (
+              <p className="font-bold text-lg tracking-wider">
+                <span className="mr-1">
+                  {
+                    CURRENCIES[
+                      summaryData?.spent?.currency as keyof typeof CURRENCIES
+                    ]?.symbol
+                  }
+                </span>
+                {summaryData?.spent?.amount.toLocaleString()}
+              </p>
+            )}
+          </KpiCard>
+          <KpiCard
+            title="Remaining Budget"
+            imageSrc={IMAGE_PATHS.MONTH}
+            imageAlt="month-calendar"
+            isLoading={query.isPending}
+            fallbackText="No budget available to calculate remaining amount"
           >
             {summaryData?.spent?.amount != null && (
               <p className="font-bold text-lg tracking-wider">

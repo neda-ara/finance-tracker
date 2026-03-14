@@ -1,13 +1,13 @@
 "use client";
 
-import { ActionResult, Earning } from "@/lib/actions/types";
+import { ActionResult, Budget } from "@/lib/actions/types";
 import {
   AMOUNT_INPUT_REGEX,
   CURRENCIES,
   VALIDATION,
 } from "@/lib/constants/constants";
+import { budgetInputSchema } from "@/lib/schema/budget-schema";
 import { Button } from "../ui/button";
-import { earningInputSchema } from "@/lib/schema/earning-schema";
 import {
   Form,
   FormControl,
@@ -35,7 +35,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import z from "zod";
 
-type EarningInput = z.input<typeof earningInputSchema>;
+type BudgetInput = z.input<typeof budgetInputSchema>;
 
 export const BudgetForm = ({
   initialValues,
@@ -44,21 +44,18 @@ export const BudgetForm = ({
   submitButtonText,
   submitInProgress,
 }: {
-  initialValues?: Earning;
+  initialValues?: Budget;
   onCancel: () => void;
   onSubmit: (values: FormData) => Promise<ActionResult<void>>;
   submitButtonText: string;
   submitInProgress: boolean;
 }) => {
-  const form = useForm<EarningInput>({
-    resolver: zodResolver(earningInputSchema),
+  const form = useForm<BudgetInput>({
+    resolver: zodResolver(budgetInputSchema),
     defaultValues: {
       amount: initialValues?.amount ?? "",
       currency: initialValues?.currency ?? CURRENCIES.INR.code,
-      category: initialValues?.category ?? "Salary",
-      description: initialValues?.description ?? "",
-      source: initialValues?.source ?? "",
-      receivedDate: initialValues?.receivedDate ?? new Date(),
+      category: initialValues?.category ?? "Food",
     },
   });
 
@@ -71,13 +68,10 @@ export const BudgetForm = ({
       amount: String(initialValues.amount),
       currency: initialValues.currency,
       category: initialValues.category,
-      source: initialValues.source,
-      description: initialValues.description ?? "",
-      receivedDate: new Date(initialValues.receivedDate),
     });
   }, [initialValues, form]);
 
-  const handleOnSubmit = async (values: EarningInput) => {
+  const handleOnSubmit = async (values: BudgetInput) => {
     const formData = new FormData();
 
     if (initialValues?.id) {
@@ -87,21 +81,13 @@ export const BudgetForm = ({
     formData.append("amount", String(values.amount));
     formData.append("currency", values.currency);
     formData.append("category", values.category);
-    formData.append("source", values.source ?? "");
-    formData.append("description", values.description ?? "");
-    formData.append(
-      "receivedDate",
-      values.receivedDate instanceof Date
-        ? values.receivedDate.toISOString()
-        : String(values.receivedDate),
-    );
 
     const resp = await onSubmit(formData);
 
     if (!resp.ok) {
       if (resp.error.fieldErrors) {
         Object.entries(resp.error.fieldErrors).forEach(([k, msg]) =>
-          form.setError(k as keyof EarningInput, { message: msg }),
+          form.setError(k as keyof BudgetInput, { message: msg }),
         );
       }
       if (resp.error.message) {
@@ -110,7 +96,7 @@ export const BudgetForm = ({
       return;
     }
 
-    toast.success("Earning recorded successfully!");
+    toast.success("Budget recorded successfully!");
     onCancel();
   };
 
@@ -153,7 +139,7 @@ export const BudgetForm = ({
                       if (
                         AMOUNT_INPUT_REGEX.test(value) &&
                         Number(value || 0) <=
-                          VALIDATION.EARNING.MAX_AMOUNT_LIMIT
+                          VALIDATION.EXPENSE.MAX_AMOUNT_LIMIT
                       ) {
                         field.onChange(value);
                       }
@@ -170,27 +156,6 @@ export const BudgetForm = ({
           )}
         />
         <div className="flex items-start gap-x-2">
-          <FormField
-            control={form.control}
-            name="receivedDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm font-medium">
-                  Received On Date
-                </FormLabel>
-                <FormControl>
-                  <DatePicker
-                    value={
-                      field.value instanceof Date ? field.value : undefined
-                    }
-                    onChange={field.onChange}
-                    customStyles={{ triggerButton: "min-w-50" }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="currency"
@@ -216,88 +181,6 @@ export const BudgetForm = ({
             )}
           />
         </div>
-        <div className="flex items-start gap-x-2">
-          <FormField
-            control={form.control}
-            name="category"
-            render={({ field }) => (
-              <FormItem className="w-1/2">
-                <FormLabel className="text-sm font-medium">
-                  Income Category
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    value={field.value}
-                    onChange={field.onChange}
-                    className="w-full"
-                    placeholder="Salary/Freelance/Investment"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="source"
-            render={({ field }) => (
-              <FormItem className="w-1/2">
-                <FormLabel className="text-sm font-medium">
-                  Income Source (optional)
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    value={field.value}
-                    onChange={field.onChange}
-                    className="w-full"
-                    placeholder="Employer/Client/Platform"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => {
-            const maxLength = VALIDATION.MAX_DESCRIPTION_LENGTH;
-            const currentLength = field.value?.length ?? 0;
-
-            return (
-              <FormItem>
-                <FormLabel className="text-sm font-medium">
-                  Description (optional)
-                </FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    className="resize-none text-sm py-1.5 min-h-14.5"
-                    placeholder="Add notes about this earning"
-                    maxLength={maxLength}
-                    rows={2}
-                  />
-                </FormControl>
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <FormMessage />
-                  <span
-                    className={cn(
-                      "text-xs font-medium ml-auto",
-                      currentLength >= maxLength
-                        ? "text-destructive"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    {currentLength}/{maxLength}
-                  </span>
-                </div>
-              </FormItem>
-            );
-          }}
-        />
 
         <div className="flex items-center gap-x-2 self-end mt-2">
           <Button

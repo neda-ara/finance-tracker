@@ -46,7 +46,7 @@ export const KpiCard = ({
           ) : children ? (
             children
           ) : (
-            <p className="h-7 flex items-center font-semibold text-sm text-muted-foreground tracking-tight leading-none">
+            <p className="h-7 max-w-48 flex items-center font-semibold text-[13px] text-muted-foreground tracking-tight leading-4">
               {fallbackText}
             </p>
           )}

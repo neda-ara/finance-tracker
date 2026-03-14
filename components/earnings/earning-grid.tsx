@@ -237,7 +237,7 @@ export const EarningsGrid = () => {
             imageSrc={IMAGE_PATHS.MONTH}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="No earnings yet"
+            fallbackText="No earnings recorded"
           >
             {summaryData?.earnedThisMonth?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
@@ -256,9 +256,9 @@ export const EarningsGrid = () => {
           <KpiCard
             title="Earned over the past year"
             imageSrc={IMAGE_PATHS.YEAR}
-            imageAlt="month-calendar"
+            imageAlt="year-calendar"
             isLoading={query.isPending}
-            fallbackText="No earnings yet"
+            fallbackText="No earnings recorded"
           >
             {summaryData?.earnedPastYear?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
