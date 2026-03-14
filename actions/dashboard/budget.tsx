@@ -6,11 +6,11 @@ import {
   Budget,
   BudgetSummary,
   PaginatedResult,
+  TotalByCurrency,
 } from "@/lib/actions/types";
 import { budgetInputSchema } from "@/lib/schema/budget-schema";
 import { db } from "@/lib/db";
 import { getAuthenticatedSession, safeRunAction } from "@/lib/actions/helpers";
-import { VALIDATION } from "@/lib/constants/constants";
 
 export async function fetchBudgets(
   params: BaseFetchRequest,
@@ -29,8 +29,8 @@ export async function fetchBudgets(
         amount::float AS amount,
         currency,
         category, 
-        created_at AS "createdAt"
-        COUNT (*) OVER() AS totalCount
+        created_at AS "createdAt",
+        COUNT (*) OVER()::int AS "totalCount"
       FROM budgets
       WHERE user_id = $1
       ORDER BY created_at
@@ -59,44 +59,44 @@ export async function fetchBudgetSummary(): Promise<
     const session = await getAuthenticatedSession();
     const userId = session.userId;
 
-    const thisMonth = await db.query<{ currency: string; total: number }>(
+    const totalBudget = await db.query<TotalByCurrency>(
       `
-    SELECT currency, SUM(amount)::float AS total
-    FROM expenses
-    WHERE user_id = $1
-      AND expense_date >= date_trunc('month', CURRENT_DATE)
-    GROUP BY currency
-    ORDER BY total DESC
-    LIMIT 1
-    `,
+      SELECT currency, SUM(amount)::float AS total
+      FROM budgets
+      WHERE user_id = $1
+      GROUP BY currency
+      LIMIT 1
+      `,
       [userId],
     );
 
-    const last30Days = await db.query<{ currency: string; total: number }>(
+    const spent = await db.query<TotalByCurrency>(
       `
-    SELECT currency, SUM(amount)::float AS total
-    FROM expenses
-    WHERE user_id = $1
-      AND expense_date >= CURRENT_DATE - INTERVAL '30 days'
-    GROUP BY currency
-    ORDER BY total DESC
-    LIMIT 1
-    `,
+      SELECT currency, SUM(amount)::float AS total
+      FROM expenses
+      WHERE user_id = $1
+        AND expense_date >= date_trunc('month', CURRENT_DATE)
+      GROUP BY currency
+      LIMIT 1
+      `,
       [userId],
     );
+
+    const budget = totalBudget.rows[0]?.total ?? 0;
+    const spentAmount = spent.rows[0]?.total ?? 0;
 
     return {
-      total: thisMonth.rows[0] && {
-        currency: thisMonth.rows[0].currency,
-        amount: thisMonth.rows[0].total,
+      total: {
+        currency: totalBudget.rows[0]?.currency,
+        amount: budget,
       },
-      spent: last30Days.rows[0] && {
-        currency: last30Days.rows[0].currency,
-        amount: last30Days.rows[0].total,
+      spent: {
+        currency: spent.rows[0]?.currency,
+        amount: spentAmount,
       },
-      remaining: last30Days.rows[0] && {
-        currency: last30Days.rows[0].currency,
-        amount: last30Days.rows[0].total,
+      remaining: {
+        currency: totalBudget.rows[0]?.currency,
+        amount: budget - spentAmount,
       },
     };
   });
@@ -112,10 +112,6 @@ export async function createBudget(
       amount: Number(formData.get("amount")),
       currency: formData.get("currency"),
       category: formData.get("category"),
-      paymentMode: formData.get("paymentMode"),
-      description: formData.get("description"),
-      satisfactionRating: Number(formData.get("satisfactionRating")),
-      expenseDate: formData.get("expenseDate"),
     };
 
     const parsedInput = budgetInputSchema.safeParse(input);
@@ -134,28 +130,15 @@ export async function createBudget(
 
     await db.query(
       `
-      INSERT INTO expenses (
+      INSERT INTO budgets (
       user_id,
       amount,
-      expense_date,
       category,
-      currency,
-      payment_mode,
-      description,
-      satisfaction_rating
+      currency
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      VALUES ($1, $2, $3, $4)
     `,
-      [
-        session?.userId,
-        values.amount,
-        values.expenseDate,
-        values.category,
-        values.currency,
-        values.paymentMode,
-        values.description,
-        values.satisfactionRating,
-      ],
+      [session?.userId, values.amount, values.category, values.currency],
     );
   });
 }
@@ -166,20 +149,16 @@ export async function updateBudget(
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
 
-    const expenseId = formData.get("id");
+    const budgetId = formData.get("id");
 
-    if (!expenseId) {
-      throw { message: "Expense ID is missing" };
+    if (!budgetId) {
+      throw { message: "Budget ID is missing" };
     }
 
     const input = {
       amount: Number(formData.get("amount")),
       currency: formData.get("currency"),
       category: formData.get("category"),
-      paymentMode: formData.get("paymentMode"),
-      description: formData.get("description"),
-      satisfactionRating: Number(formData.get("satisfactionRating")),
-      expenseDate: formData.get("expenseDate"),
     };
 
     const parsedInput = budgetInputSchema.safeParse(input);
@@ -198,56 +177,48 @@ export async function updateBudget(
 
     const result = await db.query(
       `
-    UPDATE expenses
+    UPDATE budgets
     SET
       amount = $1,
-      expense_date = $2,
-      category = $3,
-      currency = $4,
-      payment_mode = $5,
-      description = $6,
-      satisfaction_rating = $7
-    WHERE id = $8 AND user_id = $9
+      category = $2,
+      currency = $3
+    WHERE id = $4 AND user_id = $5
     `,
       [
         values.amount,
-        values.expenseDate,
         values.category,
         values.currency,
-        values.paymentMode,
-        values.description,
-        values.satisfactionRating,
-        expenseId,
+        budgetId,
         session?.userId,
       ],
     );
 
     if (result.rowCount === 0) {
-      throw { message: "Requested expense not found" };
+      throw { message: "Requested budget not found" };
     }
   });
 }
 
 export async function deleteBudget(
-  expenseId: string,
+  budgetId: string,
 ): Promise<ActionResult<void>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
 
-    if (!expenseId) {
-      throw { message: "Expense ID is missing" };
+    if (!budgetId) {
+      throw { message: "Budget ID is missing" };
     }
 
     const result = await db.query(
       `
-      DELETE FROM expenses
+      DELETE FROM budgets
       WHERE id = $1 AND user_id = $2
       `,
-      [expenseId, session?.userId],
+      [budgetId, session?.userId],
     );
 
     if (result.rowCount === 0) {
-      throw { message: "Requested expense not found" };
+      throw { message: "Requested budget not found" };
     }
   });
 }

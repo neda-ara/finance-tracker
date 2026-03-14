@@ -66,10 +66,11 @@ export type DatePickerProps = {
   customStyles?: { triggerButton?: string };
 };
 
-export type LabelValuePair = {
-  label: string;
-  value: string;
-};
+// ---------- Helper Types ----------
+
+export type LabelValuePair = { label: string; value: string };
+
+export type TotalByCurrency = { currency: string; total: number };
 
 // ---------- Data Grid / Table ----------
 
