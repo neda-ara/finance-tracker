@@ -112,13 +112,15 @@ export const BudgetForm = ({
         onSubmit={form.handleSubmit(handleOnSubmit)}
         className="flex flex-col gap-y-4 mt-3"
       >
-        <div className="flex items-start gap-x-2">
+        <div className="flex items-center gap-x-2">
           <FormField
             control={form.control}
             name="amount"
             render={({ field }) => (
               <FormItem className="flex-1">
-                <FormLabel className="text-sm font-medium">Limit</FormLabel>
+                <FormLabel className="text-sm font-medium">
+                  Spending Limit
+                </FormLabel>
                 <div className="flex items-center self-center relative">
                   <p className="font-semibold text-3xl">
                     {selectedCurrency &&
@@ -187,7 +189,7 @@ export const BudgetForm = ({
                 Category
               </FormLabel>
               <FormControl>
-                <div className="flex items-center flex-wrap gap-3">
+                <div className="grid grid-cols-8 gap-x-3 gap-y-1.5">
                   {EXPENSE_CATEGORIES.map((category) => {
                     const isSelected = category.title === field.value;
                     return (

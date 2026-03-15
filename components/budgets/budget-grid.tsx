@@ -12,14 +12,14 @@ import { ActionConstant, Budget, ModalContent } from "@/lib/actions/types";
 import { ArrowUpDown, PencilLine, Plus, Trash2 } from "lucide-react";
 import { BudgetForm } from "./budget-form";
 import { Button } from "../ui/button";
-import { ColumnDef } from "@tanstack/react-table";
-import { createActionsColumn, DataGrid } from "../common/data-grid";
 import {
   CircularProgress,
   DeleteConfirmationBody,
   GradientProgressBar,
   KpiCard,
 } from "../common/common";
+import { ColumnDef } from "@tanstack/react-table";
+import { createActionsColumn, DataGrid } from "../common/data-grid";
 import { isStringEqual } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
@@ -166,6 +166,8 @@ export const BudgetsGrid = () => {
         const percentage =
           amount > 0 ? Math.min((spent / amount) * 100, 100) : 0;
 
+        const overBudget = spent > amount;
+
         return (
           <div className="flex flex-col gap-1 w-full min-w-56 pr-24 py-2">
             <div className="flex justify-between text-xs font-medium tabular-nums">
@@ -181,6 +183,12 @@ export const BudgetsGrid = () => {
             </div>
 
             <GradientProgressBar percentage={percentage} />
+            {overBudget && (
+              <p className="text-xs font-medium text-red-700">
+                Over budget by {symbol}
+                {spent - amount}
+              </p>
+            )}
           </div>
         );
       },
