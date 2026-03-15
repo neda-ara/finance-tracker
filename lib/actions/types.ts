@@ -186,6 +186,7 @@ export type Budget = {
   currency: string;
   category: string;
   createdAt: Date;
+  spent: number;
 };
 
 export type BudgetSummary = {

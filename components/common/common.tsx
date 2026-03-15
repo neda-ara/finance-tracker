@@ -3,6 +3,7 @@
 import { MessageSquareWarning } from "lucide-react";
 import { ReactNode } from "react";
 import Image from "next/image";
+import { cn } from "@/lib/utils/shadcn-utils";
 
 type KpiCardProps = {
   title: string;
@@ -63,3 +64,34 @@ export const KpiCard = ({
     </div>
   );
 };
+
+export function GradientProgressBar({ percentage }: { percentage: number }) {
+  const clamped = Math.min(percentage, 100);
+
+  const gradient =
+    percentage >= 100
+      ? "from-red-500 to-red-600 !text-white"
+      : percentage >= 85
+        ? "from-amber-400 to-red-500"
+        : percentage >= 60
+          ? "from-green-400 via-yellow-400 to-amber-500"
+          : "from-green-400 to-green-600";
+
+  return (
+    <div className="relative h-5 w-full rounded-sm bg-gray-200 overflow-hidden">
+      <div
+        className={`h-full bg-linear-to-r ${gradient} transition-all duration-500`}
+        style={{ width: `${clamped}%` }}
+      />
+
+      <span
+        className={cn(
+          "absolute inset-0 flex items-center justify-center text-[10px] font-semibold tabular-nums",
+          percentage >= 85 && "text-white",
+        )}
+      >
+        {percentage.toFixed(0)}%
+      </span>
+    </div>
+  );
+}

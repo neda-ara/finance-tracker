@@ -22,18 +22,26 @@ export async function fetchBudgets(
     const pageSize = params.pageSize ?? 25;
     const offset = (pageNo - 1) * pageSize;
 
-    const budgetList = await db.query<Budget & { totalCount: number }>(
+    const budgetList = await db.query<
+      Budget & { spent: number; totalCount: number }
+    >(
       `
       SELECT
-        id,
-        amount::float AS amount,
-        currency,
-        category, 
-        created_at AS "createdAt",
-        COUNT (*) OVER()::int AS "totalCount"
-      FROM budgets
-      WHERE user_id = $1
-      ORDER BY created_at
+        b.id,
+        b.amount::float AS amount,
+        b.currency,
+        b.category,
+        b.created_at AS "createdAt",
+        COALESCE(SUM(e.amount)::float, 0) AS spent,
+        COUNT(*) OVER()::int AS "totalCount"
+      FROM budgets b
+      LEFT JOIN expenses e
+        ON e.user_id = b.user_id
+       AND e.category = b.category
+       AND e.expense_date >= date_trunc('month', CURRENT_DATE)
+      WHERE b.user_id = $1
+      GROUP BY b.id
+      ORDER BY b.created_at
       LIMIT $2
       OFFSET $3
       `,

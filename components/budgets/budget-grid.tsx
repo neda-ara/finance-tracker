@@ -14,7 +14,11 @@ import { BudgetForm } from "./budget-form";
 import { Button } from "../ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { createActionsColumn, DataGrid } from "../common/data-grid";
-import { DeleteConfirmationBody, KpiCard } from "../common/common";
+import {
+  DeleteConfirmationBody,
+  GradientProgressBar,
+  KpiCard,
+} from "../common/common";
 import { isStringEqual } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
@@ -126,6 +130,62 @@ export const BudgetsGrid = () => {
         );
       },
     },
+    {
+      accessorKey: "spent",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="font-semibold px-0!"
+        >
+          Spent this Month
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <p className="capitalize flex items-center gap-x-1">
+          <span>
+            {
+              CURRENCIES[row.original.currency as keyof typeof CURRENCIES]
+                .symbol
+            }
+          </span>
+          {row.original.spent.toLocaleString()}
+        </p>
+      ),
+      enableSorting: true,
+      enableHiding: false,
+    },
+    {
+      header: "Budget Used",
+      cell: ({ row }) => {
+        const { amount, spent, currency } = row.original;
+        const symbol =
+          CURRENCIES[currency as keyof typeof CURRENCIES]?.symbol ?? "";
+        const percentage =
+          amount > 0 ? Math.min((spent / amount) * 100, 100) : 0;
+
+        return (
+          <div className="flex flex-col gap-1 w-full min-w-56 pr-24 py-2">
+            <div className="flex justify-between text-xs font-medium tabular-nums">
+              <span>
+                {symbol}
+                {spent.toLocaleString()}
+              </span>
+
+              <span>
+                {symbol}
+                {amount.toLocaleString()}
+              </span>
+            </div>
+
+            <GradientProgressBar percentage={percentage} />
+          </div>
+        );
+      },
+      enableHiding: false,
+    },
+
     createActionsColumn<Budget>([
       {
         icon: <PencilLine className="h-4 text-violet-600" />,
@@ -255,16 +315,17 @@ export const BudgetsGrid = () => {
             isLoading={query.isPending}
             fallbackText="Add limits to track remaining funds"
           >
-            {summaryData?.spent?.amount != null && (
+            {summaryData?.remaining?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
                   {
                     CURRENCIES[
-                      summaryData?.spent?.currency as keyof typeof CURRENCIES
+                      summaryData?.remaining
+                        ?.currency as keyof typeof CURRENCIES
                     ]?.symbol
                   }
                 </span>
-                {summaryData?.spent?.amount.toLocaleString()}
+                {summaryData?.remaining?.amount.toLocaleString()}
               </p>
             )}
           </KpiCard>
