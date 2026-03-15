@@ -4,6 +4,7 @@ import { Baloo_Tamma_2 } from "next/font/google";
 import {
   BarChart3,
   Edit3,
+  LayoutGrid,
   LogOut,
   PiggyBank,
   Repeat,
@@ -41,10 +42,11 @@ export const Sidebar = ({ user }: { user: User | null }) => {
   };
 
   const iconsMap: Record<string, React.ElementType> = {
+    [ROUTES.DASHBOARD.OVERVIEW]: LayoutGrid,
     [ROUTES.DASHBOARD.EXPENSES]: Wallet,
     [ROUTES.DASHBOARD.EARNINGS]: TrendingUp,
     [ROUTES.DASHBOARD.ANALYTICS]: BarChart3,
-    [ROUTES.DASHBOARD.BUDGET]: PiggyBank,
+    [ROUTES.DASHBOARD.BUDGETS]: PiggyBank,
     [ROUTES.DASHBOARD.AUTO_ENTRIES]: Repeat,
   };
 

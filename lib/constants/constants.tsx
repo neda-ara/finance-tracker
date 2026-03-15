@@ -4,10 +4,11 @@ export const ROUTES = {
     SIGNUP: "/signup",
   },
   DASHBOARD: {
+    OVERVIEW: "/overview",
     EXPENSES: "/expenses",
     EARNINGS: "/earnings",
+    BUDGETS: "/budgets",
     ANALYTICS: "/analytics",
-    BUDGET: "/budget",
     AUTO_ENTRIES: "/auto-entries",
   },
   PROFILE: "/profile",
@@ -121,4 +122,5 @@ export const IMAGE_PATHS = {
   EARNING_TITLE: "/images/creative/make-it-rain-cat.png",
   PLACEHOLDER_AVATAR: "/images/avatars/ducka-lisa.jpg",
   AUTH: "/images/creative/finance.png",
+  WALLET: "/images/icons/wallet.png",
 };

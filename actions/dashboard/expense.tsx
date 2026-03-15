@@ -7,6 +7,7 @@ import {
   ExpenseSummary,
   FetchRequest,
   PaginatedResult,
+  TotalByCurrency,
 } from "@/lib/actions/types";
 import { db } from "@/lib/db";
 import { expenseInputSchema } from "@/lib/schema/expense-schema";
@@ -73,7 +74,7 @@ export async function fetchExpenseSummary(): Promise<
     const session = await getAuthenticatedSession();
     const userId = session.userId;
 
-    const thisMonth = await db.query<{ currency: string; total: number }>(
+    const thisMonth = await db.query<TotalByCurrency>(
       `
     SELECT currency, SUM(amount)::float AS total
     FROM expenses
@@ -86,7 +87,7 @@ export async function fetchExpenseSummary(): Promise<
       [userId],
     );
 
-    const last30Days = await db.query<{ currency: string; total: number }>(
+    const last30Days = await db.query<TotalByCurrency>(
       `
     SELECT currency, SUM(amount)::float AS total
     FROM expenses

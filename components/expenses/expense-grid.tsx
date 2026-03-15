@@ -303,7 +303,7 @@ export const ExpenseGrid = () => {
             imageSrc={IMAGE_PATHS.MONTH}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="No expenses yet"
+            fallbackText="No expenses recorded"
           >
             {summaryData?.spentThisMonth?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
@@ -324,7 +324,7 @@ export const ExpenseGrid = () => {
             imageSrc={IMAGE_PATHS["30DAYS"]}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="No expenses yet"
+            fallbackText="No expenses recorded"
           >
             {summaryData?.spentLast30Days?.amount != null && (
               <p className="font-bold text-lg tracking-wider">

@@ -4,55 +4,41 @@ import {
   ACTION_CONSTANTS,
   CURRENCIES,
   DEFAULT_VALUES,
+  EXPENSE_CATEGORIES,
+  EXPENSE_CATEGORY_ICONS_BASE_PATH,
   IMAGE_PATHS,
-  VALIDATION,
 } from "@/lib/constants/constants";
-import {
-  ActionConstant,
-  Earning,
-  EarningsFiltersType,
-  ModalContent,
-} from "@/lib/actions/types";
+import { ActionConstant, Budget, ModalContent } from "@/lib/actions/types";
 import { ArrowUpDown, PencilLine, Plus, Trash2 } from "lucide-react";
+import { BudgetForm } from "./budget-form";
 import { Button } from "../ui/button";
+import {
+  CircularProgress,
+  DeleteConfirmationBody,
+  GradientProgressBar,
+  KpiCard,
+} from "../common/common";
 import { ColumnDef } from "@tanstack/react-table";
 import { createActionsColumn, DataGrid } from "../common/data-grid";
-import { DeleteConfirmationBody, KpiCard } from "../common/common";
-import { EarningFilters } from "./earning-filters";
-import { EarningForm } from "./earning-form";
-import { formatDateForDisplay } from "@/lib/utils/utils";
+import { isStringEqual } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
-import { useEarnings } from "@/hooks/use-earnings";
+import { useBudgets } from "@/hooks/use-budgets";
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import toast from "react-hot-toast";
 
-export const EarningsGrid = () => {
+export const BudgetsGrid = () => {
   const [action, setAction] = useState<ActionConstant | undefined>();
-  const [appliedFilters, setAppliedFilters] = useState<EarningsFiltersType>(
-    () => {
-      const oneYearAgo = new Date();
-      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
-      return {
-        searchQuery: "",
-        startDate: oneYearAgo,
-        endDate: new Date(),
-        minAmount: 0,
-        maxAmount: Math.ceil(VALIDATION.EARNING.MAX_AMOUNT_LIMIT) / 2,
-        currencies: [],
-      };
-    },
-  );
   const [pageNo, setPageNo] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(DEFAULT_VALUES.PAGE_SIZE);
-  const [quickActionData, setQuickActionData] = useState<Earning | undefined>();
+  const [quickActionData, setQuickActionData] = useState<Budget | undefined>();
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-  const { query, summaryQuery, mutations } = useEarnings({
+  const { query, summaryQuery, mutations } = useBudgets({
     page: pageNo,
     pageSize,
-    filters: appliedFilters,
   });
 
   useEffect(() => {
@@ -64,49 +50,32 @@ export const EarningsGrid = () => {
     }
   }, [query.error, summaryQuery.error]);
 
-  const handleDeleteEarning = async () => {
+  const handleDeleteBudget = async () => {
     if (!quickActionData?.id) {
-      toast.error("Earning ID missing");
+      toast.error("Budget ID missing");
       return;
     }
     const resp = await mutations.delete.mutateAsync(quickActionData.id);
 
     if (!resp.ok) {
-      toast.error(resp.error.message ?? "Failed to delete earning");
+      toast.error(resp.error.message ?? "Failed to delete budget");
       return;
     }
 
     handleCloseModal();
-    toast.success("Earning deleted successfully!");
+    toast.success("Budget deleted successfully!");
   };
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
-  const actionHandler = (action: ActionConstant, data?: Earning) => {
+  const actionHandler = (action: ActionConstant, data?: Budget) => {
     setAction(action);
     setQuickActionData(data);
     handleOpenModal();
   };
 
-  const columns: ColumnDef<Earning>[] = [
-    {
-      accessorKey: "receivedDate",
-      accessorFn: (row) => new Date(row.receivedDate).getTime(),
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="font-semibold px-0!"
-        >
-          Received On Date
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => formatDateForDisplay(row.original.receivedDate),
-      enableSorting: true,
-      enableHiding: false,
-    },
+  const columns: ColumnDef<Budget>[] = [
     {
       accessorKey: "amount",
       header: ({ column }) => (
@@ -141,19 +110,92 @@ export const EarningsGrid = () => {
     {
       accessorKey: "category",
       header: "Category",
-      enableHiding: true,
+      enableHiding: false,
+      cell: ({ row }) => {
+        const category = EXPENSE_CATEGORIES.find((cat) =>
+          isStringEqual(cat.title, row.original.category),
+        );
+        return category ? (
+          <div className="flex items-center gap-2">
+            <Image
+              alt={category.title}
+              height={56}
+              width={56}
+              src={`${EXPENSE_CATEGORY_ICONS_BASE_PATH}${category.iconPath}`}
+              className="h-6 w-6 object-contain"
+            />
+            <span className="text-sm">{category.title}</span>
+          </div>
+        ) : (
+          row.original.category
+        );
+      },
     },
     {
-      accessorKey: "source",
-      header: "Source",
-      enableHiding: true,
+      accessorKey: "spent",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="font-semibold px-0!"
+        >
+          Spent this Month
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <p className="capitalize flex items-center gap-x-1">
+          <span>
+            {
+              CURRENCIES[row.original.currency as keyof typeof CURRENCIES]
+                .symbol
+            }
+          </span>
+          {row.original.spent.toLocaleString()}
+        </p>
+      ),
+      enableSorting: true,
+      enableHiding: false,
     },
     {
-      accessorKey: "description",
-      header: "Description",
-      enableHiding: true,
+      header: "Budget Used",
+      cell: ({ row }) => {
+        const { amount, spent, currency } = row.original;
+        const symbol =
+          CURRENCIES[currency as keyof typeof CURRENCIES]?.symbol ?? "";
+        const percentage =
+          amount > 0 ? Math.min((spent / amount) * 100, 100) : 0;
+
+        const overBudget = spent > amount;
+
+        return (
+          <div className="flex flex-col gap-1 w-full min-w-56 pr-24 py-2">
+            <div className="flex justify-between text-xs font-medium tabular-nums">
+              <span>
+                {symbol}
+                {spent.toLocaleString()}
+              </span>
+
+              <span>
+                {symbol}
+                {amount.toLocaleString()}
+              </span>
+            </div>
+
+            <GradientProgressBar percentage={percentage} />
+            {overBudget && (
+              <p className="text-xs font-medium text-red-700">
+                Over budget by {symbol}
+                {spent - amount}
+              </p>
+            )}
+          </div>
+        );
+      },
+      enableHiding: false,
     },
-    createActionsColumn<Earning>([
+
+    createActionsColumn<Budget>([
       {
         icon: <PencilLine className="h-4 text-violet-600" />,
         label: "Edit",
@@ -171,12 +213,12 @@ export const EarningsGrid = () => {
     [
       ACTION_CONSTANTS.ADD,
       {
-        header: <p>Add New Earning</p>,
+        header: <p>Add New Budget</p>,
         body: (
-          <EarningForm
+          <BudgetForm
             onCancel={handleCloseModal}
             onSubmit={(formData) => mutations.create.mutateAsync(formData)}
-            submitButtonText={`Add Earning`}
+            submitButtonText={`Add Budget`}
             submitInProgress={mutations.create.isPending}
           />
         ),
@@ -185,13 +227,18 @@ export const EarningsGrid = () => {
     [
       ACTION_CONSTANTS.EDIT,
       {
-        header: <p>Update Earning - {quickActionData?.amount}</p>,
+        header: (
+          <p>
+            Update Budget - {quickActionData?.amount} for{" "}
+            {quickActionData?.category}
+          </p>
+        ),
         body: (
-          <EarningForm
+          <BudgetForm
             initialValues={quickActionData}
             onCancel={handleCloseModal}
             onSubmit={(formData) => mutations.update.mutateAsync(formData)}
-            submitButtonText={`Edit Earning`}
+            submitButtonText={`Edit Budget`}
             submitInProgress={mutations.update.isPending}
           />
         ),
@@ -200,19 +247,17 @@ export const EarningsGrid = () => {
     [
       ACTION_CONSTANTS.DELETE,
       {
-        header: <p>Delete Earning</p>,
+        header: <p>Delete Budget</p>,
         body: (
           <DeleteConfirmationBody
             entity={
               quickActionData && quickActionData.currency
-                ? `earning of ${
+                ? `budget of ${
                     CURRENCIES[
                       quickActionData.currency as keyof typeof CURRENCIES
                     ].symbol
-                  } ${quickActionData.amount} from ${formatDateForDisplay(
-                    quickActionData.receivedDate,
-                  )}`
-                : "earning"
+                  } ${quickActionData.amount} for ${quickActionData.category} `
+                : "budget"
             }
           />
         ),
@@ -227,51 +272,81 @@ export const EarningsGrid = () => {
 
   const deleteInProgress = mutations.delete.isPending;
   const summaryData = useMemo(() => summaryQuery?.data, [summaryQuery]);
+  const remainingPercentage =
+    summaryData && summaryData?.remaining && summaryData?.total
+      ? (summaryData.remaining.amount / summaryData.total.amount) * 100
+      : 0;
 
   return (
     <div>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-x-4">
+        <div className="flex items-center gap-x-5 mb-8">
           <KpiCard
-            title="Earned this month"
+            title="Monthly Budget"
             imageSrc={IMAGE_PATHS.MONTH}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="No earnings recorded"
+            fallbackText="No limits set yet"
           >
-            {summaryData?.earnedThisMonth?.amount != null && (
+            {summaryData?.total?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
                   {
                     CURRENCIES[
-                      summaryData?.earnedThisMonth
-                        ?.currency as keyof typeof CURRENCIES
+                      summaryData?.total?.currency as keyof typeof CURRENCIES
                     ]?.symbol
                   }
                 </span>
-                {summaryData?.earnedThisMonth?.amount?.toLocaleString()}
+                {summaryData?.total?.amount?.toLocaleString()}
               </p>
             )}
           </KpiCard>
           <KpiCard
-            title="Earned over the past year"
-            imageSrc={IMAGE_PATHS.YEAR}
-            imageAlt="year-calendar"
+            title="Budget Spent"
+            imageSrc={IMAGE_PATHS.WALLET}
+            imageAlt="wallet"
             isLoading={query.isPending}
-            fallbackText="No earnings recorded"
+            fallbackText="No spending in tracked categories"
           >
-            {summaryData?.earnedPastYear?.amount != null && (
+            {summaryData?.spent?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
                   {
                     CURRENCIES[
-                      summaryData?.earnedPastYear
-                        ?.currency as keyof typeof CURRENCIES
+                      summaryData?.spent?.currency as keyof typeof CURRENCIES
                     ]?.symbol
                   }
                 </span>
-                {summaryData?.earnedPastYear?.amount.toLocaleString()}
+                {summaryData?.spent?.amount.toLocaleString()}
               </p>
+            )}
+          </KpiCard>
+          <KpiCard
+            title="Remaining Budget"
+            isLoading={query.isPending}
+            customIcon={
+              <CircularProgress
+                remainingPercentage={remainingPercentage}
+                usedPercentage={100 - remainingPercentage}
+                size={50}
+              />
+            }
+            fallbackText="Add limits to track remaining funds"
+          >
+            {summaryData?.remaining?.amount != null && (
+              <div className="flex items-center gap-4">
+                <p className="font-bold text-lg tracking-wider">
+                  <span className="mr-1">
+                    {
+                      CURRENCIES[
+                        summaryData?.remaining
+                          ?.currency as keyof typeof CURRENCIES
+                      ]?.symbol
+                    }
+                  </span>
+                  {summaryData?.remaining?.amount.toLocaleString()}
+                </p>
+              </div>
             )}
           </KpiCard>
         </div>
@@ -280,10 +355,9 @@ export const EarningsGrid = () => {
           className="font-medium"
           onClick={() => actionHandler(ACTION_CONSTANTS.ADD)}
         >
-          <Plus /> Add New Earning
+          <Plus /> Add New Budget
         </Button>
       </div>
-      <EarningFilters filters={appliedFilters} setFilters={setAppliedFilters} />
       <DataGrid
         data={query?.data?.data || []}
         columns={columns}
@@ -296,8 +370,8 @@ export const EarningsGrid = () => {
           onPageSizeChange: handlePageSizeChange,
         }}
         customStyles={{
-          gridWrapperStyles: "min-h-90",
-          tableContainerStyles: "max-h-90",
+          gridWrapperStyles: "min-h-106",
+          tableContainerStyles: "max-h-106",
         }}
       />
       <Modal
@@ -309,7 +383,7 @@ export const EarningsGrid = () => {
           dialogContent:
             action === ACTION_CONSTANTS.DELETE
               ? "sm:max-w-116"
-              : "sm:max-w-136",
+              : "sm:max-w-164",
         }}
         showFooter={action === ACTION_CONSTANTS.DELETE}
         footerContent={
@@ -322,7 +396,7 @@ export const EarningsGrid = () => {
               Cancel
             </Button>
             <Button
-              onClick={handleDeleteEarning}
+              onClick={handleDeleteBudget}
               variant="destructive"
               disabled={deleteInProgress}
             >

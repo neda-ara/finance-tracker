@@ -7,6 +7,7 @@ import {
   EarningSummary,
   FetchRequest,
   PaginatedResult,
+  TotalByCurrency,
 } from "@/lib/actions/types";
 import { db } from "@/lib/db";
 import { earningInputSchema } from "@/lib/schema/earning-schema";
@@ -72,7 +73,7 @@ export async function fetchEarningSummary(): Promise<
     const session = await getAuthenticatedSession();
     const userId = session.userId;
 
-    const thisMonth = await db.query<{ currency: string; total: number }>(
+    const thisMonth = await db.query<TotalByCurrency>(
       `
     SELECT currency, SUM(amount)::float AS total
     FROM earnings
@@ -85,7 +86,7 @@ export async function fetchEarningSummary(): Promise<
       [userId],
     );
 
-    const pastYear = await db.query<{ currency: string; total: number }>(
+    const pastYear = await db.query<TotalByCurrency>(
       `
     SELECT currency, SUM(amount)::float AS total
     FROM earnings

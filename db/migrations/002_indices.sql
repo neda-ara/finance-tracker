@@ -1,4 +1,4 @@
--- EXPENSE
+--- EXPENSE ---
 
 CREATE INDEX idx_expenses_user_date_created
 ON expenses (user_id, expense_date DESC, created_at DESC);
@@ -12,7 +12,7 @@ USING GIN (description gin_trgm_ops);
 CREATE INDEX idx_expenses_user_category
 ON expenses (user_id, category);
 
--- EARNING
+--- EARNING ---
 
 CREATE INDEX idx_earnings_user_date_created
 ON earnings (user_id, received_date DESC, created_at DESC);
@@ -30,3 +30,12 @@ USING GIN (source gin_trgm_ops);
 CREATE INDEX idx_earnings_category_trgm
 ON earnings
 USING GIN (category gin_trgm_ops);
+
+--- BUDGET ---
+
+CREATE UNIQUE INDEX idx_unique_user_category_budget
+ON budgets(user_id, category);
+
+CREATE INDEX idx_budgets_user_currency_amount
+ON budgets (user_id, currency)
+INCLUDE (amount);

@@ -28,9 +28,12 @@ export type PaginatedResult<T> = {
   totalPages: number;
 };
 
-export type FetchRequest<TFilters> = {
+export type BaseFetchRequest = {
   page: number;
   pageSize: number;
+};
+
+export type FetchRequest<TFilters> = BaseFetchRequest & {
   filters: TFilters;
 };
 
@@ -63,10 +66,11 @@ export type DatePickerProps = {
   customStyles?: { triggerButton?: string };
 };
 
-export type LabelValuePair = {
-  label: string;
-  value: string;
-};
+// ---------- Helper Types ----------
+
+export type LabelValuePair = { label: string; value: string };
+
+export type TotalByCurrency = { currency: string; total: number };
 
 // ---------- Data Grid / Table ----------
 
@@ -92,7 +96,7 @@ export type DataGridProps<T> = {
   customStyles?: { gridWrapperStyles?: string; tableContainerStyles?: string };
 };
 
-// ---------- User Domain ----------
+// ---------- User ----------
 
 export type User = {
   id: string;
@@ -169,6 +173,32 @@ export type EarningSummary = {
     amount: number;
   };
   earnedPastYear?: {
+    currency: string;
+    amount: number;
+  };
+};
+
+// ---------- Budget ----------
+
+export type Budget = {
+  id: string;
+  amount: number;
+  currency: string;
+  category: string;
+  createdAt: Date;
+  spent: number;
+};
+
+export type BudgetSummary = {
+  total?: {
+    currency: string;
+    amount: number;
+  };
+  spent?: {
+    currency: string;
+    amount: number;
+  };
+  remaining?: {
     currency: string;
     amount: number;
   };
