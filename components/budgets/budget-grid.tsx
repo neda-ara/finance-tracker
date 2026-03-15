@@ -15,6 +15,7 @@ import { Button } from "../ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { createActionsColumn, DataGrid } from "../common/data-grid";
 import {
+  CircularProgress,
   DeleteConfirmationBody,
   GradientProgressBar,
   KpiCard,
@@ -263,6 +264,10 @@ export const BudgetsGrid = () => {
 
   const deleteInProgress = mutations.delete.isPending;
   const summaryData = useMemo(() => summaryQuery?.data, [summaryQuery]);
+  const remainingPercentage =
+    summaryData && summaryData?.remaining && summaryData?.total
+      ? (summaryData.remaining.amount / summaryData.total.amount) * 100
+      : 0;
 
   return (
     <div>
@@ -290,8 +295,8 @@ export const BudgetsGrid = () => {
           </KpiCard>
           <KpiCard
             title="Budget Spent"
-            imageSrc={IMAGE_PATHS.MONTH}
-            imageAlt="month-calendar"
+            imageSrc={IMAGE_PATHS.WALLET}
+            imageAlt="wallet"
             isLoading={query.isPending}
             fallbackText="No spending in tracked categories"
           >
@@ -310,23 +315,30 @@ export const BudgetsGrid = () => {
           </KpiCard>
           <KpiCard
             title="Remaining Budget"
-            imageSrc={IMAGE_PATHS.MONTH}
-            imageAlt="month-calendar"
             isLoading={query.isPending}
+            customIcon={
+              <CircularProgress
+                remainingPercentage={remainingPercentage}
+                usedPercentage={100 - remainingPercentage}
+                size={50}
+              />
+            }
             fallbackText="Add limits to track remaining funds"
           >
             {summaryData?.remaining?.amount != null && (
-              <p className="font-bold text-lg tracking-wider">
-                <span className="mr-1">
-                  {
-                    CURRENCIES[
-                      summaryData?.remaining
-                        ?.currency as keyof typeof CURRENCIES
-                    ]?.symbol
-                  }
-                </span>
-                {summaryData?.remaining?.amount.toLocaleString()}
-              </p>
+              <div className="flex items-center gap-4">
+                <p className="font-bold text-lg tracking-wider">
+                  <span className="mr-1">
+                    {
+                      CURRENCIES[
+                        summaryData?.remaining
+                          ?.currency as keyof typeof CURRENCIES
+                      ]?.symbol
+                    }
+                  </span>
+                  {summaryData?.remaining?.amount.toLocaleString()}
+                </p>
+              </div>
             )}
           </KpiCard>
         </div>
