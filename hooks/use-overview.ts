@@ -11,29 +11,9 @@ import {
   fetchOverview,
 } from "@/actions/dashboard/overview";
 import { OVERVIEW_CLIENT_QUERY_KEY } from "@/lib/constants/query-keys";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 export function useOverview(days: number = 30) {
-  const queryClient = useQueryClient();
-
-  const invalidateOverview = () => {
-    queryClient.invalidateQueries({
-      queryKey: [OVERVIEW_CLIENT_QUERY_KEY],
-    });
-  };
-
-  const invalidateTrend = () => {
-    queryClient.invalidateQueries({
-      queryKey: [OVERVIEW_CLIENT_QUERY_KEY, "trend"],
-    });
-  };
-
-  const invalidateCategoryBreakdown = () => {
-    queryClient.invalidateQueries({
-      queryKey: [OVERVIEW_CLIENT_QUERY_KEY, "categories"],
-    });
-  };
-
   const overviewQuery = useQuery<OverviewData>({
     queryKey: [OVERVIEW_CLIENT_QUERY_KEY],
     queryFn: async () => {
@@ -46,7 +26,6 @@ export function useOverview(days: number = 30) {
       return resp.data;
     },
     placeholderData: (prev) => prev,
-    retry: false,
   });
 
   const trendQuery = useQuery<ExpenseTrend[]>({
@@ -61,7 +40,6 @@ export function useOverview(days: number = 30) {
       return resp.data;
     },
     placeholderData: (prev) => prev,
-    retry: false,
   });
 
   const categoryBreakdownQuery = useQuery<CategoryBreakdown[]>({
@@ -78,16 +56,11 @@ export function useOverview(days: number = 30) {
       return resp.data;
     },
     placeholderData: (prev) => prev,
-    retry: false,
   });
 
   return {
     overviewQuery,
     trendQuery,
     categoryBreakdownQuery,
-
-    invalidateOverview,
-    invalidateTrend,
-    invalidateCategoryBreakdown,
   };
 }
