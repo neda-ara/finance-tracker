@@ -1,3 +1,5 @@
+"use server";
+
 import {
   ActionResult,
   CategoryBreakdown,
@@ -17,8 +19,8 @@ export async function fetchOverview(): Promise<ActionResult<OverviewData>> {
       SELECT currency, SUM(amount)::float AS amount
       FROM earnings
       WHERE user_id = $1
-        AND earning_date >= date_trunc('month', CURRENT_DATE - INTERVAL '1 month')
-        AND earning_date < date_trunc('month', CURRENT_DATE)
+        AND received_date >= date_trunc('month', CURRENT_DATE - INTERVAL '1 month')
+        AND received_date < date_trunc('month', CURRENT_DATE)
       GROUP BY currency
       LIMIT 1
       `,
@@ -30,8 +32,8 @@ export async function fetchOverview(): Promise<ActionResult<OverviewData>> {
       SELECT SUM(amount)::float AS amount
       FROM earnings
       WHERE user_id = $1
-        AND earning_date >= date_trunc('month', CURRENT_DATE - INTERVAL '2 month')
-        AND earning_date < date_trunc('month', CURRENT_DATE - INTERVAL '1 month')
+        AND received_date >= date_trunc('month', CURRENT_DATE - INTERVAL '2 month')
+        AND received_date < date_trunc('month', CURRENT_DATE - INTERVAL '1 month')
       `,
       [userId],
     );
