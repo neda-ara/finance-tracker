@@ -205,24 +205,32 @@ export type BudgetSummary = {
 };
 
 // ---------- Overview ----------
-
 export interface OverviewData {
   earningsLastMonth: {
     currency?: string;
     amount: number;
     change: number;
   };
+
   expensesThisMonth: {
     currency?: string;
     amount: number;
     change: number;
   };
-  topExpenses: {
-    category: string;
+
+  netSavings: {
+    currency?: string;
     amount: number;
-    currency: string;
-    budget?: number;
-  }[];
+  };
+
+  budgetUsage?: {
+    currency?: string;
+    total: number;
+    spent: number;
+    remaining: number;
+  };
+
+  overBudgetCount: number;
 }
 
 export interface ExpenseTrend {
