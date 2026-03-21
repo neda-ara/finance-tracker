@@ -4,7 +4,9 @@ import {
   ActionResult,
   CategoryBreakdown,
   ExpenseTrend,
+  Interval,
   OverviewData,
+  TopExpensesData,
 } from "@/lib/actions/types";
 import { db } from "@/lib/db";
 import { getAuthenticatedSession, safeRunAction } from "@/lib/actions/helpers";
@@ -141,6 +143,83 @@ export async function fetchOverview(): Promise<ActionResult<OverviewData>> {
         remaining: budgetRow.total - budgetRow.spent,
       },
       overBudgetCount: overBudgetResult.rows[0]?.count ?? 0,
+    };
+  });
+}
+
+export async function fetchTopExpensesByInterval(
+  interval: Interval = "this_month",
+): Promise<ActionResult<TopExpensesData>> {
+  return safeRunAction(async () => {
+    const session = await getAuthenticatedSession();
+    const userId = session.userId;
+
+    let days: number | null = null;
+
+    switch (interval) {
+      case "last_7_days":
+        days = 7;
+        break;
+      case "last_15_days":
+        days = 15;
+        break;
+      case "last_30_days":
+        days = 30;
+        break;
+      case "this_month":
+      default:
+        days = null;
+    }
+
+    const dateCondition =
+      days === null
+        ? `expense_date >= date_trunc('month', CURRENT_DATE)`
+        : `expense_date >= CURRENT_DATE - ($2 * INTERVAL '1 day')`;
+
+    const params = days === null ? [userId] : [userId, days];
+
+    const topExpenses = await db.query(
+      `
+      SELECT 
+        category,
+        currency,
+        SUM(amount)::float AS amount
+      FROM expenses
+      WHERE user_id = $1
+        AND ${dateCondition}
+      GROUP BY category, currency
+      ORDER BY amount DESC
+      LIMIT 5
+      `,
+      params,
+    );
+
+    const totalExpenses = await db.query(
+      `
+      SELECT 
+        currency,
+        SUM(amount)::float AS amount
+      FROM expenses
+      WHERE user_id = $1
+        AND ${dateCondition}
+      GROUP BY currency
+      LIMIT 1
+      `,
+      params,
+    );
+
+    const totalAmount = totalExpenses.rows[0]?.amount ?? 0;
+
+    return {
+      interval,
+      total: {
+        currency: totalExpenses.rows[0]?.currency,
+        amount: totalAmount,
+      },
+      topCategories: topExpenses.rows.map((row) => ({
+        ...row,
+        percentage: totalAmount === 0 ? 0 : (row.amount / totalAmount) * 100,
+      })),
     };
   });
 }

@@ -4,11 +4,13 @@ import {
   CategoryBreakdown,
   ExpenseTrend,
   OverviewData,
+  TopExpensesData,
 } from "@/lib/actions/types";
 import {
   fetchCategoryBreakdown,
   fetchExpenseTrend,
   fetchOverview,
+  fetchTopExpensesByInterval,
 } from "@/actions/dashboard/overview";
 import { OVERVIEW_CLIENT_QUERY_KEY } from "@/lib/constants/query-keys";
 import { useQuery } from "@tanstack/react-query";
@@ -20,7 +22,7 @@ export function useOverview(days: number = 30) {
       const resp = await fetchOverview();
 
       if (!resp?.ok) {
-        throw new Error(resp.error.message ?? "Failed to fetch overview");
+        throw new Error(resp.error.message ?? "Failed to fetch overview data");
       }
 
       return resp.data;
@@ -28,8 +30,22 @@ export function useOverview(days: number = 30) {
     placeholderData: (prev) => prev,
   });
 
-  const trendQuery = useQuery<ExpenseTrend[]>({
-    queryKey: [OVERVIEW_CLIENT_QUERY_KEY, "trend", days],
+  const topExpensesQuery = useQuery<TopExpensesData>({
+    queryKey: [OVERVIEW_CLIENT_QUERY_KEY, "top_expenses", days],
+    queryFn: async () => {
+      const resp = await fetchTopExpensesByInterval();
+
+      if (!resp?.ok) {
+        throw new Error(resp.error.message ?? "Failed to fetch top expenses");
+      }
+
+      return resp.data;
+    },
+    placeholderData: (prev) => prev,
+  });
+
+  const expensesTrendQuery = useQuery<ExpenseTrend[]>({
+    queryKey: [OVERVIEW_CLIENT_QUERY_KEY, "expenses_trend", days],
     queryFn: async () => {
       const resp = await fetchExpenseTrend(days);
 
@@ -60,7 +76,8 @@ export function useOverview(days: number = 30) {
 
   return {
     overviewQuery,
-    trendQuery,
+    topExpensesQuery,
+    expensesTrendQuery,
     categoryBreakdownQuery,
   };
 }

@@ -205,24 +205,28 @@ export type BudgetSummary = {
 };
 
 // ---------- Overview ----------
+
+export type Interval =
+  | "this_month"
+  | "last_7_days"
+  | "last_15_days"
+  | "last_30_days";
+
 export interface OverviewData {
   earningsLastMonth: {
     currency?: string;
     amount: number;
     change: number;
   };
-
   expensesThisMonth: {
     currency?: string;
     amount: number;
     change: number;
   };
-
   netSavings: {
     currency?: string;
     amount: number;
   };
-
   budgetUsage?: {
     currency?: string;
     total: number;
@@ -231,6 +235,20 @@ export interface OverviewData {
   };
 
   overBudgetCount: number;
+}
+
+export interface TopExpensesData {
+  interval: Interval;
+  total: {
+    currency?: string;
+    amount: number;
+  };
+  topCategories: {
+    category: string;
+    currency: string;
+    amount: number;
+    percentage: number;
+  }[];
 }
 
 export interface ExpenseTrend {
