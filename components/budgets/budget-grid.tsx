@@ -18,6 +18,7 @@ import {
   GradientProgressBar,
   KpiCard,
 } from "../common/common";
+import { cn } from "@/lib/utils/shadcn-utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { createActionsColumn, DataGrid } from "../common/data-grid";
 import { isStringEqual } from "@/lib/utils/utils";
@@ -272,6 +273,8 @@ export const BudgetsGrid = () => {
 
   const deleteInProgress = mutations.delete.isPending;
   const summaryData = useMemo(() => summaryQuery?.data, [summaryQuery]);
+
+  const remainingAmount = (summaryData && summaryData?.remaining?.amount) ?? 0;
   const remainingPercentage =
     summaryData && summaryData?.remaining && summaryData?.total
       ? (summaryData.remaining.amount / summaryData.total.amount) * 100
@@ -335,7 +338,12 @@ export const BudgetsGrid = () => {
           >
             {summaryData?.remaining?.amount != null && (
               <div className="flex items-center gap-4">
-                <p className="font-bold text-lg tracking-wider">
+                <p
+                  className={cn(
+                    "font-bold text-lg tracking-wider",
+                    remainingAmount < 0 && "text-red-600",
+                  )}
+                >
                   <span className="mr-1">
                     {
                       CURRENCIES[
@@ -344,7 +352,7 @@ export const BudgetsGrid = () => {
                       ]?.symbol
                     }
                   </span>
-                  {summaryData?.remaining?.amount.toLocaleString()}
+                  {remainingAmount?.toLocaleString()}
                 </p>
               </div>
             )}
