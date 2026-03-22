@@ -1,8 +1,9 @@
 "use client";
 
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { CURRENCIES } from "@/lib/constants/constants";
 
-type Trend = {
+export type Trend = {
   value?: string | number;
   direction?: "up" | "down" | "neutral";
   label?: string;
@@ -10,6 +11,7 @@ type Trend = {
 };
 
 type StatCardProps = {
+  key: number;
   title: string;
   amount: number | string;
   currency?: string;
@@ -19,6 +21,7 @@ type StatCardProps = {
 };
 
 export function StatCard({
+  key,
   title,
   amount,
   currency = "",
@@ -43,13 +46,16 @@ export function StatCard({
     neutral: null,
   };
 
+  const currencySymbol =
+    CURRENCIES[currency as keyof typeof CURRENCIES]?.symbol;
+
   return (
-    <div className="card p-4 space-y-3">
+    <div key={key} className="card p-4 space-y-3">
       <div className="flex items-center justify-between gap-x-2">
         <div className="flex flex-col gap-y-2">
           <p className="text-xs font-medium text-muted-foreground">{title}</p>
           <p className="text-lg font-bold tracking-wide leading-none">
-            {currency && <span className="mr-1">{currency}</span>}
+            {currency && <span className="mr-1">{currencySymbol}</span>}
             {formattedAmount}
           </p>
         </div>
