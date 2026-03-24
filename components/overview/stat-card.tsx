@@ -2,12 +2,13 @@
 
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { CURRENCIES } from "@/lib/constants/constants";
+import { TrendDirection, TrendTone } from "@/lib/actions/types";
 
 export type Trend = {
   value?: string | number;
-  direction?: "up" | "down" | "neutral";
+  direction?: TrendDirection;
   label?: string;
-  tone?: "success" | "danger" | "warning" | "neutral";
+  tone?: TrendTone;
 };
 
 type StatCardProps = {

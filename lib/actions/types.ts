@@ -72,6 +72,10 @@ export type LabelValuePair = { label: string; value: string };
 
 export type TotalByCurrency = { currency: string; total: number };
 
+export type TrendDirection = "up" | "down" | "neutral";
+
+export type TrendTone = "success" | "danger" | "warning" | "neutral";
+
 // ---------- Data Grid / Table ----------
 
 export type RowAction<T> = {
@@ -213,28 +217,28 @@ export type Interval =
   | "last_30_days";
 
 export interface OverviewData {
-  earningsLastMonth: {
+  earnings: {
     currency?: string;
     amount: number;
-    change: number;
+    change: { amount: number | null; percentage: number | null };
   };
-  expensesThisMonth: {
+  expenses: {
     currency?: string;
     amount: number;
-    change: number;
+    change: { amount: number | null; percentage: number | null };
   };
-  netSavings: {
+  savings: {
     currency?: string;
     amount: number;
+    change: { amount: number | null; percentage: number | null };
   };
-  budgetUsage?: {
+  budget?: {
     currency?: string;
     total: number;
     spent: number;
     remaining: number;
+    usedPercentage: number;
   };
-
-  overBudgetCount: number;
 }
 
 export interface TopExpensesData {
