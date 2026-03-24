@@ -14,7 +14,7 @@ export async function middleware(request: NextRequest) {
 
   if (session && isAuthRoute(pathname)) {
     return NextResponse.redirect(
-      new URL(ROUTES.DASHBOARD.EXPENSES, request.url)
+      new URL(ROUTES.DASHBOARD.OVERVIEW, request.url),
     );
   }
 
