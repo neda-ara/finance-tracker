@@ -16,26 +16,26 @@ export async function fetchOverview(): Promise<ActionResult<OverviewData>> {
     const session = await getAuthenticatedSession();
     const userId = session.userId;
 
-    const earningsLastMonth = await db.query(
+    const earningsCurrent = await db.query(
       `
       SELECT currency, SUM(amount)::float AS amount
       FROM earnings
       WHERE user_id = $1
-        AND received_date >= date_trunc('month', CURRENT_DATE - INTERVAL '1 month')
-        AND received_date < date_trunc('month', CURRENT_DATE)
+        AND received_date >= CURRENT_DATE - INTERVAL '30 days'
       GROUP BY currency
+      ORDER BY amount DESC
       LIMIT 1
       `,
       [userId],
     );
 
-    const earningsPrevMonth = await db.query(
+    const earningsPrev = await db.query(
       `
       SELECT SUM(amount)::float AS amount
       FROM earnings
       WHERE user_id = $1
-        AND received_date >= date_trunc('month', CURRENT_DATE - INTERVAL '2 month')
-        AND received_date < date_trunc('month', CURRENT_DATE - INTERVAL '1 month')
+        AND received_date >= CURRENT_DATE - INTERVAL '60 days'
+        AND received_date < CURRENT_DATE - INTERVAL '30 days'
       `,
       [userId],
     );
@@ -47,6 +47,7 @@ export async function fetchOverview(): Promise<ActionResult<OverviewData>> {
       WHERE user_id = $1
         AND expense_date >= date_trunc('month', CURRENT_DATE)
       GROUP BY currency
+      ORDER BY amount DESC
       LIMIT 1
       `,
       [userId],
@@ -66,83 +67,58 @@ export async function fetchOverview(): Promise<ActionResult<OverviewData>> {
     const budgetSummary = await db.query(
       `
       SELECT 
-        b.currency,
         SUM(b.amount)::float AS total,
-        COALESCE(SUM(e.amount), 0)::float AS spent
+        COALESCE(SUM(exp.spent), 0)::float AS spent
       FROM budgets b
-      LEFT JOIN expenses e
-        ON e.user_id = b.user_id
-       AND e.category = b.category
-       AND e.expense_date >= date_trunc('month', CURRENT_DATE)
+      LEFT JOIN (
+        SELECT category, SUM(amount)::float AS spent
+        FROM expenses
+        WHERE user_id = $1
+          AND expense_date >= date_trunc('month', CURRENT_DATE)
+        GROUP BY category
+      ) exp
+        ON exp.category = b.category
       WHERE b.user_id = $1
-      GROUP BY b.currency
-      LIMIT 1
       `,
       [userId],
     );
 
-    const overBudgetResult = await db.query(
-      `
-      SELECT COUNT(*)::int AS count
-      FROM (
-        SELECT b.category
-        FROM budgets b
-        JOIN expenses e
-          ON e.user_id = b.user_id
-         AND e.category = b.category
-        WHERE b.user_id = $1
-          AND e.expense_date >= date_trunc('month', CURRENT_DATE)
-        GROUP BY b.category, b.amount
-        HAVING SUM(e.amount) > b.amount
-      ) t
-      `,
-      [userId],
-    );
-
-    const earningsAmount = earningsLastMonth.rows[0]?.amount ?? 0;
-    const earningsPrev = earningsPrevMonth.rows[0]?.amount ?? 0;
+    const earningsAmount = earningsCurrent.rows[0]?.amount ?? 0;
+    const earningsPrevAmount = earningsPrev.rows[0]?.amount ?? 0;
 
     const expensesAmount = expensesThisMonth.rows[0]?.amount ?? 0;
-    const expensesPrev = expensesPrevMonth.rows[0]?.amount ?? 0;
+    const expensesPrevAmount = expensesPrevMonth.rows[0]?.amount ?? 0;
+
+    const savingsAmount = earningsAmount - expensesAmount;
+    const savingsPrev = earningsPrevAmount - expensesPrevAmount;
 
     const budgetRow = budgetSummary.rows[0];
 
-    const earningsChange =
-      earningsPrev === 0
-        ? 0
-        : ((earningsAmount - earningsPrev) / earningsPrev) * 100;
-
-    const expensesChange =
-      expensesPrev === 0
-        ? 0
-        : ((expensesAmount - expensesPrev) / expensesPrev) * 100;
-
-    const netSavings = earningsAmount - expensesAmount;
-
     return {
-      earningsLastMonth: {
-        currency: earningsLastMonth.rows[0]?.currency,
+      earnings: {
+        currency: earningsCurrent.rows[0]?.currency,
         amount: earningsAmount,
-        change: earningsChange,
+        change: calcChange(earningsAmount, earningsPrevAmount),
       },
-      expensesThisMonth: {
+      expenses: {
         currency: expensesThisMonth.rows[0]?.currency,
         amount: expensesAmount,
-        change: expensesChange,
+        change: calcChange(expensesAmount, expensesPrevAmount),
       },
-      netSavings: {
+      savings: {
         currency:
-          earningsLastMonth.rows[0]?.currency ??
+          earningsCurrent.rows[0]?.currency ??
           expensesThisMonth.rows[0]?.currency,
-        amount: netSavings,
+        amount: savingsAmount,
+        change: calcChange(savingsAmount, savingsPrev),
       },
-      budgetUsage: budgetRow && {
-        currency: budgetRow.currency,
-        total: budgetRow.total,
-        spent: budgetRow.spent,
-        remaining: budgetRow.total - budgetRow.spent,
+      budget: budgetRow && {
+        total: budgetRow.total ?? 0,
+        spent: budgetRow.spent ?? 0,
+        remaining: (budgetRow.total ?? 0) - (budgetRow.spent ?? 0),
+        usedPercentage:
+          budgetRow.total === 0 ? 0 : (budgetRow.spent / budgetRow.total) * 100,
       },
-      overBudgetCount: overBudgetResult.rows[0]?.count ?? 0,
     };
   });
 }
@@ -276,3 +252,10 @@ export async function fetchCategoryBreakdown(
     return result.rows;
   });
 }
+
+const calcChange = (current: number, previous: number) => {
+  const amountChange = current - previous;
+  const percentageChange =
+    previous === 0 ? null : (amountChange / previous) * 100;
+  return { amount: amountChange, percentage: percentageChange };
+};
