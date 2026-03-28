@@ -66,20 +66,24 @@ export async function fetchOverview(): Promise<ActionResult<OverviewData>> {
 
     const budgetSummary = await db.query(
       `
-      SELECT 
-        SUM(b.amount)::float AS total,
-        COALESCE(SUM(exp.spent), 0)::float AS spent
-      FROM budgets b
-      LEFT JOIN (
-        SELECT category, SUM(amount)::float AS spent
-        FROM expenses
-        WHERE user_id = $1
-          AND expense_date >= date_trunc('month', CURRENT_DATE)
-        GROUP BY category
-      ) exp
-        ON exp.category = b.category
-      WHERE b.user_id = $1
-      `,
+  SELECT 
+    b.currency,
+    SUM(b.amount)::float AS total,
+    COALESCE(SUM(exp.spent), 0)::float AS spent
+  FROM budgets b
+  LEFT JOIN (
+    SELECT category, SUM(amount)::float AS spent
+    FROM expenses
+    WHERE user_id = $1
+      AND expense_date >= date_trunc('month', CURRENT_DATE)
+    GROUP BY category
+  ) exp
+    ON exp.category = b.category
+  WHERE b.user_id = $1
+  GROUP BY b.currency
+  ORDER BY total DESC
+  LIMIT 1
+  `,
       [userId],
     );
 
@@ -116,6 +120,7 @@ export async function fetchOverview(): Promise<ActionResult<OverviewData>> {
         total: budgetRow.total ?? 0,
         spent: budgetRow.spent ?? 0,
         remaining: (budgetRow.total ?? 0) - (budgetRow.spent ?? 0),
+        currency: budgetRow?.currency,
         usedPercentage:
           budgetRow.total === 0 ? 0 : (budgetRow.spent / budgetRow.total) * 100,
       },
