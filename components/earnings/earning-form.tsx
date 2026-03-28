@@ -19,7 +19,7 @@ import {
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils/shadcn-utils";
 import { DatePicker } from "../common/date-picker";
-import { normalizeNumber } from "@/lib/utils/utils";
+import { getCurrencySymbol, normalizeNumber } from "@/lib/utils/utils";
 import {
   Select,
   SelectContent,
@@ -136,9 +136,7 @@ export const EarningForm = ({
                     Amount Received
                   </FormLabel>
                   <p className="font-semibold text-4xl">
-                    {selectedCurrency &&
-                      CURRENCIES[selectedCurrency as keyof typeof CURRENCIES]
-                        .symbol}
+                    {getCurrencySymbol(selectedCurrency)}
                   </p>
                   <Input
                     {...field}

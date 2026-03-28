@@ -1,7 +1,8 @@
 "use client";
 
 import { ArrowDown, ArrowUp } from "lucide-react";
-import { CURRENCIES } from "@/lib/constants/constants";
+import { cn } from "@/lib/utils/shadcn-utils";
+import { getCurrencySymbol } from "@/lib/utils/utils";
 import { TrendDirection, TrendTone } from "@/lib/actions/types";
 
 export type Trend = {
@@ -47,15 +48,19 @@ export function StatCard({
     neutral: null,
   };
 
-  const currencySymbol =
-    CURRENCIES[currency as keyof typeof CURRENCIES]?.symbol;
+  const currencySymbol = getCurrencySymbol(currency);
 
   return (
     <div key={`stat-card-${idx}`} className="card p-4 space-y-3">
       <div className="flex items-center justify-between gap-x-2">
         <div className="flex flex-col gap-y-2">
           <p className="text-xs font-medium text-muted-foreground">{title}</p>
-          <p className="text-lg font-bold tracking-wide leading-none">
+          <p
+            className={cn(
+              "text-lg font-bold tracking-wide leading-none",
+              +amount < 0 && "text-red-600",
+            )}
+          >
             {currency && <span className="mr-1">{currencySymbol}</span>}
             {formattedAmount}
           </p>

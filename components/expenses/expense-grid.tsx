@@ -2,7 +2,6 @@
 
 import {
   ACTION_CONSTANTS,
-  CURRENCIES,
   DEFAULT_VALUES,
   EXPENSE_CATEGORIES,
   EXPENSE_CATEGORY_ICONS_BASE_PATH,
@@ -25,7 +24,11 @@ import { createActionsColumn, DataGrid } from "../common/data-grid";
 import { DeleteConfirmationBody, KpiCard } from "../common/common";
 import { ExpenseFilters } from "./expense-filters";
 import { ExpenseForm } from "./expense-form";
-import { formatDateForDisplay, isStringEqual } from "@/lib/utils/utils";
+import {
+  formatDateForDisplay,
+  getCurrencySymbol,
+  isStringEqual,
+} from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
 import { useExpenses } from "@/hooks/use-expenses";
@@ -130,12 +133,7 @@ export const ExpenseGrid = () => {
       ),
       cell: ({ row }) => (
         <p className="capitalize flex items-center gap-x-1">
-          <span>
-            {
-              CURRENCIES[row.original.currency as keyof typeof CURRENCIES]
-                .symbol
-            }
-          </span>
+          <span>{getCurrencySymbol(row.original.currency)}</span>
           {row.original.amount.toLocaleString()}
         </p>
       ),
@@ -271,11 +269,9 @@ export const ExpenseGrid = () => {
           <DeleteConfirmationBody
             entity={
               quickActionData && quickActionData.currency
-                ? `expense of ${
-                    CURRENCIES[
-                      quickActionData.currency as keyof typeof CURRENCIES
-                    ].symbol
-                  } ${quickActionData.amount} from ${formatDateForDisplay(
+                ? `expense of ${getCurrencySymbol(
+                    quickActionData.currency,
+                  )} ${quickActionData.amount} from ${formatDateForDisplay(
                     quickActionData.expenseDate,
                   )}`
                 : "expense"
@@ -308,12 +304,7 @@ export const ExpenseGrid = () => {
             {summaryData?.spentThisMonth?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
-                  {
-                    CURRENCIES[
-                      summaryData?.spentThisMonth
-                        ?.currency as keyof typeof CURRENCIES
-                    ]?.symbol
-                  }
+                  {getCurrencySymbol(summaryData?.spentThisMonth?.currency)}
                 </span>
                 {summaryData?.spentThisMonth?.amount?.toLocaleString()}
               </p>
@@ -329,12 +320,7 @@ export const ExpenseGrid = () => {
             {summaryData?.spentLast30Days?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
-                  {
-                    CURRENCIES[
-                      summaryData?.spentLast30Days
-                        ?.currency as keyof typeof CURRENCIES
-                    ]?.symbol
-                  }
+                  {getCurrencySymbol(summaryData?.spentLast30Days?.currency)}
                 </span>
                 {summaryData?.spentLast30Days?.amount.toLocaleString()}
               </p>
