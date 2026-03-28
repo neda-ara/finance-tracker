@@ -155,7 +155,8 @@ export const BudgetsGrid = () => {
         const percentage =
           amount > 0 ? Math.min((spent / amount) * 100, 100) : 0;
 
-        const overBudget = spent > amount;
+        const isOverBudget = spent > amount;
+        const overBudgetBy = (spent - amount).toFixed(2);
 
         return (
           <div className="flex flex-col gap-1 w-full min-w-56 pr-24 py-2">
@@ -172,10 +173,10 @@ export const BudgetsGrid = () => {
             </div>
 
             <GradientProgressBar percentage={percentage} />
-            {overBudget && (
+            {isOverBudget && (
               <p className="text-xs font-medium text-red-700">
                 Over budget by {symbol}
-                {spent - amount}
+                {overBudgetBy}
               </p>
             )}
           </div>
