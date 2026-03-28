@@ -1,6 +1,6 @@
 "use client";
 
-import { HandCoins } from "lucide-react";
+import { Layers, PiggyBank, TrendingUp, Wallet } from "lucide-react";
 import { StatCard, Trend } from "./stat-card";
 import { TrendDirection, TrendTone } from "@/lib/actions/types";
 import { useEffect } from "react";
@@ -70,7 +70,7 @@ export const Overview = () => {
       title: "Earnings (Last 30 Days)",
       amount: data?.earnings.amount ?? 0,
       currency: data?.earnings.currency,
-      icon: <HandCoins className="h-6 w-6 text-(--color-subtext)" />,
+      icon: <TrendingUp className="h-6 w-6 text-(--color-subtext)" />,
       trend: getTrend(
         {
           amount: data?.earnings?.change?.amount ?? 0,
@@ -85,7 +85,7 @@ export const Overview = () => {
       title: "Expenses (This Month)",
       amount: data?.expenses.amount ?? 0,
       currency: data?.expenses.currency,
-      icon: <HandCoins className="h-6 w-6 text-(--color-subtext)" />,
+      icon: <Wallet className="h-6 w-6 text-(--color-subtext)" />,
       trend: getTrend(
         {
           amount: data?.expenses?.change?.amount ?? 0,
@@ -100,7 +100,7 @@ export const Overview = () => {
       title: "Current Savings",
       amount: data?.savings.amount ?? 0,
       currency: data?.savings.currency,
-      icon: <HandCoins className="h-6 w-6 text-(--color-subtext)" />,
+      icon: <Layers className="h-6 w-6 text-(--color-subtext)" />,
       trend: getTrend(
         {
           amount: data?.savings?.change?.amount ?? 0,
@@ -115,7 +115,7 @@ export const Overview = () => {
       title: "Budget Left (This Month)",
       amount: data?.budget?.remaining ?? 0,
       currency: data?.budget?.currency,
-      icon: <HandCoins className="h-6 w-6 text-(--color-subtext)" />,
+      icon: <PiggyBank className="h-6 w-6 text-(--color-subtext)" />,
       trend: data?.budget
         ? {
             value: `${Math.round(data.budget.usedPercentage)}% used`,
