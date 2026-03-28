@@ -255,7 +255,18 @@ export async function fetchCategoryBreakdown(
 
 const calcChange = (current: number, previous: number) => {
   const amountChange = current - previous;
-  const percentageChange =
-    previous === 0 ? null : (amountChange / previous) * 100;
-  return { amount: amountChange, percentage: percentageChange };
+
+  if (previous === 0) {
+    return {
+      amount: amountChange,
+      percentage: null,
+    };
+  }
+
+  const percentageChange = (amountChange / Math.abs(previous)) * 100;
+
+  return {
+    amount: amountChange,
+    percentage: percentageChange,
+  };
 };
