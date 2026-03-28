@@ -139,7 +139,7 @@ export const Overview = () => {
     <div className="relative flex flex-col gap-y-8">
       <div className="grid grid-cols-4 xl:gap-x-4 xxl:gap-x-5">
         {OVERVIEW_CARDS.map((card, idx) => (
-          <StatCard key={idx} {...card} />
+          <StatCard key={idx} idx={idx} {...card} />
         ))}
       </div>
     </div>

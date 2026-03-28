@@ -12,7 +12,7 @@ export type Trend = {
 };
 
 type StatCardProps = {
-  key: number;
+  idx: number;
   title: string;
   amount: number | string;
   currency?: string;
@@ -22,7 +22,7 @@ type StatCardProps = {
 };
 
 export function StatCard({
-  key,
+  idx,
   title,
   amount,
   currency = "",
@@ -51,7 +51,7 @@ export function StatCard({
     CURRENCIES[currency as keyof typeof CURRENCIES]?.symbol;
 
   return (
-    <div key={key} className="card p-4 space-y-3">
+    <div key={`stat-card-${idx}`} className="card p-4 space-y-3">
       <div className="flex items-center justify-between gap-x-2">
         <div className="flex flex-col gap-y-2">
           <p className="text-xs font-medium text-muted-foreground">{title}</p>
