@@ -10,8 +10,6 @@ import toast from "react-hot-toast";
 export const Overview = () => {
   const { overviewQuery } = useOverview();
 
-  console.log("QUERY DATA", overviewQuery.data);
-
   useEffect(() => {
     if (overviewQuery.error) {
       toast.error(overviewQuery.error?.message);
@@ -137,11 +135,19 @@ export const Overview = () => {
 
   return (
     <div className="relative flex flex-col gap-y-8">
-      <div className="grid grid-cols-4 xl:gap-x-4 xxl:gap-x-5">
+      <section className="grid grid-cols-4 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
         {OVERVIEW_CARDS.map((card, idx) => (
           <StatCard key={idx} idx={idx} {...card} />
         ))}
-      </div>
+      </section>
+      <section>
+        <h2 className="font-bold text-lg">Top Expenses</h2>
+        <div className="grid grid-cols-5 gap-x-3 xl:gap-x-4 xxl:gap-x-5"></div>
+      </section>
+      <section>
+        <h2 className="font-bold text-lg">Expense Trends</h2>
+        <div className="grid grid-cols-5 gap-x-3 xl:gap-x-4 xxl:gap-x-5"></div>
+      </section>
     </div>
   );
 };
