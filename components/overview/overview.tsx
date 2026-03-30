@@ -1,7 +1,12 @@
 "use client";
 
 import { INTERVALS } from "@/lib/constants/constants";
-import { LabelValuePair, TrendDirection, TrendTone } from "@/lib/actions/types";
+import {
+  Interval,
+  LabelValuePair,
+  TrendDirection,
+  TrendTone,
+} from "@/lib/actions/types";
 import { Layers, PiggyBank, TrendingUp, Wallet } from "lucide-react";
 import {
   Select,
@@ -16,9 +21,26 @@ import { useOverview } from "@/hooks/use-overview";
 import toast from "react-hot-toast";
 
 export const Overview = () => {
-  const [topExpensesInterval, setTopExpensesInterval] = useState("this_month");
+  const [topExpensesInterval, setTopExpensesInterval] =
+    useState<Interval>("this_month");
+  const [trendInterval, setTrendInterval] = useState<Interval>("this_month");
+  const [categoryInterval, setCategoryInterval] =
+    useState<Interval>("this_month");
 
-  const { overviewQuery } = useOverview();
+  const {
+    overviewQuery,
+    topExpensesQuery,
+    expensesTrendQuery,
+    categoryBreakdownQuery,
+  } = useOverview({
+    topExpenses: topExpensesInterval,
+    trend: trendInterval,
+    categories: categoryInterval,
+  });
+
+  console.log({ topExpensesQuery });
+  console.log({ expensesTrendQuery });
+  console.log({ categoryBreakdownQuery });
 
   useEffect(() => {
     if (overviewQuery.error) {

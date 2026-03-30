@@ -16,7 +16,19 @@ import {
 import { OVERVIEW_CLIENT_QUERY_KEY } from "@/lib/constants/query-keys";
 import { useQuery } from "@tanstack/react-query";
 
-export function useOverview(interval: Interval = "this_month") {
+type OverviewIntervals = {
+  topExpenses?: Interval;
+  trend?: Interval;
+  categories?: Interval;
+};
+
+export function useOverview(intervals: OverviewIntervals = {}) {
+  const {
+    topExpenses = "this_month",
+    trend = "this_month",
+    categories = "this_month",
+  } = intervals;
+
   const overviewQuery = useQuery<OverviewData>({
     queryKey: [OVERVIEW_CLIENT_QUERY_KEY],
     queryFn: async () => {
@@ -32,9 +44,9 @@ export function useOverview(interval: Interval = "this_month") {
   });
 
   const topExpensesQuery = useQuery<TopExpensesData>({
-    queryKey: [OVERVIEW_CLIENT_QUERY_KEY, "top_expenses", interval],
+    queryKey: [OVERVIEW_CLIENT_QUERY_KEY, "top_expenses", topExpenses],
     queryFn: async () => {
-      const resp = await fetchTopExpenses();
+      const resp = await fetchTopExpenses(topExpenses); // ✅ only fix
 
       if (!resp?.ok) {
         throw new Error(resp.error.message ?? "Failed to fetch top expenses");
@@ -46,9 +58,9 @@ export function useOverview(interval: Interval = "this_month") {
   });
 
   const expensesTrendQuery = useQuery<ExpenseTrend[]>({
-    queryKey: [OVERVIEW_CLIENT_QUERY_KEY, "expenses_trend", interval],
+    queryKey: [OVERVIEW_CLIENT_QUERY_KEY, "expenses_trend", trend],
     queryFn: async () => {
-      const resp = await fetchExpenseTrend(interval);
+      const resp = await fetchExpenseTrend(trend);
 
       if (!resp?.ok) {
         throw new Error(resp.error.message ?? "Failed to fetch expense trend");
@@ -60,9 +72,9 @@ export function useOverview(interval: Interval = "this_month") {
   });
 
   const categoryBreakdownQuery = useQuery<CategoryBreakdown[]>({
-    queryKey: [OVERVIEW_CLIENT_QUERY_KEY, "categories", interval],
+    queryKey: [OVERVIEW_CLIENT_QUERY_KEY, "categories", categories],
     queryFn: async () => {
-      const resp = await fetchCategoryBreakdown(interval);
+      const resp = await fetchCategoryBreakdown(categories);
 
       if (!resp?.ok) {
         throw new Error(
