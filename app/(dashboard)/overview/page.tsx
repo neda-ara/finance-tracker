@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function OverviewPage() {
   return (
-    <div className="relative flex flex-col justify-center pt-4 px-6 gap-y-6">
+    <div className="relative flex flex-col py-4 px-6 gap-y-6 min-h-[calc(100vh-16px)] max-h-[calc(100vh-16px)] overflow-hidden">
       <PageTitle
         heading="Overview"
         subheading="Get a snapshot of your finances in one glance."

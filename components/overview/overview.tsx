@@ -134,7 +134,7 @@ export const Overview = () => {
   ];
 
   return (
-    <div className="relative flex flex-col gap-y-8">
+    <div className="relative flex flex-1 flex-col gap-y-8">
       <section className="grid grid-cols-4 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
         {OVERVIEW_CARDS.map((card, idx) => (
           <StatCard key={idx} idx={idx} {...card} />
@@ -144,9 +144,12 @@ export const Overview = () => {
         <h2 className="font-bold text-lg">Top Expenses</h2>
         <div className="grid grid-cols-5 gap-x-3 xl:gap-x-4 xxl:gap-x-5"></div>
       </section>
-      <section>
-        <h2 className="font-bold text-lg">Expense Trends</h2>
-        <div className="grid grid-cols-5 gap-x-3 xl:gap-x-4 xxl:gap-x-5"></div>
+      <section className="flex flex-col flex-1 min-h-0">
+        <h2 className="font-bold text-lg mb-2">Expense Trends</h2>
+        <div className="flex-1 grid grid-cols-2 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
+          <div className="h-full border"></div>
+          <div className="h-full border"></div>
+        </div>
       </section>
     </div>
   );
