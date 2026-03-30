@@ -128,47 +128,41 @@ export async function fetchOverview(): Promise<ActionResult<OverviewData>> {
   });
 }
 
-export async function fetchTopExpensesByInterval(
+export async function fetchTopExpenses(
   interval: Interval = "this_month",
 ): Promise<ActionResult<TopExpensesData>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
     const userId = session.userId;
 
-    let days: number | null = null;
-
-    switch (interval) {
-      case "last_7_days":
-        days = 7;
-        break;
-      case "last_15_days":
-        days = 15;
-        break;
-      case "last_30_days":
-        days = 30;
-        break;
-      case "this_month":
-      default:
-        days = null;
-    }
-
-    const dateCondition =
-      days === null
-        ? `expense_date >= date_trunc('month', CURRENT_DATE)`
-        : `expense_date >= CURRENT_DATE - ($2 * INTERVAL '1 day')`;
-
-    const params = days === null ? [userId] : [userId, days];
+    const { condition, paramsBuilder } = getDateFilter(interval);
+    const params = paramsBuilder(userId);
 
     const topExpenses = await db.query(
       `
       SELECT 
-        category,
-        currency,
-        SUM(amount)::float AS amount
-      FROM expenses
-      WHERE user_id = $1
-        AND ${dateCondition}
-      GROUP BY category, currency
+        e.category,
+        e.currency,
+        SUM(e.amount)::float AS amount,
+
+        b.amount::float AS budget,
+
+        COALESCE(
+          (SUM(e.amount) / NULLIF(b.amount, 0)) * 100,
+          NULL
+        ) AS "budgetUsed",
+
+        COALESCE(b.amount - SUM(e.amount), NULL) AS "remaining"
+
+      FROM expenses e
+      LEFT JOIN budgets b
+        ON b.user_id = e.user_id
+       AND b.category = e.category
+
+      WHERE e.user_id = $1
+        AND ${condition}
+
+      GROUP BY e.category, e.currency, b.amount
       ORDER BY amount DESC
       LIMIT 5
       `,
@@ -182,7 +176,7 @@ export async function fetchTopExpensesByInterval(
         SUM(amount)::float AS amount
       FROM expenses
       WHERE user_id = $1
-        AND ${dateCondition}
+        AND ${condition}
       GROUP BY currency
       LIMIT 1
       `,
@@ -206,10 +200,11 @@ export async function fetchTopExpensesByInterval(
 }
 
 export async function fetchExpenseTrend(
-  days: number,
+  interval: Interval,
 ): Promise<ActionResult<ExpenseTrend[]>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
+    const { condition, paramsBuilder } = getDateFilter(interval);
 
     const trend = await db.query<ExpenseTrend>(
       `
@@ -218,11 +213,11 @@ export async function fetchExpenseTrend(
         SUM(amount)::float AS amount
       FROM expenses
       WHERE user_id = $1
-        AND expense_date >= CURRENT_DATE - ($2 || ' days')::interval
+        AND ${condition}
       GROUP BY expense_date
       ORDER BY expense_date
       `,
-      [session.userId, days],
+      paramsBuilder(session.userId),
     );
 
     return trend.rows;
@@ -230,28 +225,40 @@ export async function fetchExpenseTrend(
 }
 
 export async function fetchCategoryBreakdown(
-  days: number,
+  interval: Interval,
 ): Promise<ActionResult<CategoryBreakdown[]>> {
   return safeRunAction(async () => {
     const session = await getAuthenticatedSession();
+    const { condition, paramsBuilder } = getDateFilter(interval);
 
     const result = await db.query<CategoryBreakdown>(
       `
       SELECT 
         e.category,
-        SUM(e.amount)::float AS amount,
         e.currency,
-        b.amount::float AS budget
+        SUM(e.amount)::float AS amount,
+
+        b.amount::float AS budget,
+
+        COALESCE(
+          (SUM(e.amount) / NULLIF(b.amount, 0)) * 100,
+          NULL
+        ) AS "budgetUsed",
+
+        COALESCE(b.amount - SUM(e.amount), NULL) AS "remaining"
+
       FROM expenses e
       LEFT JOIN budgets b
         ON b.user_id = e.user_id
        AND b.category = e.category
+
       WHERE e.user_id = $1
-        AND e.expense_date >= CURRENT_DATE - ($2 || ' days')::interval
+        AND ${condition}
+
       GROUP BY e.category, e.currency, b.amount
       ORDER BY amount DESC
       `,
-      [session.userId, days],
+      paramsBuilder(session.userId),
     );
 
     return result.rows;
@@ -274,4 +281,33 @@ const calcChange = (current: number, previous: number) => {
     amount: amountChange,
     percentage: percentageChange,
   };
+};
+
+const getDateFilter = (interval: Interval) => {
+  let days: number | null = null;
+
+  switch (interval) {
+    case "last_7_days":
+      days = 7;
+      break;
+    case "last_15_days":
+      days = 15;
+      break;
+    case "last_30_days":
+      days = 30;
+      break;
+    case "this_month":
+    default:
+      days = null;
+  }
+
+  const condition =
+    days === null
+      ? `expense_date >= date_trunc('month', CURRENT_DATE)`
+      : `expense_date >= CURRENT_DATE - ($2 * INTERVAL '1 day')`;
+
+  const paramsBuilder = (userId: string) =>
+    days === null ? [userId] : [userId, days];
+
+  return { condition, paramsBuilder };
 };

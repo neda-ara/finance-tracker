@@ -124,3 +124,10 @@ export const IMAGE_PATHS = {
   AUTH: "/images/creative/finance.png",
   WALLET: "/images/icons/wallet.png",
 };
+
+export const INTERVALS = [
+  { label: "This Month", value: "this_month" },
+  { label: "Last 7 Days", value: "last_7_days" },
+  { label: "Last 15 Days", value: "last_15_days" },
+  { label: "Last 30 Days", value: "last_30_days" },
+];
