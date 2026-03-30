@@ -1,13 +1,23 @@
 "use client";
 
+import { INTERVALS } from "@/lib/constants/constants";
+import { LabelValuePair, TrendDirection, TrendTone } from "@/lib/actions/types";
 import { Layers, PiggyBank, TrendingUp, Wallet } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { StatCard, Trend } from "./stat-card";
-import { TrendDirection, TrendTone } from "@/lib/actions/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useOverview } from "@/hooks/use-overview";
 import toast from "react-hot-toast";
 
 export const Overview = () => {
+  const [topExpensesInterval, setTopExpensesInterval] = useState("this_month");
+
   const { overviewQuery } = useOverview();
 
   useEffect(() => {
@@ -141,7 +151,24 @@ export const Overview = () => {
         ))}
       </section>
       <section>
-        <h2 className="font-bold text-lg">Top Expenses</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-lg">Top Expenses</h2>
+          <Select
+            value={topExpensesInterval}
+            onValueChange={setTopExpensesInterval}
+          >
+            <SelectTrigger className="w-fit">
+              <SelectValue placeholder="Select currency" />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              {INTERVALS.map((item: LabelValuePair) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="grid grid-cols-5 gap-x-3 xl:gap-x-4 xxl:gap-x-5"></div>
       </section>
       <section className="flex flex-col flex-1 min-h-0">
