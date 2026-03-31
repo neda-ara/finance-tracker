@@ -1,12 +1,8 @@
 "use client";
 
+import { ExpenseCard } from "./expense-card";
 import { INTERVALS } from "@/lib/constants/constants";
-import {
-  Interval,
-  LabelValuePair,
-  TrendDirection,
-  TrendTone,
-} from "@/lib/actions/types";
+import { Interval, TrendDirection, TrendTone } from "@/lib/actions/types";
 import { Layers, PiggyBank, TrendingUp, Wallet } from "lucide-react";
 import {
   Select,
@@ -38,9 +34,9 @@ export const Overview = () => {
     categories: categoryInterval,
   });
 
-  console.log({ topExpensesQuery });
-  console.log({ expensesTrendQuery });
-  console.log({ categoryBreakdownQuery });
+  console.log("topExpensesQuery", topExpensesQuery.data);
+  console.log("expensesTrendQuery", expensesTrendQuery.data);
+  console.log("categoryBreakdownQuery", categoryBreakdownQuery.data);
 
   useEffect(() => {
     if (overviewQuery.error) {
@@ -173,17 +169,17 @@ export const Overview = () => {
         ))}
       </section>
       <section>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-2">
           <h2 className="font-bold text-lg">Top Expenses</h2>
           <Select
             value={topExpensesInterval}
-            onValueChange={setTopExpensesInterval}
+            onValueChange={(val: Interval) => setTopExpensesInterval(val)}
           >
             <SelectTrigger className="w-fit">
-              <SelectValue placeholder="Select currency" />
+              <SelectValue placeholder="Select interval" />
             </SelectTrigger>
             <SelectContent position="popper">
-              {INTERVALS.map((item: LabelValuePair) => (
+              {INTERVALS.map((item) => (
                 <SelectItem key={item.value} value={item.value}>
                   {item.label}
                 </SelectItem>
@@ -191,7 +187,22 @@ export const Overview = () => {
             </SelectContent>
           </Select>
         </div>
-        <div className="grid grid-cols-5 gap-x-3 xl:gap-x-4 xxl:gap-x-5"></div>
+
+        <div className="grid grid-cols-5 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
+          {topExpensesQuery.data?.topCategories.map((item, idx) => (
+            <ExpenseCard
+              key={idx}
+              idx={idx}
+              category={item.category}
+              amount={item.amount}
+              currency={item.currency}
+              budget={item.budget ?? null}
+              budgetUsed={item.budgetUsed ? parseFloat(item.budgetUsed) : null}
+              remaining={item.remaining ? parseFloat(item.remaining) : null}
+              totalPercentage={item.percentage}
+            />
+          ))}
+        </div>
       </section>
       <section className="flex flex-col flex-1 min-h-0">
         <h2 className="font-bold text-lg mb-2">Expense Trends</h2>

@@ -251,6 +251,9 @@ export interface TopExpensesData {
     category: string;
     currency: string;
     amount: number;
+    budget: number | null;
+    budgetUsed: string | null;
+    remaining: string | null;
     percentage: number;
   }[];
 }
