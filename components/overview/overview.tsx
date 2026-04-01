@@ -3,7 +3,14 @@
 import { ExpenseCard } from "./expense-card";
 import { INTERVALS } from "@/lib/constants/constants";
 import { Interval, TrendDirection, TrendTone } from "@/lib/actions/types";
-import { Layers, PiggyBank, TrendingUp, Wallet } from "lucide-react";
+import {
+  BarChart3,
+  Layers,
+  PiggyBank,
+  TrendingUp,
+  Wallet,
+  Wallet2,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -161,6 +168,8 @@ export const Overview = () => {
     },
   ];
 
+  const topExpenses = topExpensesQuery.data?.topCategories ?? [];
+
   return (
     <div className="relative flex flex-1 flex-col gap-y-8">
       <section className="grid grid-cols-4 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
@@ -189,19 +198,38 @@ export const Overview = () => {
         </div>
 
         <div className="grid grid-cols-5 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
-          {topExpensesQuery.data?.topCategories.map((item, idx) => (
-            <ExpenseCard
-              key={idx}
-              idx={idx}
-              category={item.category}
-              amount={item.amount}
-              currency={item.currency}
-              budget={item.budget ?? null}
-              budgetUsed={item.budgetUsed ? parseFloat(item.budgetUsed) : null}
-              remaining={item.remaining ? parseFloat(item.remaining) : null}
-              totalPercentage={item.percentage}
-            />
-          ))}
+          {topExpenses.length > 0 ? (
+            topExpenses.map((item, idx) => (
+              <ExpenseCard
+                key={idx}
+                idx={idx}
+                category={item.category}
+                amount={item.amount}
+                currency={item.currency}
+                budget={item.budget ?? null}
+                budgetUsed={
+                  item.budgetUsed ? parseFloat(item.budgetUsed) : null
+                }
+                remaining={item.remaining ? parseFloat(item.remaining) : null}
+                totalPercentage={item.percentage}
+              />
+            ))
+          ) : (
+            <div className="card h-32 relative flex items-center justify-center text-center overflow-hidden">
+              <div className="absolute inset-0 flex items-center justify-center opacity-5">
+                <Wallet2 className="w-20 h-20 text-gray-500" />
+              </div>
+
+              <div className="relative z-10 px-4">
+                <p className="text-sm font-medium text-gray-600">
+                  No expenses yet
+                </p>
+                <p className="text-[11px] text-gray-400 mt-1">
+                  Your top categories will appear here
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </section>
       <section className="flex flex-col flex-1 min-h-0">
