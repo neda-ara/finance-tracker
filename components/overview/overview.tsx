@@ -4,12 +4,11 @@ import { ExpenseCard } from "./expense-card";
 import { INTERVALS } from "@/lib/constants/constants";
 import { Interval, TrendDirection, TrendTone } from "@/lib/actions/types";
 import {
-  BarChart3,
   Layers,
   PiggyBank,
   TrendingUp,
   Wallet,
-  Wallet2,
+  WalletCards,
 } from "lucide-react";
 import {
   Select,
@@ -217,14 +216,13 @@ export const Overview = () => {
           ) : (
             <div className="card h-32 relative flex items-center justify-center text-center overflow-hidden">
               <div className="absolute inset-0 flex items-center justify-center opacity-5">
-                <Wallet2 className="w-20 h-20 text-gray-500" />
+                <WalletCards className="w-24 h-24 text-gray-600" />
               </div>
-
               <div className="relative z-10 px-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-semibold text-gray-700">
                   No expenses yet
                 </p>
-                <p className="text-[11px] text-gray-400 mt-1">
+                <p className="text-xs font-medium text-gray-600 mt-1">
                   Your top categories will appear here
                 </p>
               </div>
