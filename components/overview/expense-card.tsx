@@ -71,24 +71,23 @@ export function ExpenseCard({
               Used: {totalPercentage?.toFixed(1)}% of total budget of{" "}
               {currencySymbol}{" "}
               {budget.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}
-              {overspentAmount > 0 && (
-                <div className="font-medium text-xs text-red-600">
-                  Over budget by {currencySymbol}
-                  {overspentAmount.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </div>
-              )}
             </div>
           ) : (
             <p className="text-muted-foreground text-xs">
               Budget not set for{" "}
               <span className="font-medium">{expenseCatObj?.title}</span>
             </p>
+          )}
+          {overspentAmount > 0 && (
+            <div className="font-medium text-xs text-red-600">
+              Over budget by {currencySymbol}
+              {overspentAmount.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </div>
           )}
         </div>
         {budget && (
