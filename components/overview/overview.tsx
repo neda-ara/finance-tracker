@@ -196,12 +196,7 @@ export const Overview = () => {
           </Select>
         </div>
 
-        <div
-          className="grid gap-x-3 xl:gap-x-4 xxl:gap-x-5"
-          style={{
-            gridTemplateColumns: `repeat(${Math.min(topExpenses.length, 5)}, minmax(0, 1fr))`,
-          }}
-        >
+        <div className="grid grid-cols-5 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
           {topExpenses.length > 0 ? (
             topExpenses.map((item, idx) => (
               <ExpenseCard

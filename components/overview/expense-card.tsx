@@ -5,6 +5,7 @@ import {
   EXPENSE_CATEGORIES,
   EXPENSE_CATEGORY_ICONS_BASE_PATH,
 } from "@/lib/constants/constants";
+import { cn } from "@/lib/utils/shadcn-utils";
 import { getCurrencySymbol, isStringEqual } from "@/lib/utils/utils";
 import Image from "next/image";
 
@@ -39,10 +40,25 @@ export function ExpenseCard({
 
   const overspentAmount = budget && usedPercentage > 100 ? amount - budget : 0;
 
+  const formattedAmount = amount.toLocaleString(undefined, {
+    maximumFractionDigits: 2,
+  });
+
+  const formattedBudget = budget?.toLocaleString(undefined, {
+    maximumFractionDigits: 2,
+  });
+
+  const formattedOverspent = overspentAmount.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const roundedPercentage = Math.round(Number(totalPercentage));
+
   return (
     <div
       key={`expense-card-${idx}`}
-      className="card p-4 flex flex-col space-y-3"
+      className="card p-4 flex flex-col space-y-1.5"
     >
       <div className="flex items-center gap-x-5">
         <div className="flex flex-col gap-y-2">
@@ -60,34 +76,32 @@ export function ExpenseCard({
               <p className="font-bold text-sm">{category}</p>
               <p className="font-semibold text-sm">
                 {currencySymbol}
-                {amount.toLocaleString(undefined, {
-                  maximumFractionDigits: 2,
-                })}
+                {formattedAmount}
               </p>
             </div>
           </div>
           {budget ? (
-            <div className="text-xs text-gray-500">
-              Used: {totalPercentage?.toFixed(1)}% of total budget of{" "}
-              {currencySymbol}{" "}
-              {budget.toLocaleString(undefined, {
-                maximumFractionDigits: 2,
-              })}
+            <div className="text-xs text-gray-500 mt-1">
+              Used{" "}
+              <span
+                className={cn(
+                  "text-accent-foreground font-medium",
+                  roundedPercentage >= 100 && "text-red-500",
+                )}
+              >
+                {roundedPercentage}%
+              </span>{" "}
+              of total budget of{" "}
+              <span className="text-accent-foreground font-medium">
+                {currencySymbol}
+                {formattedBudget}
+              </span>
             </div>
           ) : (
             <p className="text-muted-foreground text-xs">
               Budget not set for{" "}
               <span className="font-medium">{expenseCatObj?.title}</span>
             </p>
-          )}
-          {overspentAmount > 0 && (
-            <div className="font-medium text-xs text-red-600">
-              Over budget by {currencySymbol}
-              {overspentAmount.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </div>
           )}
         </div>
         {budget && (
@@ -100,6 +114,12 @@ export function ExpenseCard({
           </div>
         )}
       </div>
+      {overspentAmount > 0 && (
+        <div className="font-medium text-xs text-red-600">
+          Over budget by {currencySymbol}
+          {formattedOverspent}
+        </div>
+      )}
     </div>
   );
 }
