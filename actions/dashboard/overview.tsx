@@ -193,7 +193,7 @@ export async function fetchTopExpenses(
       },
       topCategories: topExpenses.rows.map((row) => ({
         ...row,
-        percentage: totalAmount === 0 ? 0 : (row.amount / totalAmount) * 100,
+        percentage: row.budgetUsed ? parseFloat(row.budgetUsed) : 0,
       })),
     };
   });

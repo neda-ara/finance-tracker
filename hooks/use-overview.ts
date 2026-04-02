@@ -46,7 +46,7 @@ export function useOverview(intervals: OverviewIntervals = {}) {
   const topExpensesQuery = useQuery<TopExpensesData>({
     queryKey: [OVERVIEW_CLIENT_QUERY_KEY, "top_expenses", topExpenses],
     queryFn: async () => {
-      const resp = await fetchTopExpenses(topExpenses); // ✅ only fix
+      const resp = await fetchTopExpenses(topExpenses);
 
       if (!resp?.ok) {
         throw new Error(resp.error.message ?? "Failed to fetch top expenses");
