@@ -123,3 +123,32 @@ export function ExpenseCard({
     </div>
   );
 }
+
+export const ExpenseCardSkeleton = () => {
+  return (
+    <div className="card p-4 flex flex-col space-y-1.5">
+      <div className="flex items-center gap-x-5">
+        <div className="flex flex-col gap-y-2 flex-1 min-w-0">
+          <div className="flex gap-x-4 items-center">
+            <div className="h-10 w-10 rounded bg-gray-300 transition-all animate-pulse shrink-0" />
+            <div className="flex flex-col gap-y-2 flex-1">
+              <div className="h-3 rounded bg-gray-300 transition-all animate-pulse" />
+              <div className="h-3 rounded bg-gray-300 transition-all animate-pulse" />
+            </div>
+          </div>
+
+          <div className="mt-1 flex items-center gap-x-2 flex-wrap">
+            <div className="h-3 w-full rounded bg-gray-300 transition-all animate-pulse" />
+          </div>
+        </div>
+
+        <div className="relative shrink-0">
+          <div className="h-14 w-14 rounded-full border-4 border-gray-200 transition-all animate-pulse" />
+          <div className="absolute inset-0 m-1 rounded-full border-4 border-gray-200" />
+        </div>
+      </div>
+
+      <div className="h-3 w-3/5 rounded bg-gray-300 transition-all animate-pulse" />
+    </div>
+  );
+};

@@ -1,6 +1,6 @@
 "use client";
 
-import { ExpenseCard } from "./expense-card";
+import { ExpenseCard, ExpenseCardSkeleton } from "./expense-card";
 import { INTERVALS } from "@/lib/constants/constants";
 import { Interval, TrendDirection, TrendTone } from "@/lib/actions/types";
 import {
@@ -39,10 +39,6 @@ export const Overview = () => {
     trend: trendInterval,
     categories: categoryInterval,
   });
-
-  console.log("topExpensesQuery", topExpensesQuery.data);
-  console.log("expensesTrendQuery", expensesTrendQuery.data);
-  console.log("categoryBreakdownQuery", categoryBreakdownQuery.data);
 
   useEffect(() => {
     if (overviewQuery.error) {
@@ -173,7 +169,12 @@ export const Overview = () => {
     <div className="relative flex flex-1 flex-col gap-y-8">
       <section className="grid grid-cols-4 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
         {OVERVIEW_CARDS.map((card, idx) => (
-          <StatCard key={idx} idx={idx} {...card} />
+          <StatCard
+            key={idx}
+            idx={idx}
+            {...card}
+            isLoading={overviewQuery.isPending}
+          />
         ))}
       </section>
       <section>
@@ -195,7 +196,6 @@ export const Overview = () => {
             </SelectContent>
           </Select>
         </div>
-
         <div className="grid grid-cols-5 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
           {topExpenses.length > 0 ? (
             topExpenses.map((item, idx) => (
@@ -213,6 +213,8 @@ export const Overview = () => {
                 totalPercentage={item.percentage}
               />
             ))
+          ) : topExpensesQuery.isPending ? (
+            <ExpenseCardSkeleton />
           ) : (
             <div className="card h-32 relative flex items-center justify-center text-center overflow-hidden">
               <div className="absolute inset-0 flex items-center justify-center opacity-5">

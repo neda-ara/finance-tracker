@@ -20,6 +20,7 @@ type StatCardProps = {
   icon?: React.ReactNode;
   trend?: Trend;
   formatAmount?: (value: number | string) => string;
+  isLoading: boolean;
 };
 
 export function StatCard({
@@ -30,6 +31,7 @@ export function StatCard({
   icon,
   trend,
   formatAmount,
+  isLoading,
 }: StatCardProps) {
   const formattedAmount = formatAmount
     ? formatAmount(amount)
@@ -55,15 +57,19 @@ export function StatCard({
       <div className="flex items-center justify-between gap-x-2">
         <div className="flex flex-col gap-y-2">
           <p className="text-xs font-medium text-muted-foreground">{title}</p>
-          <p
-            className={cn(
-              "text-lg font-bold tracking-wide leading-none",
-              +amount < 0 && "text-red-600",
-            )}
-          >
-            {currency && <span className="mr-1">{currencySymbol}</span>}
-            {formattedAmount}
-          </p>
+          {isLoading ? (
+            <div className="h-5.5 bg-gray-100 animate-pulse transition-all rounded-sm" />
+          ) : (
+            <p
+              className={cn(
+                "text-lg font-bold tracking-wide leading-none",
+                +amount < 0 && "text-red-600",
+              )}
+            >
+              {currency && <span className="mr-1">{currencySymbol}</span>}
+              {formattedAmount}
+            </p>
+          )}
         </div>
 
         {icon && (
@@ -73,24 +79,28 @@ export function StatCard({
         )}
       </div>
 
-      {trend && (
-        <div className="flex items-center gap-x-1">
-          {trend.value && (
-            <span
-              className={`flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium leading-none ${
-                toneStyles[trend.tone || "neutral"]
-              }`}
-            >
-              {trend.direction && directionIcon[trend.direction]}
-              {trend.value?.toLocaleString()}
-            </span>
-          )}
-          {trend.label && (
-            <p className="text-xs text-muted-foreground leading-none">
-              {trend.label}
-            </p>
-          )}
-        </div>
+      {isLoading ? (
+        <div className="h-4.5 bg-gray-100 animate-pulse transition-all rounded-sm" />
+      ) : (
+        trend && (
+          <div className="flex items-center gap-x-1">
+            {trend.value && (
+              <span
+                className={`flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium leading-none ${
+                  toneStyles[trend.tone || "neutral"]
+                }`}
+              >
+                {trend.direction && directionIcon[trend.direction]}
+                {trend.value?.toLocaleString()}
+              </span>
+            )}
+            {trend.label && (
+              <p className="text-xs text-muted-foreground leading-none">
+                {trend.label}
+              </p>
+            )}
+          </div>
+        )
       )}
     </div>
   );
