@@ -221,8 +221,54 @@ export const Overview = () => {
       <section className="flex flex-col flex-1 min-h-0">
         <h2 className="font-bold text-lg mb-2">Expense Trends</h2>
         <div className="flex-1 grid grid-cols-2 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
-          <div className="h-full border rounded-md"></div>
-          <div className="h-full border rounded-md"></div>
+          <div className="h-full border rounded-md py-2 px-3">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-sm">Spending Trend</h2>
+              <Select
+                value={trendInterval}
+                onValueChange={(val: Interval) => setTrendInterval(val)}
+              >
+                <SelectTrigger className="w-fit h-fit! font-medium text-xs p-1.5">
+                  <SelectValue placeholder="Select interval" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  {INTERVALS.map((item) => (
+                    <SelectItem
+                      key={item.value}
+                      value={item.value}
+                      className="text-xs"
+                    >
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="h-full border rounded-md py-2 px-3">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-sm">Category Distribution</h2>
+              <Select
+                value={categoryInterval}
+                onValueChange={(val: Interval) => setCategoryInterval(val)}
+              >
+                <SelectTrigger className="w-fit h-fit! font-medium text-xs p-1.5">
+                  <SelectValue placeholder="Select interval" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  {INTERVALS.map((item) => (
+                    <SelectItem
+                      key={item.value}
+                      value={item.value}
+                      className="text-xs"
+                    >
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
       </section>
     </div>
