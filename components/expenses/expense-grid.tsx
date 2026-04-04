@@ -295,6 +295,22 @@ export const ExpenseGrid = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-x-4">
           <KpiCard
+            title="Spent today"
+            imageSrc={IMAGE_PATHS.TODAY}
+            imageAlt="month-calendar"
+            isLoading={query.isPending}
+            fallbackText="No expenses recorded"
+          >
+            {summaryData?.spentToday?.amount != null && (
+              <p className="font-bold text-lg tracking-wider">
+                <span className="mr-1">
+                  {getCurrencySymbol(summaryData?.spentToday?.currency)}
+                </span>
+                {summaryData?.spentToday?.amount.toLocaleString()}
+              </p>
+            )}
+          </KpiCard>
+          <KpiCard
             title="Spent this month"
             imageSrc={IMAGE_PATHS.MONTH}
             imageAlt="month-calendar"
@@ -307,22 +323,6 @@ export const ExpenseGrid = () => {
                   {getCurrencySymbol(summaryData?.spentThisMonth?.currency)}
                 </span>
                 {summaryData?.spentThisMonth?.amount?.toLocaleString()}
-              </p>
-            )}
-          </KpiCard>
-          <KpiCard
-            title="Spent in last 30 days"
-            imageSrc={IMAGE_PATHS["30DAYS"]}
-            imageAlt="month-calendar"
-            isLoading={query.isPending}
-            fallbackText="No expenses recorded"
-          >
-            {summaryData?.spentLast30Days?.amount != null && (
-              <p className="font-bold text-lg tracking-wider">
-                <span className="mr-1">
-                  {getCurrencySymbol(summaryData?.spentLast30Days?.currency)}
-                </span>
-                {summaryData?.spentLast30Days?.amount.toLocaleString()}
               </p>
             )}
           </KpiCard>
