@@ -7,6 +7,7 @@ import {
 } from "@/lib/constants/constants";
 import { cn } from "@/lib/utils/shadcn-utils";
 import { getCurrencySymbol, isStringEqual } from "@/lib/utils/utils";
+import { WalletCards } from "lucide-react";
 import Image from "next/image";
 
 export interface ExpenseCardProps {
@@ -149,6 +150,22 @@ export const ExpenseCardSkeleton = () => {
       </div>
 
       <div className="h-3 w-3/5 rounded bg-gray-300 transition-all animate-pulse" />
+    </div>
+  );
+};
+
+export const TopExpensesEmptyState = () => {
+  return (
+    <div className="card h-32 relative flex items-center justify-center text-center overflow-hidden">
+      <div className="absolute inset-0 flex items-center justify-center opacity-5">
+        <WalletCards className="w-24 h-24 text-gray-600" />
+      </div>
+      <div className="relative z-10 px-4">
+        <p className="text-sm font-semibold text-gray-700">No expenses yet</p>
+        <p className="text-xs font-medium text-gray-600 mt-1">
+          Your top categories will appear here
+        </p>
+      </div>
     </div>
   );
 };

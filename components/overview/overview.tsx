@@ -1,15 +1,13 @@
 "use client";
 
-import { ExpenseCard, ExpenseCardSkeleton } from "./expense-card";
+import {
+  ExpenseCard,
+  ExpenseCardSkeleton,
+  TopExpensesEmptyState,
+} from "./expense-card";
 import { INTERVALS } from "@/lib/constants/constants";
 import { Interval, TrendDirection, TrendTone } from "@/lib/actions/types";
-import {
-  Layers,
-  PiggyBank,
-  TrendingUp,
-  Wallet,
-  WalletCards,
-} from "lucide-react";
+import { Layers, PiggyBank, TrendingUp, Wallet } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -166,7 +164,7 @@ export const Overview = () => {
   const topExpenses = topExpensesQuery.data?.topCategories ?? [];
 
   return (
-    <div className="relative flex flex-1 flex-col gap-y-8">
+    <div className="relative flex flex-1 flex-col gap-y-6">
       <section className="grid grid-cols-4 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
         {OVERVIEW_CARDS.map((card, idx) => (
           <StatCard
@@ -216,27 +214,15 @@ export const Overview = () => {
           ) : topExpensesQuery.isPending ? (
             <ExpenseCardSkeleton />
           ) : (
-            <div className="card h-32 relative flex items-center justify-center text-center overflow-hidden">
-              <div className="absolute inset-0 flex items-center justify-center opacity-5">
-                <WalletCards className="w-24 h-24 text-gray-600" />
-              </div>
-              <div className="relative z-10 px-4">
-                <p className="text-sm font-semibold text-gray-700">
-                  No expenses yet
-                </p>
-                <p className="text-xs font-medium text-gray-600 mt-1">
-                  Your top categories will appear here
-                </p>
-              </div>
-            </div>
+            <TopExpensesEmptyState />
           )}
         </div>
       </section>
       <section className="flex flex-col flex-1 min-h-0">
         <h2 className="font-bold text-lg mb-2">Expense Trends</h2>
         <div className="flex-1 grid grid-cols-2 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
-          <div className="h-full border"></div>
-          <div className="h-full border"></div>
+          <div className="h-full border rounded-md"></div>
+          <div className="h-full border rounded-md"></div>
         </div>
       </section>
     </div>

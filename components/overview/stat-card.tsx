@@ -58,7 +58,7 @@ export function StatCard({
         <div className="flex flex-col gap-y-2">
           <p className="text-xs font-medium text-muted-foreground">{title}</p>
           {isLoading ? (
-            <div className="h-5.5 bg-gray-100 animate-pulse transition-all rounded-sm" />
+            <div className="h-5.5 bg-gray-300 animate-pulse transition-all rounded-sm" />
           ) : (
             <p
               className={cn(
@@ -80,7 +80,7 @@ export function StatCard({
       </div>
 
       {isLoading ? (
-        <div className="h-4.5 bg-gray-100 animate-pulse transition-all rounded-sm" />
+        <div className="h-4.5 bg-gray-300 animate-pulse transition-all rounded-sm" />
       ) : (
         trend && (
           <div className="flex items-center gap-x-1">
