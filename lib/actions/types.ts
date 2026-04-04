@@ -139,11 +139,11 @@ export type ExpenseFiltersType = {
 };
 
 export type ExpenseSummary = {
-  spentThisMonth?: {
+  spentToday?: {
     currency: string;
     amount: number;
   };
-  spentLast30Days?: {
+  spentThisMonth?: {
     currency: string;
     amount: number;
   };

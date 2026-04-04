@@ -87,12 +87,12 @@ export async function fetchExpenseSummary(): Promise<
       [userId],
     );
 
-    const last30Days = await db.query<TotalByCurrency>(
+    const today = await db.query<TotalByCurrency>(
       `
     SELECT currency, SUM(amount)::float AS total
     FROM expenses
     WHERE user_id = $1
-      AND expense_date >= CURRENT_DATE - INTERVAL '30 days'
+      AND expense_date >= CURRENT_DATE
     GROUP BY currency
     ORDER BY total DESC
     LIMIT 1
@@ -101,13 +101,13 @@ export async function fetchExpenseSummary(): Promise<
     );
 
     return {
+      spentToday: today.rows[0] && {
+        currency: today.rows[0].currency,
+        amount: today.rows[0].total,
+      },
       spentThisMonth: thisMonth.rows[0] && {
         currency: thisMonth.rows[0].currency,
         amount: thisMonth.rows[0].total,
-      },
-      spentLast30Days: last30Days.rows[0] && {
-        currency: last30Days.rows[0].currency,
-        amount: last30Days.rows[0].total,
       },
     };
   });
