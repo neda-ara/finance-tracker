@@ -1,6 +1,19 @@
 "use client";
 
 import {
+  Bar,
+  BarChart,
+  Legend,
+  LegendPayload,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  TooltipValueType,
+  XAxis,
+  YAxis,
+} from "recharts";
+import {
   ExpenseCard,
   ExpenseCardSkeleton,
   TopExpensesEmptyState,
@@ -19,6 +32,7 @@ import { StatCard, Trend } from "./stat-card";
 import { useEffect, useState } from "react";
 import { useOverview } from "@/hooks/use-overview";
 import toast from "react-hot-toast";
+import { ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 export const Overview = () => {
   const [topExpensesInterval, setTopExpensesInterval] =
@@ -163,8 +177,29 @@ export const Overview = () => {
 
   const topExpenses = topExpensesQuery.data?.topCategories ?? [];
 
+  const expenseTrendData = expensesTrendQuery?.data?.map((item) => ({
+    ...item,
+    dateLabel: new Date(item.date).toLocaleDateString(undefined, {
+      day: "numeric",
+      month: "short",
+    }),
+  }));
+
+  const COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444"];
+
+  const expenseCategoryPieData = categoryBreakdownQuery?.data?.map(
+    (item, idx) => ({
+      name: item.category,
+      value: Number(item.amount),
+      fill: COLORS[idx % COLORS.length],
+    }),
+  );
+
+  console.log("expense-trend", expensesTrendQuery.data);
+  console.log("category", categoryBreakdownQuery.data);
+
   return (
-    <div className="relative flex flex-1 flex-col gap-y-6">
+    <div className="relative flex flex-1 flex-col gap-y-8">
       <section className="grid grid-cols-4 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
         {OVERVIEW_CARDS.map((card, idx) => (
           <StatCard
@@ -221,7 +256,7 @@ export const Overview = () => {
       <section className="flex flex-col flex-1 min-h-0">
         <h2 className="font-bold text-lg mb-2">Expense Trends</h2>
         <div className="flex-1 grid grid-cols-2 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
-          <div className="h-full border rounded-md py-2 px-3">
+          <div className="h-full border rounded-md pt-2 px-3">
             <div className="flex items-center justify-between">
               <h2 className="font-semibold text-sm">Spending Trend</h2>
               <Select
@@ -244,8 +279,18 @@ export const Overview = () => {
                 </SelectContent>
               </Select>
             </div>
+            <div className="h-[calc(100%-34px)]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={expenseTrendData}>
+                  <XAxis dataKey="dateLabel" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip />
+                  <Bar dataKey="amount" fill="#3b82f6" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-          <div className="h-full border rounded-md py-2 px-3">
+          <div className="h-full border rounded-md pt-2 px-3">
             <div className="flex items-center justify-between">
               <h2 className="font-semibold text-sm">Category Distribution</h2>
               <Select
@@ -267,6 +312,44 @@ export const Overview = () => {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            <div className="h-[calc(100%-30px)]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={expenseCategoryPieData}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius="80%"
+                    paddingAngle={3}
+                    fill="fill"
+                    label={false}
+                    labelLine={false}
+                  />
+
+                  <Tooltip
+                    formatter={(value: ValueType | undefined) => {
+                      const num = Number(value ?? 0);
+                      return new Intl.NumberFormat("en-IN", {
+                        style: "currency",
+                        currency: "INR",
+                        maximumFractionDigits: 0,
+                      }).format(num);
+                    }}
+                  />
+
+                  <Legend
+                    verticalAlign="bottom"
+                    align="center"
+                    layout="horizontal"
+                    wrapperStyle={{ fontSize: "11px" }}
+                    formatter={(value: string, entry: LegendPayload) => {
+                      const amount = entry.payload.value;
+                      return `${value} - ₹${Number(amount).toLocaleString()}`;
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
