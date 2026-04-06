@@ -309,7 +309,7 @@ export const Overview = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="h-[calc(100%-30px)]">
+            <div className="h-[calc(100%-38px)]">
               <CategoryPieChart data={expenseCategoryPieData} />
             </div>
           </div>
