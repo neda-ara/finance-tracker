@@ -8,6 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { CategoryPieChart, COLORS } from "./category-pie-chart";
 import {
   ExpenseCard,
   ExpenseCardSkeleton,
@@ -27,8 +28,6 @@ import { StatCard, Trend } from "./stat-card";
 import { useEffect, useState } from "react";
 import { useOverview } from "@/hooks/use-overview";
 import toast from "react-hot-toast";
-import { ValueType } from "recharts/types/component/DefaultTooltipContent";
-import { CategoryPieChart } from "./category-pie-chart";
 
 export const Overview = () => {
   const [topExpensesInterval, setTopExpensesInterval] =
@@ -181,8 +180,6 @@ export const Overview = () => {
     }),
   }));
 
-  const COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444"];
-
   const expenseCategoryPieData = categoryBreakdownQuery?.data?.map(
     (item, idx) => ({
       name: item.category,
@@ -190,9 +187,6 @@ export const Overview = () => {
       fill: COLORS[idx % COLORS.length],
     }),
   );
-
-  console.log("expense-trend", expensesTrendQuery.data);
-  console.log("category", categoryBreakdownQuery.data);
 
   return (
     <div className="relative flex flex-1 flex-col gap-y-8">

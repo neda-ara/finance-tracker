@@ -57,3 +57,31 @@ export const CategoryPieChart = ({
     </div>
   );
 };
+
+export const COLORS = [
+  "#2563EB", // Royal Blue
+  "#DC2626", // Deep Red
+  "#059669", // Emerald Green
+  "#D97706", // Amber
+  "#7C3AED", // Violet
+  "#DB2777", // Pink
+  "#0891B2", // Cyan
+  "#65A30D", // Lime Green
+  "#EA580C", // Orange
+  "#4F46E5", // Indigo
+  "#BE123C", // Rose Red
+  "#0D9488", // Teal (only one)
+  "#CA8A04", // Gold
+  "#9333EA", // Purple
+  "#0284C7", // Sky Blue
+  "#15803D", // Green
+  "#B45309", // Copper
+  "#1E40AF", // Navy
+  "#9F1239", // Wine
+  "#4D7C0F", // Olive
+  "#C026D3", // Fuchsia
+  "#0369A1", // Ocean Blue
+  "#A16207", // Mustard
+  "#6B7280", // Cool Gray
+  "#111827", // Charcoal
+];
