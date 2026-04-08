@@ -184,9 +184,12 @@ export const Overview = () => {
     (item, idx) => ({
       name: item.category,
       value: Number(item.amount),
+      currency: item?.currency,
       fill: COLORS[idx % COLORS.length],
     }),
   );
+
+  console.log("expenseCategoryPieData", categoryBreakdownQuery.data);
 
   return (
     <div className="relative flex flex-1 flex-col gap-y-8">

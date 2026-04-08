@@ -237,24 +237,19 @@ export async function fetchCategoryBreakdown(
         e.category,
         e.currency,
         SUM(e.amount)::float AS amount,
-
         b.amount::float AS budget,
-
         COALESCE(
           (SUM(e.amount) / NULLIF(b.amount, 0)) * 100,
           NULL
         ) AS "budgetUsed",
 
         COALESCE(b.amount - SUM(e.amount), NULL) AS "remaining"
-
       FROM expenses e
       LEFT JOIN budgets b
         ON b.user_id = e.user_id
        AND b.category = e.category
-
       WHERE e.user_id = $1
         AND ${condition}
-
       GROUP BY e.category, e.currency, b.amount
       ORDER BY amount DESC
       `,
