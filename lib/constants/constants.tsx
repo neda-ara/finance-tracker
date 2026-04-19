@@ -8,8 +8,8 @@ export const ROUTES = {
     EXPENSES: "/expenses",
     EARNINGS: "/earnings",
     BUDGETS: "/budgets",
-    ANALYTICS: "/analytics",
-    AUTO_ENTRIES: "/auto-entries",
+    //   ANALYTICS: "/analytics",
+    //   AUTO_ENTRIES: "/auto-entries",
   },
   PROFILE: "/profile",
   SETTINGS: "/settings",
@@ -114,6 +114,7 @@ export const DEFAULT_VALUES = {
 export const PAGE_SIZE_OPTONS = [10, 25, 50, 75, 100, 250];
 
 export const IMAGE_PATHS = {
+  TODAY: "/images/icons/today.png",
   YEAR: "/images/icons/year.png",
   MONTH: "/images/icons/month.png",
   "30DAYS": "/images/icons/30-days.png",
@@ -124,3 +125,10 @@ export const IMAGE_PATHS = {
   AUTH: "/images/creative/finance.png",
   WALLET: "/images/icons/wallet.png",
 };
+
+export const INTERVALS = [
+  { label: "This Month", value: "this_month" },
+  { label: "Last 7 Days", value: "last_7_days" },
+  { label: "Last 15 Days", value: "last_15_days" },
+  { label: "Last 30 Days", value: "last_30_days" },
+];

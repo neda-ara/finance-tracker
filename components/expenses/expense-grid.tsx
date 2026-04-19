@@ -2,7 +2,6 @@
 
 import {
   ACTION_CONSTANTS,
-  CURRENCIES,
   DEFAULT_VALUES,
   EXPENSE_CATEGORIES,
   EXPENSE_CATEGORY_ICONS_BASE_PATH,
@@ -25,7 +24,11 @@ import { createActionsColumn, DataGrid } from "../common/data-grid";
 import { DeleteConfirmationBody, KpiCard } from "../common/common";
 import { ExpenseFilters } from "./expense-filters";
 import { ExpenseForm } from "./expense-form";
-import { formatDateForDisplay, isStringEqual } from "@/lib/utils/utils";
+import {
+  formatDateForDisplay,
+  getCurrencySymbol,
+  isStringEqual,
+} from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
 import { useExpenses } from "@/hooks/use-expenses";
@@ -130,12 +133,7 @@ export const ExpenseGrid = () => {
       ),
       cell: ({ row }) => (
         <p className="capitalize flex items-center gap-x-1">
-          <span>
-            {
-              CURRENCIES[row.original.currency as keyof typeof CURRENCIES]
-                .symbol
-            }
-          </span>
+          <span>{getCurrencySymbol(row.original.currency)}</span>
           {row.original.amount.toLocaleString()}
         </p>
       ),
@@ -271,11 +269,9 @@ export const ExpenseGrid = () => {
           <DeleteConfirmationBody
             entity={
               quickActionData && quickActionData.currency
-                ? `expense of ${
-                    CURRENCIES[
-                      quickActionData.currency as keyof typeof CURRENCIES
-                    ].symbol
-                  } ${quickActionData.amount} from ${formatDateForDisplay(
+                ? `expense of ${getCurrencySymbol(
+                    quickActionData.currency,
+                  )} ${quickActionData.amount} from ${formatDateForDisplay(
                     quickActionData.expenseDate,
                   )}`
                 : "expense"
@@ -299,6 +295,22 @@ export const ExpenseGrid = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-x-4">
           <KpiCard
+            title="Spent today"
+            imageSrc={IMAGE_PATHS.TODAY}
+            imageAlt="month-calendar"
+            isLoading={query.isPending}
+            fallbackText="No expenses recorded"
+          >
+            {summaryData?.spentToday?.amount != null && (
+              <p className="font-bold text-lg tracking-wider">
+                <span className="mr-1">
+                  {getCurrencySymbol(summaryData?.spentToday?.currency)}
+                </span>
+                {summaryData?.spentToday?.amount.toLocaleString()}
+              </p>
+            )}
+          </KpiCard>
+          <KpiCard
             title="Spent this month"
             imageSrc={IMAGE_PATHS.MONTH}
             imageAlt="month-calendar"
@@ -308,35 +320,9 @@ export const ExpenseGrid = () => {
             {summaryData?.spentThisMonth?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
-                  {
-                    CURRENCIES[
-                      summaryData?.spentThisMonth
-                        ?.currency as keyof typeof CURRENCIES
-                    ]?.symbol
-                  }
+                  {getCurrencySymbol(summaryData?.spentThisMonth?.currency)}
                 </span>
                 {summaryData?.spentThisMonth?.amount?.toLocaleString()}
-              </p>
-            )}
-          </KpiCard>
-          <KpiCard
-            title="Spent in last 30 days"
-            imageSrc={IMAGE_PATHS["30DAYS"]}
-            imageAlt="month-calendar"
-            isLoading={query.isPending}
-            fallbackText="No expenses recorded"
-          >
-            {summaryData?.spentLast30Days?.amount != null && (
-              <p className="font-bold text-lg tracking-wider">
-                <span className="mr-1">
-                  {
-                    CURRENCIES[
-                      summaryData?.spentLast30Days
-                        ?.currency as keyof typeof CURRENCIES
-                    ]?.symbol
-                  }
-                </span>
-                {summaryData?.spentLast30Days?.amount.toLocaleString()}
               </p>
             )}
           </KpiCard>

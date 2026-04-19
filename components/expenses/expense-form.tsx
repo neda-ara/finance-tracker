@@ -30,7 +30,7 @@ import { Mochiy_Pop_One } from "next/font/google";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils/shadcn-utils";
 import { DatePicker } from "../common/date-picker";
-import { normalizeNumber } from "@/lib/utils/utils";
+import { getCurrencySymbol, normalizeNumber } from "@/lib/utils/utils";
 import {
   Select,
   SelectContent,
@@ -115,7 +115,7 @@ export const ExpenseForm = ({
       "expenseDate",
       values.expenseDate instanceof Date
         ? values.expenseDate.toISOString()
-        : String(values.expenseDate)
+        : String(values.expenseDate),
     );
 
     const resp = await onSubmit(formData);
@@ -123,7 +123,7 @@ export const ExpenseForm = ({
     if (!resp.ok) {
       if (resp.error.fieldErrors) {
         Object.entries(resp.error.fieldErrors).forEach(([k, msg]) =>
-          form.setError(k as keyof ExpenseInput, { message: msg })
+          form.setError(k as keyof ExpenseInput, { message: msg }),
         );
       }
       if (resp.error.message) {
@@ -180,9 +180,7 @@ export const ExpenseForm = ({
                     Amount Spent
                   </FormLabel>
                   <p className="font-semibold text-4xl">
-                    {selectedCurrency &&
-                      CURRENCIES[selectedCurrency as keyof typeof CURRENCIES]
-                        .symbol}
+                    {getCurrencySymbol(selectedCurrency)}
                   </p>
                   <Input
                     {...field}
@@ -352,7 +350,7 @@ export const ExpenseForm = ({
                             "flex items-center justify-center rounded-full h-17 aspect-square font-medium border-2 transition-all delay-100 ease-in",
                             isSelected
                               ? "bg-green-50 text-primary-foreground border-3 border-green-200"
-                              : "bg-background hover:bg-accent border-muted"
+                              : "bg-background hover:bg-accent border-muted",
                           )}
                         >
                           <Image
@@ -366,7 +364,7 @@ export const ExpenseForm = ({
                         <span
                           className={cn(
                             "transition-colors duration-150 text-xs font-medium text-muted-foreground",
-                            isSelected && "text-black"
+                            isSelected && "text-black",
                           )}
                         >
                           {category?.title}
@@ -408,7 +406,7 @@ export const ExpenseForm = ({
                       "text-xs font-medium ml-auto",
                       currentLength >= maxLength
                         ? "text-destructive"
-                        : "text-muted-foreground"
+                        : "text-muted-foreground",
                     )}
                   >
                     {currentLength}/{maxLength}

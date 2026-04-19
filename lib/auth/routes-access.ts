@@ -1,8 +1,18 @@
 import { ROUTES } from "../constants/constants";
 
-export const AUTH_ROUTES = new Set([ROUTES.AUTH.LOGIN, ROUTES.AUTH.SIGNUP]);
+interface RouteTree {
+  [key: string]: string | RouteTree;
+}
 
-export const PROTECTED_ROUTES = new Set([ROUTES.DASHBOARD.EXPENSES]);
+const flattenRoutes = (obj: RouteTree): string[] =>
+  Object.values(obj).flatMap((val) =>
+    typeof val === "string" ? val : flattenRoutes(val),
+  );
+
+const { AUTH, ...PROTECTED } = ROUTES;
+
+const AUTH_ROUTES = new Set(flattenRoutes(AUTH));
+const PROTECTED_ROUTES = new Set(flattenRoutes(PROTECTED));
 
 export function isAuthRoute(pathname: string) {
   return AUTH_ROUTES.has(pathname);

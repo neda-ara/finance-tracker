@@ -1,0 +1,316 @@
+"use client";
+
+import { CategoryPieChart, COLORS } from "./category-pie-chart";
+import {
+  ExpenseCard,
+  ExpenseCardSkeleton,
+  TopExpensesEmptyState,
+} from "./expense-card";
+import { ExpenseLineChart } from "./expense-line-chart";
+import { INTERVALS } from "@/lib/constants/constants";
+import { Interval, TrendDirection, TrendTone } from "@/lib/actions/types";
+import { Layers, PiggyBank, TrendingUp, Wallet } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { StatCard, Trend } from "./stat-card";
+import { useEffect, useMemo, useState } from "react";
+import { useOverview } from "@/hooks/use-overview";
+import toast from "react-hot-toast";
+
+export const Overview = () => {
+  const [topExpensesInterval, setTopExpensesInterval] =
+    useState<Interval>("this_month");
+  const [trendInterval, setTrendInterval] = useState<Interval>("this_month");
+  const [categoryInterval, setCategoryInterval] =
+    useState<Interval>("this_month");
+
+  const {
+    overviewQuery,
+    topExpensesQuery,
+    expensesTrendQuery,
+    categoryBreakdownQuery,
+  } = useOverview({
+    topExpenses: topExpensesInterval,
+    trend: trendInterval,
+    categories: categoryInterval,
+  });
+
+  useEffect(() => {
+    if (overviewQuery.error) {
+      toast.error(overviewQuery.error?.message);
+    }
+  }, [overviewQuery.error]);
+
+  const data = overviewQuery.data;
+
+  const getTrend = (
+    change?: { amount: number; percentage: number | null },
+    contextLabel?: string,
+    invert = false,
+    noPrevDataText?: string,
+  ): Trend | undefined => {
+    if (!change || change.percentage === null) {
+      return {
+        value: "—",
+        direction: "neutral",
+        tone: "neutral",
+        label: noPrevDataText,
+      };
+    }
+
+    const { amount, percentage } = change;
+
+    const direction: TrendDirection =
+      amount > 0 ? "up" : amount < 0 ? "down" : "neutral";
+
+    const tone: TrendTone = invert
+      ? amount > 0
+        ? "danger"
+        : amount < 0
+          ? "success"
+          : "neutral"
+      : amount > 0
+        ? "success"
+        : amount < 0
+          ? "danger"
+          : "neutral";
+
+    const formattedAmount = Math.abs(amount).toLocaleString(undefined, {
+      maximumFractionDigits: 1,
+    });
+
+    return {
+      value: `${percentage >= 0 ? "+" : ""}${percentage.toFixed(1)}%`,
+      direction,
+      tone,
+      label: `${amount >= 0 ? "+" : "-"}${formattedAmount} ${contextLabel ?? ""}`,
+    };
+  };
+
+  const OVERVIEW_CARDS = [
+    {
+      title: "Earnings (Last 30 Days)",
+      amount: data?.earnings.amount ?? 0,
+      currency: data?.earnings.currency,
+      icon: <TrendingUp className="h-6 w-6 text-(--color-subtext)" />,
+      trend: getTrend(
+        {
+          amount: data?.earnings?.change?.amount ?? 0,
+          percentage: data?.earnings?.change?.percentage ?? null,
+        },
+        "vs previous 30 days",
+        false,
+        "No data for previous 30 days",
+      ),
+    },
+    {
+      title: "Expenses (This Month)",
+      amount: data?.expenses.amount ?? 0,
+      currency: data?.expenses.currency,
+      icon: <Wallet className="h-6 w-6 text-(--color-subtext)" />,
+      trend: getTrend(
+        {
+          amount: data?.expenses?.change?.amount ?? 0,
+          percentage: data?.expenses?.change?.percentage ?? null,
+        },
+        "vs last month",
+        true,
+        "No data for last month",
+      ),
+    },
+    {
+      title: "Current Savings",
+      amount: data?.savings.amount ?? 0,
+      currency: data?.savings.currency,
+      icon: <Layers className="h-6 w-6 text-(--color-subtext)" />,
+      trend: getTrend(
+        {
+          amount: data?.savings?.change?.amount ?? 0,
+          percentage: data?.savings?.change?.percentage ?? null,
+        },
+        "vs last month",
+        false,
+        "No data for last month",
+      ),
+    },
+    {
+      title: "Budget Left (This Month)",
+      amount: data?.budget?.remaining ?? 0,
+      currency: data?.budget?.currency,
+      icon: <PiggyBank className="h-6 w-6 text-(--color-subtext)" />,
+      trend: data?.budget
+        ? {
+            value: `${Math.round(data.budget.usedPercentage)}% used`,
+            tone:
+              data.budget.usedPercentage > 80
+                ? "danger"
+                : data.budget.usedPercentage > 60
+                  ? "warning"
+                  : ("success" as TrendTone),
+            label: "of monthly budget",
+          }
+        : {
+            value: "—",
+            tone: "neutral" as TrendTone,
+            label: "No budget set",
+          },
+    },
+  ];
+
+  const topExpenses = useMemo(
+    () => topExpensesQuery.data?.topCategories ?? [],
+    [topExpensesQuery],
+  );
+
+  const expenseTrendData = useMemo(
+    () =>
+      expensesTrendQuery?.data?.map((item) => ({
+        ...item,
+        currency: item?.currency,
+        dateLabel: new Date(item.date).toLocaleDateString(undefined, {
+          day: "numeric",
+          month: "short",
+        }),
+      })),
+    [expensesTrendQuery],
+  );
+
+  const expenseCategoryPieData = useMemo(
+    () =>
+      categoryBreakdownQuery?.data?.map((item, idx) => ({
+        name: item.category,
+        value: Number(item.amount),
+        currency: item?.currency,
+        fill: COLORS[idx % COLORS.length],
+      })),
+    [categoryBreakdownQuery],
+  );
+
+  return (
+    <div className="relative flex flex-1 flex-col gap-y-8">
+      <section className="grid grid-cols-4 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
+        {OVERVIEW_CARDS.map((card, idx) => (
+          <StatCard
+            key={idx}
+            idx={idx}
+            {...card}
+            isLoading={overviewQuery.isPending}
+          />
+        ))}
+      </section>
+      <section>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-bold text-lg">Top Expenses</h2>
+          <Select
+            value={topExpensesInterval}
+            onValueChange={(val: Interval) => setTopExpensesInterval(val)}
+          >
+            <SelectTrigger className="w-fit">
+              <SelectValue placeholder="Select interval" />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              {INTERVALS.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="grid grid-cols-5 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
+          {topExpenses.length > 0 ? (
+            topExpenses.map((item, idx) => (
+              <ExpenseCard
+                key={idx}
+                idx={idx}
+                category={item.category}
+                amount={item.amount}
+                currency={item.currency}
+                budget={item.budget ?? null}
+                budgetUsed={
+                  item.budgetUsed ? parseFloat(item.budgetUsed) : null
+                }
+                remaining={item.remaining ? parseFloat(item.remaining) : null}
+                totalPercentage={item.percentage}
+              />
+            ))
+          ) : topExpensesQuery.isPending ? (
+            <ExpenseCardSkeleton />
+          ) : (
+            <TopExpensesEmptyState />
+          )}
+        </div>
+      </section>
+      <section className="flex flex-col flex-1 min-h-0">
+        <h2 className="font-bold text-lg mb-2">Expense Trends</h2>
+        <div className="flex-1 grid grid-cols-2 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
+          <div className="h-full border rounded-md pt-2 px-3">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-sm">Spending Trend</h2>
+              <Select
+                value={trendInterval}
+                onValueChange={(val: Interval) => setTrendInterval(val)}
+              >
+                <SelectTrigger className="w-fit h-fit! font-medium text-xs p-1.5">
+                  <SelectValue placeholder="Select interval" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  {INTERVALS.map((item) => (
+                    <SelectItem
+                      key={item.value}
+                      value={item.value}
+                      className="text-xs"
+                    >
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="h-[calc(100%-38px)]">
+              <ExpenseLineChart
+                data={expenseTrendData ?? []}
+                isLoading={expensesTrendQuery.isPending}
+              />
+            </div>
+          </div>
+          <div className="h-full border rounded-md pt-2 px-3">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-sm">Category Distribution</h2>
+              <Select
+                value={categoryInterval}
+                onValueChange={(val: Interval) => setCategoryInterval(val)}
+              >
+                <SelectTrigger className="w-fit h-fit! font-medium text-xs p-1.5">
+                  <SelectValue placeholder="Select interval" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  {INTERVALS.map((item) => (
+                    <SelectItem
+                      key={item.value}
+                      value={item.value}
+                      className="text-xs"
+                    >
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="h-[calc(100%-38px)]">
+              <CategoryPieChart
+                data={expenseCategoryPieData}
+                isLoading={categoryBreakdownQuery.isPending}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};

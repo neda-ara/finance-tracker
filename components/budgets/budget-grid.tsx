@@ -2,7 +2,6 @@
 
 import {
   ACTION_CONSTANTS,
-  CURRENCIES,
   DEFAULT_VALUES,
   EXPENSE_CATEGORIES,
   EXPENSE_CATEGORY_ICONS_BASE_PATH,
@@ -18,9 +17,10 @@ import {
   GradientProgressBar,
   KpiCard,
 } from "../common/common";
+import { cn } from "@/lib/utils/shadcn-utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { createActionsColumn, DataGrid } from "../common/data-grid";
-import { isStringEqual } from "@/lib/utils/utils";
+import { getCurrencySymbol, isStringEqual } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
 import { useBudgets } from "@/hooks/use-budgets";
@@ -90,12 +90,7 @@ export const BudgetsGrid = () => {
       ),
       cell: ({ row }) => (
         <p className="capitalize flex items-center gap-x-1">
-          <span>
-            {
-              CURRENCIES[row.original.currency as keyof typeof CURRENCIES]
-                .symbol
-            }
-          </span>
+          <span>{getCurrencySymbol(row.original.currency)}</span>
           {row.original.amount.toLocaleString()}
         </p>
       ),
@@ -145,12 +140,7 @@ export const BudgetsGrid = () => {
       ),
       cell: ({ row }) => (
         <p className="capitalize flex items-center gap-x-1">
-          <span>
-            {
-              CURRENCIES[row.original.currency as keyof typeof CURRENCIES]
-                .symbol
-            }
-          </span>
+          <span>{getCurrencySymbol(row.original.currency)}</span>
           {row.original.spent.toLocaleString()}
         </p>
       ),
@@ -161,12 +151,12 @@ export const BudgetsGrid = () => {
       header: "Budget Used",
       cell: ({ row }) => {
         const { amount, spent, currency } = row.original;
-        const symbol =
-          CURRENCIES[currency as keyof typeof CURRENCIES]?.symbol ?? "";
+        const symbol = getCurrencySymbol(currency);
         const percentage =
           amount > 0 ? Math.min((spent / amount) * 100, 100) : 0;
 
-        const overBudget = spent > amount;
+        const isOverBudget = spent > amount;
+        const overBudgetBy = (spent - amount).toFixed(2);
 
         return (
           <div className="flex flex-col gap-1 w-full min-w-56 pr-24 py-2">
@@ -183,10 +173,10 @@ export const BudgetsGrid = () => {
             </div>
 
             <GradientProgressBar percentage={percentage} />
-            {overBudget && (
+            {isOverBudget && (
               <p className="text-xs font-medium text-red-700">
                 Over budget by {symbol}
-                {spent - amount}
+                {overBudgetBy}
               </p>
             )}
           </div>
@@ -252,11 +242,9 @@ export const BudgetsGrid = () => {
           <DeleteConfirmationBody
             entity={
               quickActionData && quickActionData.currency
-                ? `budget of ${
-                    CURRENCIES[
-                      quickActionData.currency as keyof typeof CURRENCIES
-                    ].symbol
-                  } ${quickActionData.amount} for ${quickActionData.category} `
+                ? `budget of ${getCurrencySymbol(
+                    quickActionData.currency,
+                  )} ${quickActionData.amount} for ${quickActionData.category} `
                 : "budget"
             }
           />
@@ -272,6 +260,8 @@ export const BudgetsGrid = () => {
 
   const deleteInProgress = mutations.delete.isPending;
   const summaryData = useMemo(() => summaryQuery?.data, [summaryQuery]);
+
+  const remainingAmount = (summaryData && summaryData?.remaining?.amount) ?? 0;
   const remainingPercentage =
     summaryData && summaryData?.remaining && summaryData?.total
       ? (summaryData.remaining.amount / summaryData.total.amount) * 100
@@ -291,11 +281,7 @@ export const BudgetsGrid = () => {
             {summaryData?.total?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
-                  {
-                    CURRENCIES[
-                      summaryData?.total?.currency as keyof typeof CURRENCIES
-                    ]?.symbol
-                  }
+                  {getCurrencySymbol(summaryData?.total?.currency)}
                 </span>
                 {summaryData?.total?.amount?.toLocaleString()}
               </p>
@@ -311,11 +297,7 @@ export const BudgetsGrid = () => {
             {summaryData?.spent?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
-                  {
-                    CURRENCIES[
-                      summaryData?.spent?.currency as keyof typeof CURRENCIES
-                    ]?.symbol
-                  }
+                  {getCurrencySymbol(summaryData?.spent?.currency)}
                 </span>
                 {summaryData?.spent?.amount.toLocaleString()}
               </p>
@@ -335,16 +317,16 @@ export const BudgetsGrid = () => {
           >
             {summaryData?.remaining?.amount != null && (
               <div className="flex items-center gap-4">
-                <p className="font-bold text-lg tracking-wider">
+                <p
+                  className={cn(
+                    "font-bold text-lg tracking-wider",
+                    remainingAmount < 0 && "text-red-600",
+                  )}
+                >
                   <span className="mr-1">
-                    {
-                      CURRENCIES[
-                        summaryData?.remaining
-                          ?.currency as keyof typeof CURRENCIES
-                      ]?.symbol
-                    }
+                    {getCurrencySymbol(summaryData?.remaining?.currency)}
                   </span>
-                  {summaryData?.remaining?.amount.toLocaleString()}
+                  {remainingAmount?.toLocaleString()}
                 </p>
               </div>
             )}

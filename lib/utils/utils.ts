@@ -1,3 +1,5 @@
+import { CURRENCIES } from "../constants/constants";
+
 export const normalizeNumber = (value: string) => {
   const num = Number(value || 0);
   if (Number.isNaN(num)) {
@@ -10,7 +12,7 @@ export const sanitizeNumberInput = (
   value: string,
   min = 0,
   max = 1_000_000,
-  clampToOther?: number
+  clampToOther?: number,
 ) => {
   const raw = value.replace(/\D/g, "");
   let num = Number(raw || 0);
@@ -48,6 +50,13 @@ export const snakeCaseToTitleCase = (text: string) => {
       .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
+  }
+  return "";
+};
+
+export const getCurrencySymbol = (currencyCode: string) => {
+  if (currencyCode) {
+    return CURRENCIES[currencyCode as keyof typeof CURRENCIES]?.symbol ?? "";
   }
   return "";
 };

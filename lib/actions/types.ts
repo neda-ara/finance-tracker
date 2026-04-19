@@ -72,6 +72,10 @@ export type LabelValuePair = { label: string; value: string };
 
 export type TotalByCurrency = { currency: string; total: number };
 
+export type TrendDirection = "up" | "down" | "neutral";
+
+export type TrendTone = "success" | "danger" | "warning" | "neutral";
+
 // ---------- Data Grid / Table ----------
 
 export type RowAction<T> = {
@@ -135,11 +139,11 @@ export type ExpenseFiltersType = {
 };
 
 export type ExpenseSummary = {
-  spentThisMonth?: {
+  spentToday?: {
     currency: string;
     amount: number;
   };
-  spentLast30Days?: {
+  spentThisMonth?: {
     currency: string;
     amount: number;
   };
@@ -203,3 +207,66 @@ export type BudgetSummary = {
     amount: number;
   };
 };
+
+// ---------- Overview ----------
+
+export type Interval =
+  | "this_month"
+  | "last_7_days"
+  | "last_15_days"
+  | "last_30_days";
+
+export interface OverviewData {
+  earnings: {
+    currency?: string;
+    amount: number;
+    change: { amount: number | null; percentage: number | null };
+  };
+  expenses: {
+    currency?: string;
+    amount: number;
+    change: { amount: number | null; percentage: number | null };
+  };
+  savings: {
+    currency?: string;
+    amount: number;
+    change: { amount: number | null; percentage: number | null };
+  };
+  budget?: {
+    currency?: string;
+    total: number;
+    spent: number;
+    remaining: number;
+    usedPercentage: number;
+  };
+}
+
+export interface TopExpensesData {
+  interval: Interval;
+  total: {
+    currency?: string;
+    amount: number;
+  };
+  topCategories: {
+    category: string;
+    currency: string;
+    amount: number;
+    budget: number | null;
+    budgetUsed: string | null;
+    remaining: string | null;
+    percentage: number;
+  }[];
+}
+
+export interface ExpenseTrend {
+  date: string;
+  amount: number;
+  currency: string;
+}
+
+export interface CategoryBreakdown {
+  category: string;
+  amount: number;
+  currency: string;
+  budget?: number;
+}

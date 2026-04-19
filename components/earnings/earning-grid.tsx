@@ -2,7 +2,6 @@
 
 import {
   ACTION_CONSTANTS,
-  CURRENCIES,
   DEFAULT_VALUES,
   IMAGE_PATHS,
   VALIDATION,
@@ -20,7 +19,7 @@ import { createActionsColumn, DataGrid } from "../common/data-grid";
 import { DeleteConfirmationBody, KpiCard } from "../common/common";
 import { EarningFilters } from "./earning-filters";
 import { EarningForm } from "./earning-form";
-import { formatDateForDisplay } from "@/lib/utils/utils";
+import { formatDateForDisplay, getCurrencySymbol } from "@/lib/utils/utils";
 import { Modal } from "../common/modal";
 import { Spinner } from "../ui/spinner";
 import { useEarnings } from "@/hooks/use-earnings";
@@ -121,12 +120,7 @@ export const EarningsGrid = () => {
       ),
       cell: ({ row }) => (
         <p className="capitalize flex items-center gap-x-1">
-          <span>
-            {
-              CURRENCIES[row.original.currency as keyof typeof CURRENCIES]
-                .symbol
-            }
-          </span>
+          <span>{getCurrencySymbol(row.original.currency)}</span>
           {row.original.amount.toLocaleString()}
         </p>
       ),
@@ -205,11 +199,9 @@ export const EarningsGrid = () => {
           <DeleteConfirmationBody
             entity={
               quickActionData && quickActionData.currency
-                ? `earning of ${
-                    CURRENCIES[
-                      quickActionData.currency as keyof typeof CURRENCIES
-                    ].symbol
-                  } ${quickActionData.amount} from ${formatDateForDisplay(
+                ? `earning of ${getCurrencySymbol(
+                    quickActionData.currency,
+                  )} ${quickActionData.amount} from ${formatDateForDisplay(
                     quickActionData.receivedDate,
                   )}`
                 : "earning"
@@ -242,12 +234,7 @@ export const EarningsGrid = () => {
             {summaryData?.earnedThisMonth?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
-                  {
-                    CURRENCIES[
-                      summaryData?.earnedThisMonth
-                        ?.currency as keyof typeof CURRENCIES
-                    ]?.symbol
-                  }
+                  {getCurrencySymbol(summaryData?.earnedThisMonth?.currency)}
                 </span>
                 {summaryData?.earnedThisMonth?.amount?.toLocaleString()}
               </p>
@@ -263,12 +250,7 @@ export const EarningsGrid = () => {
             {summaryData?.earnedPastYear?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
                 <span className="mr-1">
-                  {
-                    CURRENCIES[
-                      summaryData?.earnedPastYear
-                        ?.currency as keyof typeof CURRENCIES
-                    ]?.symbol
-                  }
+                  {getCurrencySymbol(summaryData?.earnedPastYear?.currency)}
                 </span>
                 {summaryData?.earnedPastYear?.amount.toLocaleString()}
               </p>
