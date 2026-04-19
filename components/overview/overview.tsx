@@ -1,19 +1,12 @@
 "use client";
 
-import {
-  Bar,
-  BarChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
 import { CategoryPieChart, COLORS } from "./category-pie-chart";
 import {
   ExpenseCard,
   ExpenseCardSkeleton,
   TopExpensesEmptyState,
 } from "./expense-card";
+import { ExpenseLineChart } from "./expense-line-chart";
 import { INTERVALS } from "@/lib/constants/constants";
 import { Interval, TrendDirection, TrendTone } from "@/lib/actions/types";
 import { Layers, PiggyBank, TrendingUp, Wallet } from "lucide-react";
@@ -25,7 +18,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { StatCard, Trend } from "./stat-card";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useOverview } from "@/hooks/use-overview";
 import toast from "react-hot-toast";
 
@@ -88,7 +81,6 @@ export const Overview = () => {
           : "neutral";
 
     const formattedAmount = Math.abs(amount).toLocaleString(undefined, {
-      minimumFractionDigits: 1,
       maximumFractionDigits: 1,
     });
 
@@ -170,26 +162,36 @@ export const Overview = () => {
     },
   ];
 
-  const topExpenses = topExpensesQuery.data?.topCategories ?? [];
-
-  const expenseTrendData = expensesTrendQuery?.data?.map((item) => ({
-    ...item,
-    dateLabel: new Date(item.date).toLocaleDateString(undefined, {
-      day: "numeric",
-      month: "short",
-    }),
-  }));
-
-  const expenseCategoryPieData = categoryBreakdownQuery?.data?.map(
-    (item, idx) => ({
-      name: item.category,
-      value: Number(item.amount),
-      currency: item?.currency,
-      fill: COLORS[idx % COLORS.length],
-    }),
+  const topExpenses = useMemo(
+    () => topExpensesQuery.data?.topCategories ?? [],
+    [topExpensesQuery],
   );
 
-  console.log("expenseCategoryPieData", categoryBreakdownQuery.data);
+  const expenseTrendData = useMemo(
+    () =>
+      expensesTrendQuery?.data?.map((item) => ({
+        ...item,
+        currency: item?.currency,
+        dateLabel: new Date(item.date).toLocaleDateString(undefined, {
+          day: "numeric",
+          month: "short",
+        }),
+      })),
+    [expensesTrendQuery],
+  );
+
+  console.log({ expenseTrendData });
+
+  const expenseCategoryPieData = useMemo(
+    () =>
+      categoryBreakdownQuery?.data?.map((item, idx) => ({
+        name: item.category,
+        value: Number(item.amount),
+        currency: item?.currency,
+        fill: COLORS[idx % COLORS.length],
+      })),
+    [categoryBreakdownQuery],
+  );
 
   return (
     <div className="relative flex flex-1 flex-col gap-y-8">
@@ -272,15 +274,8 @@ export const Overview = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="h-[calc(100%-34px)]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={expenseTrendData}>
-                  <XAxis dataKey="dateLabel" tick={{ fontSize: 10 }} />
-                  <YAxis tick={{ fontSize: 10 }} />
-                  <Tooltip />
-                  <Bar dataKey="amount" fill="#3b82f6" radius={[6, 6, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+            <div className="h-[calc(100%-38px)]">
+              <ExpenseLineChart data={expenseTrendData ?? []} />
             </div>
           </div>
           <div className="h-full border rounded-md pt-2 px-3">

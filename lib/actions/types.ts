@@ -261,6 +261,7 @@ export interface TopExpensesData {
 export interface ExpenseTrend {
   date: string;
   amount: number;
+  currency: string;
 }
 
 export interface CategoryBreakdown {

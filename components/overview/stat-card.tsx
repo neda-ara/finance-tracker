@@ -95,7 +95,7 @@ export function StatCard({
               </span>
             )}
             {trend.label && (
-              <p className="text-xs text-muted-foreground leading-none">
+              <p className="font-medium text-xs text-muted-foreground leading-none">
                 {trend.label}
               </p>
             )}
