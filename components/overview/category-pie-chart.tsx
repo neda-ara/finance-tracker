@@ -1,5 +1,6 @@
 "use client";
 
+import { getCurrencySymbol } from "@/lib/utils/utils";
 import {
   NameType,
   ValueType,
@@ -11,7 +12,6 @@ import {
   Tooltip,
   TooltipProps,
 } from "recharts";
-import { getCurrencySymbol } from "@/lib/utils/utils";
 
 type ExpenseCategory = {
   name: string;
@@ -73,7 +73,7 @@ export const CategoryPieChart = ({
 
   return (
     <div className="max-h-full w-full h-full flex items-center gap-x-2 pt-3">
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height="100%" className="max-h-150">
         <PieChart className="focus:outline-none">
           <Pie
             data={data}
@@ -87,35 +87,40 @@ export const CategoryPieChart = ({
           <Tooltip content={<CustomTooltip />} />
         </PieChart>
       </ResponsiveContainer>
-      <div className="max-h-[calc(100vh-600px)] h-full min-h-0 w-2/3 overflow-y-scroll custom-scrollbar pr-3 mr-1 flex flex-col justify-center gap-2 text-xs">
-        {data?.map((item, index) => (
-          <div key={index} className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <div
-                className="w-2.5 h-2.5 rounded-full shrink-0"
-                style={{ backgroundColor: item.fill }}
-              />
-              <span className="truncate text-gray-700">{item.name}</span>
+      <div className="min-h-[calc(100vh-600px)] flex justify-center items-center  w-2/3">
+        <div className="h-full w-full max-h-[calc(100vh-600px)] min-h-0 overflow-y-scroll custom-scrollbar pr-3 mr-1 flex flex-col gap-2 text-xs">
+          {data?.map((item, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between gap-2"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <div
+                  className="w-2.5 h-2.5 rounded-full shrink-0"
+                  style={{ backgroundColor: item.fill }}
+                />
+                <span className="truncate text-gray-700">{item.name}</span>
+              </div>
+              <span className="text-gray-900 font-medium whitespace-nowrap">
+                {item.currency && getCurrencySymbol(item.currency)}
+                {Number(item.value).toLocaleString("en-IN", {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                })}
+              </span>
             </div>
-            <span className="text-gray-900 font-medium whitespace-nowrap">
-              {item.currency && getCurrencySymbol(item.currency)}
-              {Number(item.value).toLocaleString("en-IN", {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2,
-              })}
-            </span>
-          </div>
-        ))}
-        <div className="mt-1 border-t border-gray-200 sticky bottom-0 bg-gray-50">
-          <div className="flex items-center justify-between gap-2 px-2 py-2 rounded-md">
-            <span className="text-gray-600 font-medium">Total</span>
-            <span className="text-gray-900 font-semibold whitespace-nowrap">
-              {currencySymbol}
-              {Number(totalExpense).toLocaleString("en-IN", {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2,
-              })}
-            </span>
+          ))}
+          <div className="mt-1 border-t border-gray-200 sticky bottom-0 bg-gray-50">
+            <div className="flex items-center justify-between gap-2 px-2 py-2 rounded-md">
+              <span className="text-gray-600 font-medium">Total</span>
+              <span className="text-gray-900 font-semibold whitespace-nowrap">
+                {currencySymbol}
+                {Number(totalExpense).toLocaleString("en-IN", {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                })}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -127,9 +132,9 @@ export const COLORS = [
   "#6C5DD3", // Soft Violet
   "#FF6B6B", // Muted Red
   "#4ECDC4", // Soft Teal
-  "#FFA94D", // Warm Amber
   "#3B82F6", // Soft Blue
-  "#F59E0B", // Muted Orange
+  "#FFA94D", // Warm Amber
+  "#38BDF8", // Cyan
   "#A78BFA", // Lavender
   "#FCA5A5", // Dusty Pink
   "#22C55E", // Soft Green
@@ -139,14 +144,14 @@ export const COLORS = [
   "#34D399", // Mint Green
   "#F87171", // Coral
   "#8B5CF6", // Lilac
-  "#FCD34D", // Pale Gold
-  "#38BDF8", // Cyan
-  "#FB923C", // Soft Orange
-  "#A7F3D0", // Light Mint
-  "#C084FC", // Pastel Purple
-  "#FDE68A", // Soft Yellow
-  "#93C5FD", // Powder Blue
-  "#F9A8D4", // Light Pink
-  "#4ADE80", // Soft Green
-  "#FACC15", // Pale Amber
+  "#84CC16", // Soft Lime (replaces pale gold cluster)
+  "#F472B6", // Rose Pink (replaces muted orange overlap)
+  "#FB7185", // Soft Rose (distinct from coral/red)
+  "#2DD4BF", // Aqua Green (clear from teal/cyan)
+  "#C4B5FD", // Light Lavender (softer, less duplicate)
+  "#FDE047", // Bright Pastel Yellow (only one strong yellow)
+  "#67E8F9", // Light Cyan (distinct from blues)
+  "#FDA4AF", // Blush Pink
+  "#86EFAC", // Light Green
+  "#E9D5FF", // Very Light Purple
 ];
