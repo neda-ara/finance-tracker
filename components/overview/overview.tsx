@@ -180,8 +180,6 @@ export const Overview = () => {
     [expensesTrendQuery],
   );
 
-  console.log({ expenseTrendData });
-
   const expenseCategoryPieData = useMemo(
     () =>
       categoryBreakdownQuery?.data?.map((item, idx) => ({
@@ -275,7 +273,10 @@ export const Overview = () => {
               </Select>
             </div>
             <div className="h-[calc(100%-38px)]">
-              <ExpenseLineChart data={expenseTrendData ?? []} />
+              <ExpenseLineChart
+                data={expenseTrendData ?? []}
+                isLoading={expensesTrendQuery.isPending}
+              />
             </div>
           </div>
           <div className="h-full border rounded-md pt-2 px-3">
@@ -302,7 +303,10 @@ export const Overview = () => {
               </Select>
             </div>
             <div className="h-[calc(100%-38px)]">
-              <CategoryPieChart data={expenseCategoryPieData} />
+              <CategoryPieChart
+                data={expenseCategoryPieData}
+                isLoading={categoryBreakdownQuery.isPending}
+              />
             </div>
           </div>
         </div>

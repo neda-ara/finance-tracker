@@ -62,8 +62,10 @@ const CustomTooltip = ({ active, payload }: PieTooltipProps) => {
 
 export const CategoryPieChart = ({
   data,
+  isLoading,
 }: {
   data: ExpenseCategory[] | undefined;
+  isLoading: boolean;
 }) => {
   const totalExpense = data?.reduce((sum, item) => sum + item.value, 0) || 0;
 
@@ -73,53 +75,88 @@ export const CategoryPieChart = ({
 
   return (
     <div className="max-h-full w-full h-full flex items-center gap-x-2 pt-3">
-      <ResponsiveContainer width="100%" height="100%" className="max-h-150">
-        <PieChart className="focus:outline-none">
-          <Pie
-            data={data}
-            dataKey="value"
-            nameKey="name"
-            outerRadius="100%"
-            paddingAngle={3}
-            label={false}
-            className="cursor-pointer focus:outline-none"
-          />
-          <Tooltip content={<CustomTooltip />} />
-        </PieChart>
-      </ResponsiveContainer>
-      <div className="min-h-[calc(100vh-600px)] flex justify-center items-center  w-2/3">
-        <div className="h-full w-full max-h-[calc(100vh-600px)] min-h-0 overflow-y-scroll custom-scrollbar pr-3 mr-1 flex flex-col gap-2 text-xs">
-          {data?.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between gap-2"
-            >
-              <div className="flex items-center gap-2 min-w-0">
+      {isLoading ? (
+        <PieChartSkeleton />
+      ) : (
+        <>
+          <ResponsiveContainer width="100%" height="100%" className="max-h-150">
+            <PieChart className="focus:outline-none">
+              <Pie
+                data={data}
+                dataKey="value"
+                nameKey="name"
+                outerRadius="100%"
+                paddingAngle={3}
+                label={false}
+                className="cursor-pointer focus:outline-none"
+              />
+              <Tooltip content={<CustomTooltip />} />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="min-h-[calc(100vh-600px)] flex justify-center items-center  w-2/3">
+            <div className="h-full w-full max-h-[calc(100vh-600px)] min-h-0 overflow-y-scroll custom-scrollbar pr-3 mr-1 flex flex-col gap-2 text-xs">
+              {data?.map((item, index) => (
                 <div
-                  className="w-2.5 h-2.5 rounded-full shrink-0"
-                  style={{ backgroundColor: item.fill }}
-                />
-                <span className="truncate text-gray-700">{item.name}</span>
+                  key={index}
+                  className="flex items-center justify-between gap-2"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div
+                      className="w-2.5 h-2.5 rounded-full shrink-0"
+                      style={{ backgroundColor: item.fill }}
+                    />
+                    <span className="truncate text-gray-700">{item.name}</span>
+                  </div>
+                  <span className="text-gray-900 font-medium whitespace-nowrap">
+                    {item.currency && getCurrencySymbol(item.currency)}
+                    {Number(item.value).toLocaleString("en-IN", {
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
+              ))}
+              <div className="mt-1 border-t border-gray-200 sticky bottom-0 bg-gray-50">
+                <div className="flex items-center justify-between gap-2 px-2 py-2 rounded-md">
+                  <span className="text-gray-600 font-medium">Total</span>
+                  <span className="text-gray-900 font-semibold whitespace-nowrap">
+                    {currencySymbol}
+                    {Number(totalExpense).toLocaleString("en-IN", {
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
               </div>
-              <span className="text-gray-900 font-medium whitespace-nowrap">
-                {item.currency && getCurrencySymbol(item.currency)}
-                {Number(item.value).toLocaleString("en-IN", {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 2,
-                })}
-              </span>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+const PieChartSkeleton = () => {
+  return (
+    <div className="max-h-full w-full h-full flex items-center gap-x-2 pt-3 animate-pulse">
+      <div className="w-full h-full max-h-150 flex items-center justify-center">
+        <div className="w-2/5 3xl:w-1/2 aspect-square rounded-full bg-gray-200" />
+      </div>
+      <div className="min-h-[calc(100vh-600px)] flex justify-center items-center w-2/3">
+        <div className="h-full w-full max-h-[calc(100vh-600px)] min-h-0 overflow-hidden pr-2 mr-1 flex flex-col gap-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 w-full">
+                <div className="w-2.5 h-2.5 rounded-full bg-gray-300 shrink-0" />
+                <div className="h-3 bg-gray-200 rounded w-24 sm:w-32" />
+              </div>
+              <div className="h-3 bg-gray-200 rounded w-12 sm:w-16" />
             </div>
           ))}
-          <div className="mt-1 border-t border-gray-200 sticky bottom-0 bg-gray-50">
-            <div className="flex items-center justify-between gap-2 px-2 py-2 rounded-md">
-              <span className="text-gray-600 font-medium">Total</span>
-              <span className="text-gray-900 font-semibold whitespace-nowrap">
-                {currencySymbol}
-                {Number(totalExpense).toLocaleString("en-IN", {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 2,
-                })}
-              </span>
+          <div className="mt-2 border-t border-gray-200 pt-2">
+            <div className="flex items-center justify-between py-2">
+              <div className="h-3 bg-gray-300 rounded w-12" />
+              <div className="h-3 bg-gray-300 rounded w-16" />
             </div>
           </div>
         </div>
