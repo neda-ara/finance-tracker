@@ -7,7 +7,7 @@ import {
 } from "@/lib/constants/constants";
 import { cn } from "@/lib/utils/shadcn-utils";
 import { getCurrencySymbol, isStringEqual } from "@/lib/utils/utils";
-import { WalletCards } from "lucide-react";
+import { TriangleAlert, WalletCards } from "lucide-react";
 import Image from "next/image";
 
 export interface ExpenseCardProps {
@@ -87,6 +87,7 @@ export function ExpenseCard({
               <span
                 className={cn(
                   "text-accent-foreground font-medium",
+                  roundedPercentage >= 80 && "text-amber-500",
                   roundedPercentage >= 100 && "text-red-500",
                 )}
               >
@@ -99,10 +100,15 @@ export function ExpenseCard({
               </span>
             </div>
           ) : (
-            <p className="text-muted-foreground text-xs">
-              Budget not set for{" "}
-              <span className="font-medium">{expenseCatObj?.title}</span>
-            </p>
+            <div className="flex items-center gap-x-1.5">
+              <TriangleAlert className="h-full w-full max-h-8 max-w-8 text-amber-500" />
+              <p className="text-muted-foreground text-xs">
+                Budget not set for{" "}
+                <span className="font-medium text-accent-foreground">
+                  {expenseCatObj?.title}
+                </span>
+              </p>
+            </div>
           )}
         </div>
         {budget && (
