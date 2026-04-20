@@ -1,9 +1,10 @@
 "use client";
 
+import { cn } from "@/lib/utils/shadcn-utils";
 import { MessageSquareWarning } from "lucide-react";
 import { ReactNode } from "react";
+import { Sparkles } from "lucide-react";
 import Image from "next/image";
-import { cn } from "@/lib/utils/shadcn-utils";
 
 type KpiCardProps = {
   title: string;
@@ -160,5 +161,37 @@ export function CircularProgress({
         {Math.round(remainingPercentage)}%
       </span>
     </div>
+  );
+}
+
+export function GradientButton({
+  buttonText,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  buttonText: string;
+}) {
+  return (
+    <button
+      {...props}
+      className="
+        cursor-pointer relative inline-flex items-center gap-2 text-sm
+        px-3 py-2 rounded-md font-medium text-white
+        bg-[linear-gradient(to_right,var(--color-primary),color-mix(in_oklab,var(--color-primary),white_12%))]
+        border border-white/20 hover:border-white/10 transition-all ease-in duration-200
+        overflow-hidden
+      "
+    >
+      <span
+        className="
+          pointer-events-none absolute inset-0 rounded-md
+          before:absolute before:inset-0 before:rounded-md
+          before:bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.25),transparent)]
+          before:opacity-0 hover:before:opacity-100
+          before:transition-opacity before:duration-500
+        "
+      />
+      <Sparkles className="w-4 h-4 opacity-95" />
+      <span className="relative z-10">{buttonText}</span>
+    </button>
   );
 }

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { InsightsDrawer } from "@/components/overview/insights-drawer";
 import { Overview } from "@/components/overview/overview";
 import { PageTitle } from "@/components/common/page-title";
 import type { Metadata } from "next";
@@ -16,7 +16,7 @@ export default function OverviewPage() {
           heading="Overview"
           subheading="Get a snapshot of your finances in one glance."
         />
-        <Button>Generate AI Insights</Button>
+        <InsightsDrawer />
       </div>
       <Overview />
     </div>
