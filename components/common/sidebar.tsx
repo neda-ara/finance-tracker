@@ -45,9 +45,9 @@ export const Sidebar = ({ user }: { user: User | null }) => {
     [ROUTES.DASHBOARD.OVERVIEW]: LayoutGrid,
     [ROUTES.DASHBOARD.EXPENSES]: Wallet,
     [ROUTES.DASHBOARD.EARNINGS]: TrendingUp,
-    [ROUTES.DASHBOARD.ANALYTICS]: BarChart3,
+    // [ROUTES.DASHBOARD.ANALYTICS]: BarChart3,
     [ROUTES.DASHBOARD.BUDGETS]: PiggyBank,
-    [ROUTES.DASHBOARD.AUTO_ENTRIES]: Repeat,
+    //[ROUTES.DASHBOARD.AUTO_ENTRIES]: Repeat,
   };
 
   return (
@@ -118,21 +118,21 @@ export const Sidebar = ({ user }: { user: User | null }) => {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-x-1 text-white">
+          <div className="flex items-center gap-x-1 text-white w-full">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-x-1.5 px-2 py-1 bg-red-600 hover:bg-red-700 rounded-full cursor-pointer"
+              className="w-full flex items-center justify-center gap-x-1.5 px-2 py-1 bg-red-600 hover:bg-red-700 rounded-full cursor-pointer"
             >
               <LogOut className="h-3.5 w-3.5" />
               <span className="text-xs leading-none mt-0.75">Logout</span>
             </button>
-            <button
+            {/* <button
               onClick={handleEditProfile}
               className="flex items-center gap-x-1.5 px-2 py-1 bg-black/80 hover:bg-black/70 rounded-full cursor-pointer"
             >
               <Edit3 className="h-3.5 w-3.5" />
               <span className="text-xs leading-none mt-0.75">Edit Profile</span>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
