@@ -3,3 +3,4 @@ export const EXPENSE_CLIENT_QUERY_KEY = "expenses";
 export const EARNING_CLIENT_QUERY_KEY = "earnings";
 export const BUDGET_CLIENT_QUERY_KEY = "budgets";
 export const OVERVIEW_CLIENT_QUERY_KEY = "overview";
+export const INSIGHTS_CLIENT_QUERY_KEY = "overview";

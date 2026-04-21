@@ -1,17 +1,15 @@
 "use server";
 
 import { fetchSnapshot } from "../dashboard/snapshot";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { Interval } from "@/lib/actions/types";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const gemini = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY!,
+});
 
 export async function generateAiInsights(interval: Interval) {
   const snapshot = await fetchSnapshot(interval);
-
-  const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
-  });
 
   const prompt = `
 You are a financial analyst inside a personal finance app.
@@ -34,9 +32,12 @@ DATA:
 ${JSON.stringify(snapshot)}
 `;
 
-  const result = await model.generateContent(prompt);
-  const response = result.response;
-  const text = response.text();
+  const result = await gemini.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: prompt,
+  });
+
+  const text = result.text;
 
   return {
     snapshot,
