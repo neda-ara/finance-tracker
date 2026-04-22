@@ -1,3 +1,7 @@
+"use client";
+
+import { IMAGE_PATHS, ROUTES } from "@/lib/constants/constants";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 
 export const SocialMediaOptions = () => {
@@ -8,13 +12,19 @@ export const SocialMediaOptions = () => {
         <p className="font-medium">OR</p>
         <div className="h-px flex-1 bg-gray-300" />
       </div>
-      <div className="cursor-pointer mx-auto flex items-center justify-center my-2 gap-x-1 w-fit border-2 border-gray-300 pl-4 pr-6 rounded-full">
+      <div
+        role="button"
+        onClick={() =>
+          signIn("google", { callbackUrl: ROUTES.DASHBOARD.OVERVIEW })
+        }
+        className="cursor-pointer mx-auto flex items-center justify-center my-2 gap-x-1 w-fit border-2 border-gray-300 pl-4 pr-6 rounded-full"
+      >
         <Image
           alt="google-logo"
           height={32}
           width={32}
           className="h-8 max-w-fit aspect-square object-contain"
-          src={"/logos/google.png"}
+          src={IMAGE_PATHS.GOOGLE}
         />
         <p className="font-semibold text-sm">Continue with Google</p>
       </div>
