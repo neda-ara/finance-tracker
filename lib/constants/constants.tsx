@@ -126,6 +126,7 @@ export const IMAGE_PATHS = {
   PLACEHOLDER_AVATAR: "/images/avatars/ducka-lisa.jpg",
   AUTH: "/images/creative/finance.png",
   WALLET: "/images/icons/wallet.png",
+  GOOGLE: "/logos/google.png",
 };
 
 export const INTERVALS = [
