@@ -135,3 +135,48 @@ export const INTERVALS = [
   { label: "Last 15 Days", value: "last_15_days" },
   { label: "Last 30 Days", value: "last_30_days" },
 ];
+
+const COLORS = {
+  PRIMARY: {
+    SUCCESS: "#10b981",
+    ERROR: "#ef4444",
+  },
+  SECONDARY: {
+    SUCCESS: "#ecfdf5",
+    ERROR: "#fef2f2",
+  },
+};
+
+export const toastStyles = {
+  style: {
+    borderRadius: "8px",
+    borderWidth: "1.75px",
+    fontSize: "14px",
+    display: "flex",
+    alignItems: "center",
+  },
+  success: {
+    style: {
+      background: COLORS.SECONDARY.SUCCESS,
+      color: COLORS.PRIMARY.SUCCESS,
+      fontWeight: 500,
+      border: `1.75px solid ${COLORS.PRIMARY.SUCCESS}`,
+    },
+    iconTheme: {
+      primary: COLORS.PRIMARY.SUCCESS,
+      secondary: COLORS.SECONDARY.SUCCESS,
+    },
+  },
+  error: {
+    style: {
+      background: COLORS.SECONDARY.ERROR,
+      color: COLORS.PRIMARY.ERROR,
+      fontWeight: 500,
+      border: `1.75px solid ${COLORS.PRIMARY.ERROR}`,
+    },
+    iconTheme: {
+      primary: COLORS.PRIMARY.ERROR,
+      secondary: COLORS.SECONDARY.ERROR,
+    },
+  },
+};

@@ -2,6 +2,7 @@ import "./globals.css";
 import { Montserrat } from "next/font/google";
 import { ReactQueryProvider } from "@/providers/react-query-provider";
 import { Toaster } from "react-hot-toast";
+import { toastStyles } from "@/lib/constants/constants";
 import type { Metadata } from "next";
 
 const montserrat = Montserrat({
@@ -23,7 +24,7 @@ export default function RootLayout({
       <body className={`${montserrat.className}`}>
         <ReactQueryProvider>
           {children}
-          <Toaster position="top-right" />
+          <Toaster position="top-center" toastOptions={toastStyles} />
         </ReactQueryProvider>
       </body>
     </html>
