@@ -79,20 +79,30 @@ export const CategoryPieChart = ({
         <PieChartSkeleton />
       ) : (
         <>
-          <ResponsiveContainer width="100%" height="100%" className="max-h-150">
-            <PieChart className="focus:outline-none">
-              <Pie
-                data={data}
-                dataKey="value"
-                nameKey="name"
-                outerRadius="100%"
-                paddingAngle={3}
-                label={false}
-                className="cursor-pointer focus:outline-none"
-              />
-              <Tooltip content={<CustomTooltip />} />
-            </PieChart>
-          </ResponsiveContainer>
+          {data ? (
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+              className="max-h-150"
+            >
+              <PieChart className="focus:outline-none">
+                <Pie
+                  data={data}
+                  dataKey="value"
+                  nameKey="name"
+                  outerRadius="100%"
+                  paddingAngle={3}
+                  label={false}
+                  className="cursor-pointer focus:outline-none"
+                />
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="w-full h-full max-h-150 flex items-center justify-center">
+              <div className="w-2/5 3xl:w-1/2 aspect-square rounded-full bg-gray-100" />
+            </div>
+          )}
           <div className="min-h-[calc(100vh-600px)] flex justify-center items-center  w-2/3">
             <div className="h-full w-full max-h-[calc(100vh-600px)] min-h-0 overflow-y-scroll custom-scrollbar pr-3 mr-1 flex flex-col gap-2 text-xs">
               {data?.map((item, index) => (

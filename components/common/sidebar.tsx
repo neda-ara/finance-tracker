@@ -112,9 +112,11 @@ export const Sidebar = ({ user }: { user: User | null }) => {
               />
             </div>
             <div className="flex flex-col justify-center h-full">
-              <p className="font-medium leading-none">{user?.username}</p>
+              <p className="font-medium text-sm leading-none">
+                {user?.username ?? "Unknown userame"}
+              </p>
               <p className="text-xs leading-none max-w-32 overflow-hidden text-ellipsis">
-                {user?.email}
+                {user?.email ?? "Unknown email"}
               </p>
             </div>
           </div>

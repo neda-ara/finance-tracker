@@ -128,7 +128,7 @@ export function DataGrid<T>({
       <div
         className={cn(
           "overflow-hidden rounded-md border",
-          customStyles?.gridWrapperStyles
+          customStyles?.gridWrapperStyles,
         )}
       >
         <Table
@@ -145,7 +145,7 @@ export function DataGrid<T>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -167,7 +167,7 @@ export function DataGrid<T>({
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -182,16 +182,21 @@ export function DataGrid<T>({
                   {isDataLoading ? (
                     <Spinner className="m-auto h-10 w-10 text-(--color-primary)" />
                   ) : (
-                    <>
+                    <div
+                      className={cn(
+                        "flex flex-col items-center justify-center gap-y-2 max-w-full",
+                        customStyles?.emptyContainerStyles,
+                      )}
+                    >
                       <Image
                         alt="no-results"
                         height={100}
                         width={100}
                         src={IMAGE_PATHS.NO_RESULTS}
-                        className="h-20 object-contain mb-2 mx-auto"
+                        className="h-20 object-contain mx-auto"
                       />
                       No results found.
-                    </>
+                    </div>
                   )}
                 </TableCell>
               </TableRow>

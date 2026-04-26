@@ -229,7 +229,7 @@ export const EarningsGrid = () => {
             imageSrc={IMAGE_PATHS.MONTH}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="No earnings recorded"
+            fallbackText="No earnings found"
           >
             {summaryData?.earnedThisMonth?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
@@ -245,7 +245,7 @@ export const EarningsGrid = () => {
             imageSrc={IMAGE_PATHS.YEAR}
             imageAlt="year-calendar"
             isLoading={query.isPending}
-            fallbackText="No earnings recorded"
+            fallbackText="No earnings found"
           >
             {summaryData?.earnedPastYear?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
@@ -280,6 +280,7 @@ export const EarningsGrid = () => {
         customStyles={{
           gridWrapperStyles: "min-h-90",
           tableContainerStyles: "max-h-90",
+          emptyContainerStyles: "min-h-64",
         }}
       />
       <Modal

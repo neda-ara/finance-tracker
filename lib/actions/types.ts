@@ -97,7 +97,11 @@ export type DataGridProps<T> = {
     onPageChange: (page: number) => void;
     onPageSizeChange: (pageSize: number) => void;
   };
-  customStyles?: { gridWrapperStyles?: string; tableContainerStyles?: string };
+  customStyles?: {
+    gridWrapperStyles?: string;
+    tableContainerStyles?: string;
+    emptyContainerStyles?: string;
+  };
 };
 
 // ---------- User ----------

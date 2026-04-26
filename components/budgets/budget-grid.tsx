@@ -354,6 +354,7 @@ export const BudgetsGrid = () => {
         customStyles={{
           gridWrapperStyles: "min-h-106",
           tableContainerStyles: "max-h-106",
+          emptyContainerStyles: "min-h-84",
         }}
       />
       <Modal

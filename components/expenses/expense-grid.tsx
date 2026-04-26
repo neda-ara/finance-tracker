@@ -299,7 +299,7 @@ export const ExpenseGrid = () => {
             imageSrc={IMAGE_PATHS.TODAY}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="No expenses recorded"
+            fallbackText="No expenses found"
           >
             {summaryData?.spentToday?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
@@ -315,7 +315,7 @@ export const ExpenseGrid = () => {
             imageSrc={IMAGE_PATHS.MONTH}
             imageAlt="month-calendar"
             isLoading={query.isPending}
-            fallbackText="No expenses recorded"
+            fallbackText="No expenses found"
           >
             {summaryData?.spentThisMonth?.amount != null && (
               <p className="font-bold text-lg tracking-wider">
@@ -350,6 +350,7 @@ export const ExpenseGrid = () => {
         customStyles={{
           gridWrapperStyles: "min-h-90",
           tableContainerStyles: "max-h-90",
+          emptyContainerStyles: "min-h-64",
         }}
       />
       <Modal
