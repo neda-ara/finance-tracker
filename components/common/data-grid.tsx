@@ -180,7 +180,14 @@ export function DataGrid<T>({
                   className="min-h-full text-center italic py-8 font-medium"
                 >
                   {isDataLoading ? (
-                    <Spinner className="m-auto h-10 w-10 text-(--color-primary)" />
+                    <div
+                      className={cn(
+                        "flex items-center justify-center max-w-full",
+                        customStyles?.emptyContainerStyles,
+                      )}
+                    >
+                      <Spinner className="m-auto h-10 w-10 text-(--color-primary)" />
+                    </div>
                   ) : (
                     <div
                       className={cn(
