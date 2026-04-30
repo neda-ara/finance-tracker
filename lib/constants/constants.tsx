@@ -16,6 +16,10 @@ export const ROUTES = {
   CREDITS: "/credits",
 };
 
+export const LINK_PATHS = {
+  FLATICON: "https://www.flaticon.com/",
+};
+
 export const ENV_PRODUCTION = "production";
 
 export const UNAUTHORIZED_ERR_MSG =

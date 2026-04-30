@@ -1,21 +1,37 @@
 "use client";
 
-import { ROUTES } from "@/lib/constants/constants";
+import { cn } from "@/lib/utils/shadcn-utils";
+import { LINK_PATHS, ROUTES } from "@/lib/constants/constants";
 import Link from "next/link";
 
-export const CreditsLink = () => {
+type CustomStyles = {
+  wrapper?: string;
+};
+
+export const CreditsLink = ({
+  customStyles,
+}: {
+  customStyles?: CustomStyles;
+}) => {
   return (
-    <div className="px-6 py-2">
+    <div className={cn("px-6 py-2", customStyles?.wrapper)}>
       <p className="text-[11px]">
         Icons by various authors from{" "}
         <Link
-          href={"https://www.flaticon.com/"}
           className="text-emerald-600 font-medium"
+          href={LINK_PATHS.FLATICON}
+          rel="noopener noreferrer"
+          target="_blank"
         >
           Flaticon
-        </Link>{" "}
-        •{" "}
-        <Link href={ROUTES.CREDITS} className="text-blue-500 font-medium">
+        </Link>
+        <span className="mx-1">•</span>
+        <Link
+          className="text-blue-500 font-medium"
+          href={ROUTES.CREDITS}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
           View full credits
         </Link>
       </p>

@@ -1,5 +1,6 @@
 import { Baloo_Tamma_2 } from "next/font/google";
 import { cn } from "@/lib/utils/shadcn-utils";
+import { CreditsLink } from "@/components/common/credits-link";
 import { IMAGE_PATHS } from "@/lib/constants/constants";
 import { Logo } from "@/components/common/logo";
 import { Quote } from "@/components/common/svg/quote";
@@ -13,7 +14,7 @@ const bt2 = Baloo_Tamma_2({
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className="h-screen w-full flex items-center justify-center px-24 py-8 bg-primary">
-      <div className="h-full w-full flex items-center p-8 bg-white rounded-lg shadow-md">
+      <div className="relative h-full w-full flex items-center p-8 bg-white rounded-lg shadow-md">
         <div className="h-full w-1/2 relative p-5 overflow-hidden rounded-tl-lg rounded-tr-[65px]">
           <svg
             className="absolute inset-0 w-full h-full"
@@ -38,7 +39,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             <div
               className={cn(
                 "text-white w-55 max-w-full flex flex-col justify-between",
-                bt2.className
+                bt2.className,
               )}
             >
               <Quote color="#ffffff80" className="h-9 mb-2" />
@@ -55,9 +56,10 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             src={IMAGE_PATHS.AUTH}
             height={500}
             width={500}
-            className="absolute bottom-8 right-12 h-60 w-60"
+            className="absolute bottom-8 right-12 h-2/5 w-2/5"
           />
         </div>
+        <CreditsLink customStyles={{ wrapper: "absolute bottom-1 left-2" }} />
         <div className="h-full w-1/2 bg-white rounded-tr-lg rounded-br-lg flex items-center justify-center pl-8">
           {children}
         </div>
