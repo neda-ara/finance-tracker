@@ -13,6 +13,7 @@ export const ROUTES = {
   },
   PROFILE: "/profile",
   SETTINGS: "/settings",
+  CREDITS: "/credits",
 };
 
 export const ENV_PRODUCTION = "production";
@@ -180,3 +181,6 @@ export const toastStyles = {
     },
   },
 };
+
+export const dashboardContainerStyles =
+  "min-h-[calc(100vh-48px)] max-h-[calc(100vh-48px)] relative flex flex-col pt-4 px-6 gap-y-6 overflow-hidden";

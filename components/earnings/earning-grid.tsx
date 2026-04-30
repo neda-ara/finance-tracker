@@ -278,9 +278,9 @@ export const EarningsGrid = () => {
           onPageSizeChange: handlePageSizeChange,
         }}
         customStyles={{
-          gridWrapperStyles: "min-h-90",
-          tableContainerStyles: "max-h-90",
-          emptyContainerStyles: "min-h-64",
+          gridWrapperStyles: "min-h-[calc(100vh-390px)]",
+          tableContainerStyles: "max-h-[calc(100vh-390px)]",
+          emptyContainerStyles: "min-h-[calc(100vh-495px)]",
         }}
       />
       <Modal

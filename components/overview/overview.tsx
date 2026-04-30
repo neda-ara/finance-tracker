@@ -192,7 +192,7 @@ export const Overview = () => {
   );
 
   return (
-    <div className="relative flex flex-1 flex-col gap-y-8">
+    <div className="relative flex flex-1 flex-col gap-y-6 2xl:gap-y-8">
       <section className="grid grid-cols-4 gap-x-3 xl:gap-x-4 xxl:gap-x-5">
         {OVERVIEW_CARDS.map((card, idx) => (
           <StatCard

@@ -53,7 +53,7 @@ export const Sidebar = ({ user }: { user: User | null }) => {
   return (
     <div
       className={cn(
-        "w-60 h-full flex flex-col justify-between py-5",
+        "w-60 h-full flex flex-col justify-between pt-5 pb-0.5",
         bt2.className,
       )}
     >

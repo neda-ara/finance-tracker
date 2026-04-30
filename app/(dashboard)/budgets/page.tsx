@@ -1,4 +1,6 @@
 import { BudgetsGrid } from "@/components/budgets/budget-grid";
+import { cn } from "@/lib/utils/shadcn-utils";
+import { dashboardContainerStyles } from "@/lib/constants/constants";
 import { PageTitle } from "@/components/common/page-title";
 import type { Metadata } from "next";
 
@@ -9,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function BudgetsPage() {
   return (
-    <div className="relative flex flex-col justify-center pt-4 px-6 gap-y-6">
+    <div className={cn(dashboardContainerStyles)}>
       <PageTitle heading="Budgets" subheading="Stay on top of your spending." />
       <BudgetsGrid />
     </div>

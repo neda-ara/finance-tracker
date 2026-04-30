@@ -50,7 +50,6 @@ export function ExpenseCard({
   });
 
   const formattedOverspent = overspentAmount.toLocaleString(undefined, {
-    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
 

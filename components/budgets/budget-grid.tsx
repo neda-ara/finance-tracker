@@ -165,18 +165,16 @@ export const BudgetsGrid = () => {
                 {symbol}
                 {spent.toLocaleString()}
               </span>
-
               <span>
                 {symbol}
                 {amount.toLocaleString()}
               </span>
             </div>
-
             <GradientProgressBar percentage={percentage} />
             {isOverBudget && (
               <p className="text-xs font-medium text-red-700">
                 Over budget by {symbol}
-                {overBudgetBy}
+                {+overBudgetBy}
               </p>
             )}
           </div>
@@ -352,9 +350,9 @@ export const BudgetsGrid = () => {
           onPageSizeChange: handlePageSizeChange,
         }}
         customStyles={{
-          gridWrapperStyles: "min-h-106",
-          tableContainerStyles: "max-h-106",
-          emptyContainerStyles: "min-h-84",
+          gridWrapperStyles: "min-h-[calc(100vh-326px)]",
+          tableContainerStyles: "max-h-[calc(100vh-326px)]",
+          emptyContainerStyles: "min-h-[calc(100vh-415px)]",
         }}
       />
       <Modal
