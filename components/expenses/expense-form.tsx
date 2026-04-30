@@ -463,6 +463,7 @@ export const ExpenseForm = ({
         />
         <div className="flex items-center gap-x-2 self-end mt-2">
           <Button
+            type="button"
             variant="outline"
             onClick={onCancel}
             disabled={submitInProgress}
