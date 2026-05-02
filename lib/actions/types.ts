@@ -76,6 +76,8 @@ export type TrendDirection = "up" | "down" | "neutral";
 
 export type TrendTone = "success" | "danger" | "warning" | "neutral";
 
+export type Attribution = { label: string; url: string; author: string };
+
 // ---------- Data Grid / Table ----------
 
 export type RowAction<T> = {

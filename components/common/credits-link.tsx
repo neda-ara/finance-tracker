@@ -18,7 +18,7 @@ export const CreditsLink = ({
       <p className="text-[11px]">
         Icons by various authors from{" "}
         <Link
-          className="text-emerald-600 font-medium"
+          className="text-emerald-600 font-medium hover:underline"
           href={LINK_PATHS.FLATICON}
           rel="noopener noreferrer"
           target="_blank"
@@ -27,7 +27,7 @@ export const CreditsLink = ({
         </Link>
         <span className="mx-1">•</span>
         <Link
-          className="text-blue-500 font-medium"
+          className="text-blue-500 font-medium hover:underline"
           href={ROUTES.CREDITS}
           rel="noopener noreferrer"
           target="_blank"

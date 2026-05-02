@@ -68,9 +68,33 @@ export const PAYMENT_MODE = [
 export const EXPENSE_CATEGORY_ICONS_BASE_PATH = "/images/expense-categories";
 
 export const EXPENSE_CATEGORIES = [
-  { title: "Food", iconPath: "/food.png" },
-  { title: "Grocery", iconPath: "/grocery.png" },
-  { title: "Transport", iconPath: "/transport.png" },
+  {
+    title: "Food",
+    iconPath: "/food.png",
+    attribution: {
+      label: "Fast food",
+      url: "https://www.flaticon.com/free-icon/fast-food_9718703",
+      author: "Viktor Turchyn",
+    },
+  },
+  {
+    title: "Grocery",
+    iconPath: "/grocery.png",
+    attribution: {
+      label: "Goods",
+      url: "https://www.flaticon.com/free-icon/groceries_1682323",
+      author: "smalllikeart",
+    },
+  },
+  {
+    title: "Transport",
+    iconPath: "/transport.png",
+    attribution: {
+      label: "Transportation",
+      url: "https://www.flaticon.com/free-icon/transportation_18146600",
+      author: "kmg design",
+    },
+  },
   { title: "Rent", iconPath: "/rent.png" },
   { title: "Vehicle", iconPath: "/vehicle.png" },
   { title: "Fuel", iconPath: "/fuel.png" },
@@ -127,8 +151,6 @@ export const IMAGE_PATHS = {
   MONTH: "/images/icons/month.png",
   "30DAYS": "/images/icons/30-days.png",
   NO_RESULTS: "/images/icons/no-results.png",
-  EXPENSE_TITLE: "/images/creative/cat-counting-money.png",
-  EARNING_TITLE: "/images/creative/make-it-rain-cat.png",
   PLACEHOLDER_AVATAR: "/images/avatars/ducka-lisa.jpg",
   AUTH: "/images/creative/finance.png",
   WALLET: "/images/icons/wallet.png",
