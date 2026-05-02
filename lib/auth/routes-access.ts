@@ -9,7 +9,7 @@ const flattenRoutes = (obj: RouteTree): string[] =>
     typeof val === "string" ? val : flattenRoutes(val),
   );
 
-const { AUTH, ...PROTECTED } = ROUTES;
+const { AUTH, CREDITS, ...PROTECTED } = ROUTES;
 
 const AUTH_ROUTES = new Set(flattenRoutes(AUTH));
 const PROTECTED_ROUTES = new Set(flattenRoutes(PROTECTED));
