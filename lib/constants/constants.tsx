@@ -95,8 +95,24 @@ export const EXPENSE_CATEGORIES = [
       author: "kmg design",
     },
   },
-  { title: "Rent", iconPath: "/rent.png" },
-  { title: "Vehicle", iconPath: "/vehicle.png" },
+  {
+    title: "Rent",
+    iconPath: "/rent.png",
+    attribution: {
+      label: "Rent",
+      url: "https://www.flaticon.com/free-icon/house_602220",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Vehicle",
+    iconPath: "/vehicle.png",
+    attribution: {
+      label: "Car",
+      url: "https://www.flaticon.com/free-icon/car_171239",
+      author: "Freepik",
+    },
+  },
   { title: "Fuel", iconPath: "/fuel.png" },
   { title: "Education", iconPath: "/education.png" },
   { title: "Health", iconPath: "/health.png" },
@@ -155,6 +171,14 @@ export const IMAGE_PATHS = {
   AUTH: "/images/creative/finance.png",
   WALLET: "/images/icons/wallet.png",
   GOOGLE: "/logos/google.png",
+};
+
+export const IMAGE_ATTRIBUTIONS = {
+  TODAY: {
+    label: "Today",
+    url: "https://www.flaticon.com/free-icon/calendar_12113063",
+    author: "redempticon",
+  },
 };
 
 export const INTERVALS = [
