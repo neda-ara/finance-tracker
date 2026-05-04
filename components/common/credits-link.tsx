@@ -29,8 +29,6 @@ export const CreditsLink = ({
         <Link
           className="text-blue-500 font-medium hover:underline"
           href={ROUTES.CREDITS}
-          rel="noopener noreferrer"
-          target="_blank"
         >
           View full credits
         </Link>

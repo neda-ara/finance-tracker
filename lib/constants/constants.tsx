@@ -179,6 +179,16 @@ export const IMAGE_ATTRIBUTIONS = {
     url: "https://www.flaticon.com/free-icon/calendar_12113063",
     author: "redempticon",
   },
+  YEAR: {
+    label: "Calendar",
+    url: "https://www.flaticon.com/free-icon/calendar_10755587",
+    author: "Gorbachev",
+  },
+  MONTH: {
+    label: "Month",
+    url: "https://www.flaticon.com/free-icon/month_10755493",
+    author: "Flat Icons",
+  },
 };
 
 export const INTERVALS = [
