@@ -69,7 +69,7 @@ export const Sidebar = ({ user }: { user: User | null }) => {
               return (
                 <Link key={key} href={route} className="relative group">
                   {isActive && (
-                    <div className="absolute -left-11.25 -top-2.25 bg-white h-8.5 w-1.75 rounded-r-sm" />
+                    <div className="absolute -left-14.75 -top-2.25 bg-white h-8.5 w-1.75 rounded-r-sm" />
                   )}
                   <div className="flex items-center gap-x-4">
                     {Icon && (
