@@ -189,6 +189,21 @@ export const IMAGE_ATTRIBUTIONS = {
     url: "https://www.flaticon.com/free-icon/month_10755493",
     author: "Flat Icons",
   },
+  NO_RESULTS: {
+    label: "No-results",
+    url: "https://www.flaticon.com/free-icon/no-results_6195678",
+    author: "Freepik",
+  },
+  AUTH: {
+    label: "Accounting",
+    url: "https://www.flaticon.com/free-icon/accounting_7892621",
+    author: "Mehwish",
+  },
+  WALLET: {
+    label: "Expense",
+    url: "https://www.flaticon.com/free-icon/expenses_5501371",
+    author: "surang",
+  },
 };
 
 export const INTERVALS = [
