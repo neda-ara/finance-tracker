@@ -144,14 +144,55 @@ export const EXPENSE_CATEGORIES = [
 export const SATISFACTION_ICONS_BASE_PATH = "/images/satisfaction-emoticons";
 
 export const SATISFACTION_RATINGS = {
-  1: { title: "Absolutely not!", iconPath: "/cry.png", color: "text-red-600" },
-  2: { title: "Not really", iconPath: "/sad.png", color: "text-red-400" },
-  3: { title: "Maybe", iconPath: "/neutral.png", color: "text-amber-500" },
-  4: { title: "Yeah", iconPath: "/smile.png", color: "text-blue-400" },
+  1: {
+    title: "Absolutely not!",
+    iconPath: "/cry.png",
+    color: "text-red-600",
+    attribution: {
+      label: "shiba-inu",
+      url: "https://www.flaticon.com/free-icon/cry_2171949",
+      author: "AomAm",
+    },
+  },
+  2: {
+    title: "Not really",
+    iconPath: "/sad.png",
+    color: "text-red-400",
+    attribution: {
+      label: "shiba-inu",
+      url: "https://www.flaticon.com/free-icon/nervous_2172062",
+      author: "AomAm",
+    },
+  },
+  3: {
+    title: "Maybe",
+    iconPath: "/neutral.png",
+    color: "text-amber-500",
+    attribution: {
+      label: "shiba-inu",
+      url: "https://www.flaticon.com/free-icon/neutral_2172069",
+      author: "AomAm",
+    },
+  },
+  4: {
+    title: "Yeah",
+    iconPath: "/smile.png",
+    color: "text-blue-400",
+    attribution: {
+      label: "shiba-inu",
+      url: "https://www.flaticon.com/free-icon/laughing_2172021",
+      author: "AomAm",
+    },
+  },
   5: {
     title: "Definitely!",
     iconPath: "/laughing.png",
     color: "text-green-500",
+    attribution: {
+      label: "shiba-inu",
+      url: "https://www.flaticon.com/free-icon/happy_2171981",
+      author: "AomAm",
+    },
   },
 } as const;
 
@@ -188,6 +229,11 @@ export const IMAGE_ATTRIBUTIONS = {
     label: "Month",
     url: "https://www.flaticon.com/free-icon/month_10755493",
     author: "Flat Icons",
+  },
+  "30DAYS": {
+    label: "Month",
+    url: "https://www.flaticon.com/free-icon/30-days_6381435",
+    author: "Freepik",
   },
   NO_RESULTS: {
     label: "No-results",
