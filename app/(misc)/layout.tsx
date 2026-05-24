@@ -12,13 +12,8 @@ export default async function MiscLayout({
   const loggedInUser = userResp.ok ? userResp.data : null;
 
   return (
-    <div
-      className={cn(
-        "h-screen w-full flex items-center bg-primary py-2 ",
-        loggedInUser ? "pr-2" : "px-2",
-      )}
-    >
-      {loggedInUser && <Sidebar user={loggedInUser} />}
+    <div className={"h-screen w-full flex items-center bg-primary py-2 pr-2"}>
+      <Sidebar user={loggedInUser} />
       <div className="bg-white flex-1 min-h-full max-h-full rounded-xl shadow-md overflow-y-scroll scrollbar-hide">
         {children}
       </div>
