@@ -113,15 +113,87 @@ export const EXPENSE_CATEGORIES = [
       author: "Freepik",
     },
   },
-  { title: "Fuel", iconPath: "/fuel.png" },
-  { title: "Education", iconPath: "/education.png" },
-  { title: "Health", iconPath: "/health.png" },
-  { title: "Electricity", iconPath: "/electricity.png" },
-  { title: "Water", iconPath: "/water.png" },
-  { title: "Gas", iconPath: "/gas.png" },
-  { title: "Internet", iconPath: "/internet.png" },
-  { title: "Phone", iconPath: "/phone.png" },
-  { title: "Cable", iconPath: "/cable.png" },
+  {
+    title: "Fuel",
+    iconPath: "/fuel.png",
+    attribution: {
+      label: "Petrol Pump",
+      url: "https://www.flaticon.com/free-icon/petrol-pump_9154309",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Education",
+    iconPath: "/education.png",
+    attribution: {
+      label: "University",
+      url: "https://www.flaticon.com/free-icon/graduation_2997322",
+      author: "justicon",
+    },
+  },
+  {
+    title: "Health",
+    iconPath: "/health.png",
+    attribution: {
+      label: "Health",
+      url: "https://www.flaticon.com/free-icon/healthcare_2382461",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Electricity",
+    iconPath: "/electricity.png",
+    attribution: {
+      label: "Electricity",
+      url: "https://www.flaticon.com/free-icon/electrical-energy_4514764",
+      author: "Flat Icons",
+    },
+  },
+  {
+    title: "Water",
+    iconPath: "/water.png",
+    attribution: {
+      label: "Faucet",
+      url: "https://www.flaticon.com/free-icon/faucet_1683015",
+      author: "smalllikeart",
+    },
+  },
+  {
+    title: "Gas",
+    iconPath: "/gas.png",
+    attribution: {
+      label: "Gas Cylinder",
+      url: "https://www.flaticon.com/free-icon/gas-cylinder_9747073",
+      author: "Robert Angle",
+    },
+  },
+  {
+    title: "Internet",
+    iconPath: "/internet.png",
+    attribution: {
+      label: "Internet",
+      url: "https://www.flaticon.com/free-icon/internet_4253160",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Phone",
+    iconPath: "/phone.png",
+    attribution: {
+      label: "Phone",
+      url: "https://www.flaticon.com/free-icon/telephone-call_827899",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Cable",
+    iconPath: "/cable.png",
+    attribution: {
+      label: "Tv",
+      url: "https://www.flaticon.com/free-icon/technology_11420072",
+      author: "Muhazdinata",
+    },
+  },
   { title: "EMI", iconPath: "/emi.png" },
   { title: "Investment", iconPath: "/investment.png" },
   { title: "Insurance", iconPath: "/insurance.png" },
