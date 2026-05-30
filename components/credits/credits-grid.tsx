@@ -26,7 +26,7 @@ export const CreditsGrid = () => {
 
     const generalIcons = Object.entries(IMAGE_ATTRIBUTIONS).map(
       ([key, attribution]) => ({
-        key,
+        title: key,
         iconPath: IMAGE_PATHS[key as keyof typeof IMAGE_PATHS],
         attribution,
       }),
@@ -38,7 +38,7 @@ export const CreditsGrid = () => {
   const ICONS_LIST = getIconsList();
 
   return (
-    <div className="max-w-full min-w-full flex items-center flex-wrap mt-10 gap-2">
+    <div className="max-w-full min-w-full max-h-[calc(100vh-150px)] overflow-y-scroll custom-scrollbar grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 3xl:grid-cols-7 mt-10 gap-2 pr-2">
       {ICONS_LIST.map(
         (icon, idx) =>
           icon.attribution && (

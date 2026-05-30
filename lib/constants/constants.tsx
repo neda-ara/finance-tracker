@@ -194,23 +194,159 @@ export const EXPENSE_CATEGORIES = [
       author: "Muhazdinata",
     },
   },
-  { title: "EMI", iconPath: "/emi.png" },
-  { title: "Investment", iconPath: "/investment.png" },
-  { title: "Insurance", iconPath: "/insurance.png" },
-  { title: "Subscriptions", iconPath: "/subscriptions.png" },
-  { title: "Pets", iconPath: "/pets.png" },
-  { title: "Help", iconPath: "/help.png" },
-  { title: "Repair", iconPath: "/repair.png" },
-  { title: "Gym", iconPath: "/gym.png" },
-  { title: "Salon", iconPath: "/salon.png" },
-  { title: "Shopping", iconPath: "/shopping.png" },
-  { title: "Vacation", iconPath: "/vacation.png" },
-  { title: "Gifts", iconPath: "/gifts.png" },
-  { title: "Entertainment", iconPath: "/entertainment.png" },
-  { title: "Personal", iconPath: "/personal.png" },
-  { title: "Family/Friends", iconPath: "/family-n-friends.png" },
-  { title: "Charity", iconPath: "/charity.png" },
-  { title: "Other", iconPath: "/other.png" },
+  {
+    title: "EMI",
+    iconPath: "/emi.png",
+    attribution: {
+      label: "Emi",
+      url: "https://www.flaticon.com/free-icon/money_15233228",
+      author: "SBTS2018",
+    },
+  },
+  {
+    title: "Investment",
+    iconPath: "/investment.png",
+    attribution: {
+      label: "Business and finance",
+      url: "https://www.flaticon.com/free-icon/investment_12129079",
+      author: "Flowicon",
+    },
+  },
+  {
+    title: "Insurance",
+    iconPath: "/insurance.png",
+    attribution: {
+      label: "Health insurance",
+      url: "https://www.flaticon.com/free-icon/health-insurance_2209673",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Subscriptions",
+    iconPath: "/subscriptions.png",
+    attribution: {
+      label: "Subscription",
+      url: "https://www.flaticon.com/free-icon/subscription-active_18890024",
+      author: "Eklip Studio",
+    },
+  },
+  {
+    title: "Pets",
+    iconPath: "/pets.png",
+    attribution: {
+      label: "Animal shelter",
+      url: "https://www.flaticon.com/free-icon/animal-shelter_5871573",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Help",
+    iconPath: "/help.png",
+    attribution: {
+      label: "Maid",
+      url: "https://www.flaticon.com/free-icon/cleaner_1886780",
+      author: "max.icons",
+    },
+  },
+  {
+    title: "Repair",
+    iconPath: "/repair.png",
+    attribution: {
+      label: "Maintenance",
+      url: "https://www.flaticon.com/free-icon/mechanic_11133672",
+      author: "kliwir art",
+    },
+  },
+  {
+    title: "Gym",
+    iconPath: "/gym.png",
+    attribution: {
+      label: "Gym",
+      url: "https://www.flaticon.com/free-icon/treadmill_2382646",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Salon",
+    iconPath: "/salon.png",
+    attribution: {
+      label: "Salon",
+      url: "https://www.flaticon.com/free-icon/salon_12525097",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Shopping",
+    iconPath: "/shopping.png",
+    attribution: {
+      label: "Shopping bag",
+      url: "https://www.flaticon.com/free-icon/shopping-bag_3779800",
+      author: "BZZRINCANTATION",
+    },
+  },
+  {
+    title: "Vacation",
+    iconPath: "/vacation.png",
+    attribution: {
+      label: "Summer",
+      url: "https://www.flaticon.com/free-icon/vacations_2664650",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Gifts",
+    iconPath: "/gifts.png",
+    attribution: {
+      label: "Gift",
+      url: "https://www.flaticon.com/free-icon/gift_3546959",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Entertainment",
+    iconPath: "/entertainment.png",
+    attribution: {
+      label: "Amusement park",
+      url: "https://www.flaticon.com/free-icon/theme-park_14023195",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Personal",
+    iconPath: "/personal.png",
+    attribution: {
+      label: "Self esteem",
+      url: "https://www.flaticon.com/free-icon/love-yourself_6911538",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Family/Friends",
+    iconPath: "/family-n-friends.png",
+    attribution: {
+      label: "Target",
+      url: "https://www.flaticon.com/free-icon/target_1605350",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Charity",
+    iconPath: "/charity.png",
+    attribution: {
+      label: "Charity",
+      url: "https://www.flaticon.com/free-icon/donation_10880437",
+      author: "Freepik",
+    },
+  },
+  {
+    title: "Other",
+    iconPath: "/other.png",
+    attribution: {
+      label: "View more",
+      url: "https://www.flaticon.com/free-icon/more_15665905",
+      author: "Pixa_icons",
+    },
+  },
 ] as const;
 
 export const SATISFACTION_ICONS_BASE_PATH = "/images/satisfaction-emoticons";
